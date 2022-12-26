@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 @Where(clause = "is_deleted=false")
 public class User extends BaseEntity {
