@@ -6,7 +6,8 @@ import java.security.PrivateKey;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class CompanyDto {
 
     private Long id;
