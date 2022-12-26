@@ -11,11 +11,11 @@ public class InvoiceController {
     //GetMapping - listInvoices()
 
     //GetMapping - createInvoice()
-    //PostMapping - createInvoice()
+    //PostMapping - createInvoice(InvoiceDto invoiceDto)
 
-    //GetMapping - editInvoice()
-    //PostMapping - updateInvoice()
+    //GetMapping - updateInvoice(Long invoiceId)
+    //PostMapping - updateInvoice(Long invoiceId, InvoiceDto invoice)
 
-    //GetMapping - deleteInvoice()
+    //GetMapping - deleteInvoice(Long invoiceId)
 
 }
