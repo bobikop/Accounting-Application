@@ -31,10 +31,13 @@ public class InvoiceProduct extends BaseEntity{
     private Invoice invoice;
 
 
+    /*
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
+
+     */
 
 
 }
