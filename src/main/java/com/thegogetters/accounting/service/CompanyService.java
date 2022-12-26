@@ -8,7 +8,7 @@ public interface CompanyService {
 
     List<CompanyDto> listAll();
 
-//    CompanyDto findByCompanyId(Long id);
+    CompanyDto findById(Long id);
 //
 //    CompanyDto update(CompanyDto companyDto);
 //
