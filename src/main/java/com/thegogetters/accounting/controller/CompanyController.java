@@ -37,6 +37,8 @@ public class CompanyController {
     @PostMapping("/create")
     public String save(@ModelAttribute("newCompany") CompanyDto companyDto){
 
+
+
         companyService.save(companyDto);
 
         return "redirect:/companies/create";
@@ -49,6 +51,12 @@ public class CompanyController {
         model.addAttribute("company", companyService.findById(Long.parseLong(id)));
 
         return "/company/company-update";
+    }
+
+    @GetMapping("/activate/{id}")
+    public String activate(@PathVariable("id") String id){
+        companyService.findById(Long.parseLong(id));
+
     }
 
 }

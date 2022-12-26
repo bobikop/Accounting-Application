@@ -11,6 +11,9 @@ public interface CompanyService {
     CompanyDto findById(Long id);
 
     void save(CompanyDto companyDto);
+
+
+    void changeCompanyStatusById(Long id);
 //
 //    CompanyDto update(CompanyDto companyDto);
 //
