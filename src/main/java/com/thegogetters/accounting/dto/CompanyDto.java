@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.dto;
 
+import com.thegogetters.accounting.enums.CompanyStatus;
 import lombok.*;
 
 import java.security.PrivateKey;
@@ -15,7 +16,7 @@ public class CompanyDto {
     private String phone;
     private String website;
     private AddressDto address;
-   // Private CompanyStatus companyStatus;
+    private CompanyStatus companyStatus;
 
 
 }
