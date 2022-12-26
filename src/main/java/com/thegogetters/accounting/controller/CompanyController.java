@@ -55,8 +55,9 @@ public class CompanyController {
 
     @GetMapping("/activate/{id}")
     public String activate(@PathVariable("id") String id){
-        companyService.findById(Long.parseLong(id));
+        companyService.changeCompanyStatusById(Long.parseLong(id));
 
+        return "redirect:/companies/create";
     }
 
 }

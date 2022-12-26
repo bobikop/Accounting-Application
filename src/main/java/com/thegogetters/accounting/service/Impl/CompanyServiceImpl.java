@@ -2,6 +2,7 @@ package com.thegogetters.accounting.service.impl;
 
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.entity.Company;
+import com.thegogetters.accounting.enums.CompanyStatus;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.CompanyRepository;
 import com.thegogetters.accounting.service.CompanyService;
@@ -48,9 +49,26 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public void save(CompanyDto companyDto) {
 
+        companyDto.setCompanyStatus(CompanyStatus.PASSIVE);
+
         Company company = mapperUtil.convert(companyDto, new Company());
 
         companyRepository.save(company);
+    }
+
+    @Override
+    public void changeCompanyStatusById(Long id) {
+
+        CompanyDto companyDto = findById(id);
+
+        if(companyDto.getCompanyStatus().equals(CompanyStatus.PASSIVE)){
+            companyDto.setCompanyStatus(CompanyStatus.ACTIVE);
+        }else {
+            companyDto.setCompanyStatus(CompanyStatus.PASSIVE);
+        }
+
+        save(companyDto);
+
     }
 
 
