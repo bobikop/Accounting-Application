@@ -9,10 +9,12 @@ public interface CompanyService {
     List<CompanyDto> listAll();
 
     CompanyDto findById(Long id);
+
+    void save(CompanyDto companyDto);
 //
 //    CompanyDto update(CompanyDto companyDto);
 //
-//    void save(CompanyDto companyDto);
+
 
 
 

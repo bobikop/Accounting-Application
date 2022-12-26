@@ -5,9 +5,7 @@ import com.thegogetters.accounting.service.CompanyService;
 import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/companies")
@@ -36,10 +34,19 @@ public class CompanyController {
         return "/company/company-create";
     }
 
+    @PostMapping("/create")
+    public String save(@ModelAttribute("newCompany") CompanyDto companyDto){
+
+        companyService.save(companyDto);
+
+        return "redirect:/companies/create";
+    }
+
     @GetMapping("/update/{id}")
     public String edit(@PathVariable("id") String id, Model model){
 
         // find company by Id
+        model.addAttribute("company", companyService.findById(Long.parseLong(id)));
 
         return "/company/company-update";
     }

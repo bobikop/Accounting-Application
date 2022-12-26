@@ -8,6 +8,7 @@ import com.thegogetters.accounting.service.CompanyService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -31,6 +32,25 @@ public class CompanyServiceImpl implements CompanyService {
         List<CompanyDto> companyDtoList =list.stream().map(company -> mapperUtil.convert(company,new CompanyDto())).collect(Collectors.toList());
 
         return companyDtoList;
+    }
+
+    @Override
+    public CompanyDto findById(Long id) {
+
+        Optional<Company> company = companyRepository.findById(id);
+        // handle exception here
+
+        CompanyDto companyDto = mapperUtil.convert(company,new CompanyDto());
+
+        return companyDto;
+    }
+
+    @Override
+    public void save(CompanyDto companyDto) {
+
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        companyRepository.save(company);
     }
 
 
