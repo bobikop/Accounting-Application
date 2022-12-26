@@ -24,11 +24,11 @@ public class ClientVendor extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private ClientVendorType clientVendorType;
 
-//    @OneToOne
-//    private Address address;
-//
-//    @ManyToOne
-//    private Company company;
+    @OneToOne
+    private Address address;
+
+    @ManyToOne
+    private Company company;
 
 
 

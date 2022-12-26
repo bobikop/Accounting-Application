@@ -20,7 +20,8 @@ import javax.persistence.Table;
 public class Category extends BaseEntity{
 
     private String description;
-//    @ManyToOne
-//    private Company company;
+
+    @ManyToOne
+    private Company company;
 
 }

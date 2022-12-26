@@ -25,10 +25,12 @@ public class User extends BaseEntity {
     private String lastname;
     private String phone;
     private boolean enabled;
-//    @ManyToOne
-//    private Role role;
-//    @ManyToOne
-//    private Company company;
+
+    @ManyToOne
+    private Role role;
+
+    @ManyToOne
+    private Company company;
 
 
 }

@@ -25,21 +25,18 @@ public class InvoiceProduct extends BaseEntity{
     private BigDecimal price;
     private Integer tax;
     private BigDecimal profitLoss;
-    private Integer remainingQty;
+
+    private int remainingQuantity;
 
 
     @ManyToOne
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
-
-    /*
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
-
-     */
 
 
 }
