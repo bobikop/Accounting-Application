@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Getter
@@ -14,23 +15,12 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "addresses")
+@Table(name = "categories")
 @Where(clause = "is_deleted=false")
-public class Address extends BaseEntity{
+public class Category extends BaseEntity{
 
-    private String addressLine1;
+    private String description;
+//    @ManyToOne
+//    private Company company;
 
-    private String addressLine2;
-
-
-    private String city;
-
-
-    private String state;
-
-
-    private String country;
-
-
-    private String zipCode;
 }
