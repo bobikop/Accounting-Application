@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.controller;
 
+import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.service.CompanyService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,4 +25,13 @@ public class CompanyController {
         return "/company/company-list";
 
     }
+
+    @GetMapping("/create")
+    public String create(Model model){
+
+        model.addAttribute("newCompany", new CompanyDto());
+
+        return "/company/company-create";
+    }
+
 }
