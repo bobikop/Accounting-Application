@@ -74,7 +74,15 @@ public class CompanyController {
     //=========================================================================//
 
     @PostMapping("/update/{id}")
-    public String update(@ModelAttribute("company") CompanyDto companyDto) {
+    public String update(@Valid @ModelAttribute("company") CompanyDto companyDto, BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) {
+
+            model.addAttribute("company", companyDto);
+
+            return "/company/company-update";
+
+        }
 
         companyService.update(companyDto);
 
