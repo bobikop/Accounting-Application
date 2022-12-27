@@ -2,7 +2,7 @@ package com.thegogetters.accounting.service.impl;
 
 import com.thegogetters.accounting.dto.CategoryDto;
 import com.thegogetters.accounting.entity.Category;
-import com.thegogetters.accounting.mapper.CategoryMapper;
+import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.CategoryRepository;
 import com.thegogetters.accounting.service.CategoryService;
 import org.springframework.stereotype.Service;
@@ -14,38 +14,38 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final CategoryMapper categoryMapper;
+    private final MapperUtil mapperUtil;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil) {
         this.categoryRepository = categoryRepository;
-        this.categoryMapper = categoryMapper;
+        this.mapperUtil = mapperUtil;
     }
 
     @Override
     public List<CategoryDto> listCategories() {
-        return categoryRepository.findAllByIsDeleted(false).stream()
-                .map(categoryMapper::convertToDto)
+        return categoryRepository.findAll().stream()
+                .map(category -> mapperUtil.convert(category, new CategoryDto()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public CategoryDto findById(Long id) {
-        Category category = categoryRepository.findByIdAndIsDeleted(id, false);
-        return categoryMapper.convertToDto(category);
+        Category category = categoryRepository.findById(id).orElseThrow();
+        return mapperUtil.convert(category, new CategoryDto());
     }
 
     @Override
     public void updateCategory(Long id, CategoryDto categoryDto) {
-        Category category = categoryRepository.findByIdAndIsDeleted(id, false);
-        CategoryDto toBeConverted = categoryMapper.convertToDto(category);
+        Category category = categoryRepository.findById(id).orElseThrow();
+        CategoryDto toBeConverted = mapperUtil.convert(category, new CategoryDto());
         toBeConverted.setId(category.getId());
         toBeConverted.setDescription(categoryDto.getDescription());
-        categoryRepository.save(categoryMapper.convertToEntity(toBeConverted));
+        categoryRepository.save(mapperUtil.convert(toBeConverted, new Category()));
     }
 
     @Override
     public CategoryDto findByDescription(String description) {
-        return categoryMapper.convertToDto(categoryRepository.findByDescription(description));
+        return mapperUtil.convert(categoryRepository.findByDescription(description), new CategoryDto());
     }
 
     @Override
@@ -57,7 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void createCategory(CategoryDto categoryDto) {
-        Category category = categoryMapper.convertToEntity(categoryDto);
+        Category category = mapperUtil.convert(categoryDto, new Category());
         categoryRepository.save(category);
     }
 
