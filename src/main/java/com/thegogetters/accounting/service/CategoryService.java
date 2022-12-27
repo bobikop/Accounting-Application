@@ -12,4 +12,6 @@ public interface CategoryService {
     void updateCategory(Long id, CategoryDto categoryDto);
 
     CategoryDto findByDescription(String description);
+
+    void deleteCategory(Long id);
 }

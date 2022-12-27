@@ -40,7 +40,9 @@ public class CategoryController {
         return "redirect:/categories/list";
     }
 
-    //GetMapping - deleteInvoice(Long invoiceId)
-
-    //
+    @GetMapping("/delete/{id}")
+    public String deleteCategory(@PathVariable("id") Long id){
+        categoryService.deleteCategory(id);
+        return "redirect:/categories/list";
+    }
 }
