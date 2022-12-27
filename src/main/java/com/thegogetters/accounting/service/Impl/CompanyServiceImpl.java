@@ -10,6 +10,7 @@ import org.hibernate.mapping.Collection;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,17 +28,22 @@ public class CompanyServiceImpl implements CompanyService {
         this.mapperUtil = mapperUtil;
     }
 
+    //=========================================================================//
     @Override
     public List<CompanyDto> listAll() {
 
         List<Company> list = companyRepository.findByIdIsNot(1L);
 
-        List<CompanyDto> companyDtoList = list.stream().map(company -> mapperUtil.convert(company, new CompanyDto())).collect(Collectors.toList());
+        List<CompanyDto> companyDtoList = list.stream().
+                map(company -> mapperUtil.convert(company, new CompanyDto())).
+                collect(Collectors.toList());
+
+        companyDtoList.sort(Comparator.comparing(CompanyDto::getCompanyStatus));
 
 
         return companyDtoList;
     }
-
+    //=========================================================================//
     @Override
     public CompanyDto findById(Long id) {
 
@@ -48,11 +54,11 @@ public class CompanyServiceImpl implements CompanyService {
 
         return companyDto;
     }
-
+    //=========================================================================//
     @Override
     public void save(CompanyDto companyDto) {
 
-        if(companyDto.getCompanyStatus()==null) {
+        if (companyDto.getCompanyStatus() == null) {
 
             companyDto.setCompanyStatus(CompanyStatus.PASSIVE);
 
@@ -62,13 +68,13 @@ public class CompanyServiceImpl implements CompanyService {
 
         companyRepository.save(company);
     }
-
+    //=========================================================================//
     @Override
     public void changeCompanyStatusById(Long id) {
 
         CompanyDto companyDto = findById(id);
 
-        if(companyDto.getCompanyStatus().equals(CompanyStatus.PASSIVE)){
+        if (companyDto.getCompanyStatus().equals(CompanyStatus.PASSIVE)) {
             companyDto.setCompanyStatus(CompanyStatus.ACTIVE);
             save(companyDto);
             return;
@@ -83,7 +89,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     }
 
-
+    //=========================================================================//
     @Override
     public CompanyDto update(CompanyDto companyDto) {
 
@@ -99,6 +105,6 @@ public class CompanyServiceImpl implements CompanyService {
 
         return findById(companyDto.getId());
     }
-
+    //=========================================================================//
 
 }
