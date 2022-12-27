@@ -17,6 +17,8 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
+
+    //=========================================================================//
     @GetMapping("/list")
     public String listAllCompanies(Model model) {
 
@@ -75,7 +77,6 @@ public class CompanyController {
     public String activate(@PathVariable("id") String id) {
 
         companyService.changeCompanyStatusById(Long.parseLong(id));
-
 
         return "redirect:/companies/list";
     }
