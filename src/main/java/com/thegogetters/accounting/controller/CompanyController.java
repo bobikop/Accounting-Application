@@ -5,7 +5,10 @@ import com.thegogetters.accounting.service.CompanyService;
 import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/companies")
@@ -41,8 +44,16 @@ public class CompanyController {
     //=========================================================================//
 
     @PostMapping("/create")
-    public String save(@ModelAttribute("newCompany") CompanyDto companyDto) {
+    public String save(@Valid @ModelAttribute("newCompany") CompanyDto companyDto, BindingResult bindingResult, Model model) {
 
+
+        if (bindingResult.hasErrors()) {
+
+            model.addAttribute("newCompany", companyDto);
+
+            return "/company/company-create";
+
+        }
 
         companyService.save(companyDto);
 
