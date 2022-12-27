@@ -3,10 +3,8 @@ package com.thegogetters.accounting.dto;
 import com.thegogetters.accounting.enums.CompanyStatus;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import java.security.PrivateKey;
 
 @NoArgsConstructor
@@ -30,7 +28,7 @@ public class CompanyDto {
     @Pattern(regexp = "(https?:\\/\\/)?([\\w\\-])+\\.{1}([a-zA-Z]{2,63})([\\/\\w-]*)*\\/?\\??([^#\\n\\r]*)?#?([^\\n\\r]*)")
     private String website;
 
-    @NotNull
+    @Valid
     private AddressDto address;
 
     private CompanyStatus companyStatus;
