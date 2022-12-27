@@ -28,9 +28,11 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public List<CompanyDto> listAll() {
 
-        List<Company> list = companyRepository.findAll();
+        List<Company> list = companyRepository.findByIdIsNot(1L);
 
-        List<CompanyDto> companyDtoList =list.stream().map(company -> mapperUtil.convert(company,new CompanyDto())).collect(Collectors.toList());
+        List<CompanyDto> companyDtoList = list.stream().map(company -> mapperUtil.convert(company, new CompanyDto())).collect(Collectors.toList());
+
+
 
         return companyDtoList;
     }
@@ -41,7 +43,7 @@ public class CompanyServiceImpl implements CompanyService {
         Optional<Company> company = companyRepository.findById(id);
         // handle exception here
 
-        CompanyDto companyDto = mapperUtil.convert(company,new CompanyDto());
+        CompanyDto companyDto = mapperUtil.convert(company, new CompanyDto());
 
         return companyDto;
     }
@@ -49,7 +51,11 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public void save(CompanyDto companyDto) {
 
-        companyDto.setCompanyStatus(CompanyStatus.PASSIVE);
+        if(companyDto.getCompanyStatus()==null) {
+
+            companyDto.setCompanyStatus(CompanyStatus.PASSIVE);
+
+        }
 
         Company company = mapperUtil.convert(companyDto, new Company());
 
@@ -63,12 +69,34 @@ public class CompanyServiceImpl implements CompanyService {
 
         if(companyDto.getCompanyStatus().equals(CompanyStatus.PASSIVE)){
             companyDto.setCompanyStatus(CompanyStatus.ACTIVE);
-        }else {
+            save(companyDto);
+            return;
+        }
+
+
+        if (companyDto.getCompanyStatus().equals(CompanyStatus.ACTIVE)) {
             companyDto.setCompanyStatus(CompanyStatus.PASSIVE);
         }
 
         save(companyDto);
 
+    }
+
+
+    @Override
+    public CompanyDto update(CompanyDto companyDto) {
+
+        CompanyDto oldCompany = findById(companyDto.getId());
+
+        companyDto.setCompanyStatus(oldCompany.getCompanyStatus());
+
+        companyDto.getAddress().setCountry("Unite States");
+
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        companyRepository.save(company);
+
+        return findById(companyDto.getId());
     }
 
 
