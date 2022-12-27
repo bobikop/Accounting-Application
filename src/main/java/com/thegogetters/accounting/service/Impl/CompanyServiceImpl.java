@@ -6,8 +6,10 @@ import com.thegogetters.accounting.enums.CompanyStatus;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.CompanyRepository;
 import com.thegogetters.accounting.service.CompanyService;
+import org.hibernate.mapping.Collection;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,7 +33,6 @@ public class CompanyServiceImpl implements CompanyService {
         List<Company> list = companyRepository.findByIdIsNot(1L);
 
         List<CompanyDto> companyDtoList = list.stream().map(company -> mapperUtil.convert(company, new CompanyDto())).collect(Collectors.toList());
-
 
 
         return companyDtoList;
