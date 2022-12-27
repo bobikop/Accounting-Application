@@ -23,20 +23,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> listCategories() {
-        return categoryRepository.findAll().stream()
+        return categoryRepository.findAllByIsDeleted(false).stream()
                 .map(categoryMapper::convertToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public CategoryDto findById(Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow();
+        Category category = categoryRepository.findByIdAndIsDeleted(id, false);
         return categoryMapper.convertToDto(category);
     }
 
     @Override
     public void updateCategory(Long id, CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(id).orElseThrow();
+        Category category = categoryRepository.findByIdAndIsDeleted(id, false);
         CategoryDto toBeConverted = categoryMapper.convertToDto(category);
         toBeConverted.setId(category.getId());
         toBeConverted.setDescription(categoryDto.getDescription());
@@ -47,4 +47,18 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto findByDescription(String description) {
         return categoryMapper.convertToDto(categoryRepository.findByDescription(description));
     }
+
+    @Override
+    public void deleteCategory(Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow();
+        category.setIsDeleted(true);
+        categoryRepository.save(category);
+    }
+
+    @Override
+    public void createCategory(CategoryDto categoryDto) {
+        Category category = categoryMapper.convertToEntity(categoryDto);
+        categoryRepository.save(category);
+    }
+
 }

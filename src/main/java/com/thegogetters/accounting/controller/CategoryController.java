@@ -25,8 +25,17 @@ public class CategoryController {
         return "/category/category-list";
     }
 
-    //GetMapping - createInvoice()
-    //PostMapping - createInvoice(InvoiceDto invoiceDto)
+    @GetMapping("/create")
+    public String createCategory(Model model){
+        model.addAttribute("newCategory", new CategoryDto());
+        return "/category/category-create";
+    }
+
+    @PostMapping("/create")
+    public String createCategory(CategoryDto categoryDto){
+        categoryService.createCategory(categoryDto);
+        return "redirect:/categories/list";
+    }
 
     @GetMapping("/update/{id}")
     public String updateCategory(@PathVariable("id") Long id, Model model){
