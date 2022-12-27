@@ -41,23 +41,45 @@ public class CompanyController {
 
         companyService.save(companyDto);
 
-        return "redirect:/companies/create";
+        return "redirect:/companies/list";
     }
 
     @GetMapping("/update/{id}")
     public String edit(@PathVariable("id") String id, Model model){
 
-        // find company by Id
+
         model.addAttribute("company", companyService.findById(Long.parseLong(id)));
 
         return "/company/company-update";
     }
 
+    @PostMapping("/update")
+    public String update(@ModelAttribute("company") CompanyDto companyDto){
+
+        return "/company/company-list";
+    }
+
+
+
+
     @GetMapping("/activate/{id}")
     public String activate(@PathVariable("id") String id){
+
         companyService.changeCompanyStatusById(Long.parseLong(id));
 
-        return "redirect:/companies/create";
+
+
+        return "redirect:/companies/list";
     }
+
+    @GetMapping("/deactivate/{id}")
+    public String deactivate(@PathVariable("id") String id){
+
+        companyService.changeCompanyStatusById(Long.parseLong(id));
+
+        return "redirect:/companies/list";
+    }
+
+
 
 }
