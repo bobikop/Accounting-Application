@@ -1,6 +1,7 @@
 package com.thegogetters.accounting.service.impl;
 
 import com.thegogetters.accounting.dto.CategoryDto;
+import com.thegogetters.accounting.entity.Category;
 import com.thegogetters.accounting.mapper.CategoryMapper;
 import com.thegogetters.accounting.repository.CategoryRepository;
 import com.thegogetters.accounting.service.CategoryService;
@@ -25,5 +26,25 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAll().stream()
                 .map(categoryMapper::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CategoryDto findById(Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow();
+        return categoryMapper.convertToDto(category);
+    }
+
+    @Override
+    public void updateCategory(Long id, CategoryDto categoryDto) {
+        Category category = categoryRepository.findById(id).orElseThrow();
+        CategoryDto toBeConverted = categoryMapper.convertToDto(category);
+        toBeConverted.setId(category.getId());
+        toBeConverted.setDescription(categoryDto.getDescription());
+        categoryRepository.save(categoryMapper.convertToEntity(toBeConverted));
+    }
+
+    @Override
+    public CategoryDto findByDescription(String description) {
+        return categoryMapper.convertToDto(categoryRepository.findByDescription(description));
     }
 }

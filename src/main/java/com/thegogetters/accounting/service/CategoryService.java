@@ -8,4 +8,8 @@ public interface CategoryService {
     List<CategoryDto> listCategories();
 
     CategoryDto findById(Long id);
+
+    void updateCategory(Long id, CategoryDto categoryDto);
+
+    CategoryDto findByDescription(String description);
 }
