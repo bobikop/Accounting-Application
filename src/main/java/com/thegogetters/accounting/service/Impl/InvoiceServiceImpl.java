@@ -56,6 +56,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
 
+        //CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); it returns null, say it to ower
+        ///Company company = mapperUtil.convert(companyDto, new Company());
+
+
+
+
         List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceType(company, InvoiceType.PURCHASE);
 
         List<InvoiceDTO> invoiceDTOList = invoiceList.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO()))
