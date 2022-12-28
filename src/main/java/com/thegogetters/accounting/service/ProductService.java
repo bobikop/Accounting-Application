@@ -7,7 +7,8 @@ public interface ProductService {
 
     ProductDTO getProductById(Long id);
     List<ProductDTO> listAllProducts();
-    void save(ProductDTO dto);
-    void update(ProductDTO dto);
+    void save(ProductDTO productDTO);
+    void update(ProductDTO productDTO);
     void deleteById(Long id);
+    void createProduct(ProductDTO productDTO);
 }
