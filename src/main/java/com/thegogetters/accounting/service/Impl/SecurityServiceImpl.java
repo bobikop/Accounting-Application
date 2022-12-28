@@ -17,8 +17,11 @@ public class SecurityServiceImpl implements SecurityService {
 
     private final UserRepository userRepository;
 
-    public SecurityServiceImpl(UserRepository userRepository) {
+    private final UserService userService;
+
+    public SecurityServiceImpl(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -28,6 +31,12 @@ public class SecurityServiceImpl implements SecurityService {
             throw new UsernameNotFoundException("This user does not exist");
         }
         return new UserPrincipal(user);
+    }
+
+    @Override
+    public UserDTO getLoggedInUser() {
+        var currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userService.findByUserName(currentUsername);
     }
 
 

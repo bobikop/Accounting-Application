@@ -1,14 +1,13 @@
-package com.thegogetters.accounting.service.impl;
+package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.dto.CategoryDto;
-import com.thegogetters.accounting.dto.UserDTO;
+import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.entity.Category;
-import com.thegogetters.accounting.entity.common.UserPrincipal;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.CategoryRepository;
 import com.thegogetters.accounting.service.CategoryService;
+import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.UserService;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,21 +18,22 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final MapperUtil mapperUtil;
+    private final CompanyService companyService;
 
     private final UserService userService;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, UserService userService) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, CompanyService companyService, UserService userService) {
         this.categoryRepository = categoryRepository;
         this.mapperUtil = mapperUtil;
+        this.companyService = companyService;
         this.userService = userService;
     }
 
     @Override
     public List<CategoryDto> listCategories() {
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDTO userDto = userService.findByUserName(userPrincipal.getUsername());
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
         return categoryRepository.listCategoriesByAscOrder().stream()
-                .filter(category -> category.getCompany().getId().equals(userDto.getCompany().getId()))
+                .filter(category -> category.getCompany().getId().equals(companyDto.getId()))
                 .map(category -> mapperUtil.convert(category, new CategoryDto()))
                 .collect(Collectors.toList());
     }

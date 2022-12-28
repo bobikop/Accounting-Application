@@ -33,7 +33,7 @@ public class UserController {
     public String createUser(Model model){
 
         model.addAttribute("newUser", new UserDTO());
-        model.addAttribute("roles", roleService.listAllRoles());
+        model.addAttribute("userRoles", roleService.listAllRoles());
         model.addAttribute("users", userService.listAllUsers());
         return "user/user-create";
     }

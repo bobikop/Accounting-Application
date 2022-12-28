@@ -22,5 +22,7 @@ public interface CompanyService {
     //=========================================================================//
     CompanyDto update(CompanyDto companyDto);
 
+    CompanyDto getCompanyOfLoggedInUser();
+
 
 }
