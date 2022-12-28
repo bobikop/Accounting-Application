@@ -33,4 +33,12 @@ public class InvoiceDTO {
 
     private List<InvoiceProductDTO> invoiceProducts;
 
+    public InvoiceDTO(String invoiceNo, LocalDate date, ClientVendorDto clientVendor, BigDecimal price, Integer tax, BigDecimal total) {
+        this.invoiceNo = invoiceNo;
+        this.date = date;
+        this.clientVendor = clientVendor;
+        this.price = price;
+        this.tax = tax;
+        this.total = total;
+    }
 }
