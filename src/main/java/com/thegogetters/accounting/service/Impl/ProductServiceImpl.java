@@ -60,16 +60,12 @@ public class ProductServiceImpl implements ProductService {
     product.setIsDeleted(true);
     productRepository.save(product);
     }
-    @Override
-    public void createProduct(ProductDTO productDTO) {
-        Product product = mapperUtil.convert(productDTO, new Product());
-        productRepository.save(product);
-    }
 
-    @Override
+     @Override
     public boolean checkAnyProductExist(Long id) {
-        List<Product> products = productRepository.findAllByCategoryId(id);
+        List <Product> products = productRepository.findAllByCategoryId(id);
         if (products.size() > 0) return true;
         return false;
     }
-}
+
+  }
