@@ -1,7 +1,9 @@
 package com.thegogetters.accounting.service.Impl;
 
 
+import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.dto.UserDTO;
+import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.User;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.UserRepository;
@@ -57,5 +59,13 @@ public class UserServiceImpl implements UserService {
 
     }
 
+
+
+    @Override
+    public CompanyDto findCompanyByUserName(String username) {
+        User username1 = userRepository.findByUsername(username);
+        Company company = username1.getCompany();
+        return mapperUtil.convert(company,new CompanyDto());
+    }
 
 }
