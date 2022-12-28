@@ -31,6 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void save(UserDTO user) {
 
+
     }
 
     @Override
@@ -42,4 +43,19 @@ public class UserServiceImpl implements UserService {
     public UserDTO findByUserName(String username) {
         return null;
     }
+
+
+    @Override
+    public void deleteUser(String username) {
+
+        User user = userRepository.findByUsername(username);
+
+        user.setIsDeleted(true);
+        user.setUsername(user.getUsername() + "-" + user.getId());
+
+        userRepository.save(user);
+
+    }
+
+
 }
