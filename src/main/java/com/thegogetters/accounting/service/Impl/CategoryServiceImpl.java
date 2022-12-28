@@ -48,8 +48,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void updateCategory(Long id, CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(id).orElseThrow();
+    public void updateCategory(CategoryDto categoryDto) {
+        Category category = categoryRepository.findById(categoryDto.getId()).orElseThrow();
         CategoryDto toBeConverted = mapperUtil.convert(category, new CategoryDto());
         toBeConverted.setId(category.getId());
         toBeConverted.setDescription(categoryDto.getDescription());
@@ -83,4 +83,13 @@ public class CategoryServiceImpl implements CategoryService {
         if(categoryRepository.findByDescriptionAndCompanyId(description, companyDto.getId())==null)return false;
         return categoryRepository.findByDescriptionAndCompanyId(description, companyDto.getId()).getCompany().getId().equals(companyDto.getId());
     }
+
+    @Override
+    public CategoryDto checkAndSetProductStatus(Long id) {
+        CategoryDto categoryDto = findById(id);
+        if(productService.checkAnyProductExist(categoryDto.getId())) categoryDto.setHasProduct(true);
+        return categoryDto;
+    }
+
+
 }

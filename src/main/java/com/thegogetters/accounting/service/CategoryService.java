@@ -9,7 +9,7 @@ public interface CategoryService {
 
     CategoryDto findById(Long id);
 
-    void updateCategory(Long id, CategoryDto categoryDto);
+    void updateCategory(CategoryDto categoryDto);
 
     CategoryDto findByDescription(String description);
 
@@ -18,4 +18,6 @@ public interface CategoryService {
     void createCategory(CategoryDto categoryDto);
 
     boolean ifCategoryExist(String description);
+
+    CategoryDto checkAndSetProductStatus(Long id);
 }
