@@ -11,4 +11,6 @@ public interface ProductService {
     void update(ProductDTO productDTO);
     void deleteById(Long id);
     void createProduct(ProductDTO productDTO);
+
+    boolean checkAnyProductExist(Long id);
 }

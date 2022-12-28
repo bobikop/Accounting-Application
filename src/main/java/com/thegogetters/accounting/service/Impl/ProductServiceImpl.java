@@ -9,6 +9,7 @@ import com.thegogetters.accounting.service.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,5 +64,12 @@ public class ProductServiceImpl implements ProductService {
     public void createProduct(ProductDTO productDTO) {
         Product product = mapperUtil.convert(productDTO, new Product());
         productRepository.save(product);
+    }
+
+    @Override
+    public boolean checkAnyProductExist(Long id) {
+        List<Product> products = productRepository.findAllByCategoryId(id);
+        if (products.size() > 0) return true;
+        return false;
     }
 }
