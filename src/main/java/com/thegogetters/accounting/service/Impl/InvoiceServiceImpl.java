@@ -56,7 +56,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
 
-        //CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); it returns null, say it to ower
+        //CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); it returns null
         ///Company company = mapperUtil.convert(companyDto, new Company());
 
 
