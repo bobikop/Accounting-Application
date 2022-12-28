@@ -2,6 +2,8 @@ package com.thegogetters.accounting.dto;
 
 import lombok.*;
 
+import javax.persistence.ManyToOne;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -10,6 +12,7 @@ public class CategoryDto {
 
     private long id;
     private String description;
-    //    private CompanyDto company;
+    @ManyToOne
+    private CompanyDto company;
     private boolean hasProduct;
 }

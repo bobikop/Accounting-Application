@@ -6,10 +6,9 @@ import com.thegogetters.accounting.enums.CompanyStatus;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.CompanyRepository;
 import com.thegogetters.accounting.service.CompanyService;
-import org.hibernate.mapping.Collection;
+import com.thegogetters.accounting.service.SecurityService;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -20,11 +19,13 @@ import java.util.stream.Collectors;
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final SecurityService securityService;
 
     private final MapperUtil mapperUtil;
 
-    public CompanyServiceImpl(CompanyRepository companyRepository, MapperUtil mapperUtil) {
+    public CompanyServiceImpl(CompanyRepository companyRepository, SecurityService securityService, MapperUtil mapperUtil) {
         this.companyRepository = companyRepository;
+        this.securityService = securityService;
         this.mapperUtil = mapperUtil;
     }
 
@@ -104,6 +105,11 @@ public class CompanyServiceImpl implements CompanyService {
         companyRepository.save(company);
 
         return findById(companyDto.getId());
+    }
+
+    @Override
+    public CompanyDto getCompanyOfLoggedInUser() {
+        return securityService.getLoggedInUser().getCompany();
     }
     //=========================================================================//
 
