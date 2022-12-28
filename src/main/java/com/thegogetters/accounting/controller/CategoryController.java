@@ -63,10 +63,12 @@ public class CategoryController {
 
     @GetMapping("/delete/{id}")
     public String deleteCategory(@PathVariable("id") Long id, RedirectAttributes redirectAttributes){
-        if (productService.checkAnyProductExist(id)){
-            redirectAttributes.addFlashAttribute("error","This category has products, so you cant delete...");
-            return "redirect:/categories/list";
-        }
+
+//        if (productService.checkAnyProductExist(id)){
+//            redirectAttributes.addFlashAttribute("error","This category has products, so you cant delete...");
+//            return "redirect:/categories/list";
+//        }
+
         categoryService.deleteCategory(id);
         return "redirect:/categories/list";
     }
