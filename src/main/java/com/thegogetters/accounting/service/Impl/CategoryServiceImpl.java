@@ -7,10 +7,10 @@ import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.CategoryRepository;
 import com.thegogetters.accounting.service.CategoryService;
 import com.thegogetters.accounting.service.CompanyService;
+import com.thegogetters.accounting.service.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -18,20 +18,27 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final MapperUtil mapperUtil;
     private final CompanyService companyService;
+    private final ProductService productService;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, CompanyService companyService) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, CompanyService companyService, ProductService productService) {
         this.categoryRepository = categoryRepository;
         this.mapperUtil = mapperUtil;
         this.companyService = companyService;
+        this.productService = productService;
     }
 
     @Override
     public List<CategoryDto> listCategories() {
         CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
-        return categoryRepository.listCategoriesByAscOrder().stream()
+
+        List<CategoryDto> categoryList = categoryRepository.listCategoriesByAscOrder().stream()
                 .filter(category -> category.getCompany().getId().equals(companyDto.getId()))
-                .map(category -> mapperUtil.convert(category, new CategoryDto()))
-                .collect(Collectors.toList());
+                .map(category -> mapperUtil.convert(category, new CategoryDto())).toList();
+
+        for (CategoryDto category : categoryList) {
+            if(productService.checkAnyProductExist(category.getId())) category.setHasProduct(true);
+        }
+        return categoryList;
     }
 
     @Override
