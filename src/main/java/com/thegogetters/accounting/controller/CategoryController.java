@@ -5,11 +5,11 @@ import com.thegogetters.accounting.service.CategoryService;
 import com.thegogetters.accounting.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/categories")
@@ -36,8 +36,16 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public String createCategory(CategoryDto categoryDto){
+    public String createCategory(@Valid @ModelAttribute("newCategory") CategoryDto categoryDto, BindingResult bindingResult, Model model){
+
+        if(bindingResult.hasErrors()){
+
+            model.addAttribute("newCategory", categoryDto);
+
+            return "/category/category-create";
+        }
         categoryService.createCategory(categoryDto);
+
         return "redirect:/categories/list";
     }
 

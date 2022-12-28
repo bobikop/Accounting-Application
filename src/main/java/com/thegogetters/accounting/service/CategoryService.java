@@ -16,4 +16,6 @@ public interface CategoryService {
     void deleteCategory(Long id);
 
     void createCategory(CategoryDto categoryDto);
+
+    boolean ifCategoryExist(String description);
 }

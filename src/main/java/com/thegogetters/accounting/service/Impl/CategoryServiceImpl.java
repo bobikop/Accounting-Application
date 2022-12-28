@@ -7,7 +7,6 @@ import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.CategoryRepository;
 import com.thegogetters.accounting.service.CategoryService;
 import com.thegogetters.accounting.service.CompanyService;
-import com.thegogetters.accounting.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,13 +19,10 @@ public class CategoryServiceImpl implements CategoryService {
     private final MapperUtil mapperUtil;
     private final CompanyService companyService;
 
-    private final UserService userService;
-
-    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, CompanyService companyService, UserService userService) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, CompanyService companyService) {
         this.categoryRepository = categoryRepository;
         this.mapperUtil = mapperUtil;
         this.companyService = companyService;
-        this.userService = userService;
     }
 
     @Override
@@ -55,7 +51,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto findByDescription(String description) {
-        return mapperUtil.convert(categoryRepository.findByDescription(description), new CategoryDto());
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+        return mapperUtil.convert(categoryRepository.findByDescriptionAndCompanyId(description, companyDto.getId()), new CategoryDto());
     }
 
     @Override
@@ -67,8 +64,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void createCategory(CategoryDto categoryDto) {
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+        categoryDto.setCompany(companyDto);
         Category category = mapperUtil.convert(categoryDto, new Category());
-        categoryRepository.save(category);
+        if(!ifCategoryExist(category.getDescription())) categoryRepository.save(category);
     }
 
+    @Override
+    public boolean ifCategoryExist(String description) {
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+        if(categoryRepository.findByDescriptionAndCompanyId(description, companyDto.getId())==null)return false;
+        return categoryRepository.findByDescriptionAndCompanyId(description, companyDto.getId()).getCompany().getId().equals(companyDto.getId());
+    }
 }
