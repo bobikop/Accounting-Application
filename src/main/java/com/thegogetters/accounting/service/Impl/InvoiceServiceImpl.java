@@ -104,21 +104,27 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     //-----------------------------getNewInvoiceDTO Purchase - Sales ----------------------------------------------------//
 
-    @Override
     public InvoiceDTO getNewInvoiceDTO(InvoiceType invoiceType) {
 
         InvoiceDTO newInvoiceDTO = new InvoiceDTO();
 
+        newInvoiceDTO.setInvoiceNo(  getInvoiceNo(invoiceType) );
+
+
         if (invoiceType.getValue().equals("Purchase")){
-            newInvoiceDTO.setInvoiceNo("P-015");
+
+            //newInvoiceDTO.setInvoiceNo("P-015");
+
             newInvoiceDTO.setInvoiceType(InvoiceType.PURCHASE);
         }else{
-            newInvoiceDTO.setInvoiceNo("S-015");
+            //newInvoiceDTO.setInvoiceNo("S-015");
             newInvoiceDTO.setInvoiceType(InvoiceType.SALES);
         }
 
         newInvoiceDTO.setDate(LocalDate.now());
         newInvoiceDTO.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
+
+
 
 
 
@@ -128,6 +134,24 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     }
 
+    private String getInvoiceNo(InvoiceType invoiceType) {
+
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        Invoice invoice = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType).stream()
+                .sorted(Comparator.comparing(Invoice::getInvoiceNo).reversed())
+                .findAny().get();
+
+        String invoiceNo = invoice.getInvoiceNo(); // P-002
+
+        int i = invoiceNo.length();
+        String s = invoiceNo.substring(0, i-1) + (  Integer.parseInt(invoiceNo.substring(i-1)) +1 ); // P-003
+
+
+        return s;
+
+    }
 
 
     //----------------------------PURCHASE - SALES CREATE ----------------------------------------------------//
