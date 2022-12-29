@@ -12,6 +12,8 @@ public interface UserService {
     UserDTO findByUserName(String username);
     UserDTO findById(Long id);
 
+    // delete method here
+
 /*
     Need to separate listed users depending on who is looged-in to application
             Case 1: root user is looged in = show all the companies -users -Admins only
