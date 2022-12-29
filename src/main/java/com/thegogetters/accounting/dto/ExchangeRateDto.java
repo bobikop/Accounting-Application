@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("jsonschema2pojo")
 public class ExchangeRateDto {
 
+
+
     @JsonProperty("date")
     private String date;
     @JsonProperty("usd")
@@ -55,5 +57,8 @@ public class ExchangeRateDto {
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
+
+
+
 
 }

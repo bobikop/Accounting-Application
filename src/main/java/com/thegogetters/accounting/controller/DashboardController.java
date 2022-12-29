@@ -1,9 +1,8 @@
 package com.thegogetters.accounting.controller;
 
 import com.thegogetters.accounting.dto.ClientVendorDto;
-import com.thegogetters.accounting.dto.ExchangeRate;
 import com.thegogetters.accounting.dto.InvoiceDTO;
-import com.thegogetters.accounting.enums.InvoiceStatus;
+import com.thegogetters.accounting.service.DashboardService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +18,12 @@ import java.util.Map;
 @Controller
 @RequestMapping("/dashboard")
 public class DashboardController {
+
+    private final DashboardService dashboardService;
+
+    public DashboardController(DashboardService dashboardService) {
+        this.dashboardService = dashboardService;
+    }
 
 
     @GetMapping
@@ -37,9 +42,11 @@ public class DashboardController {
 
         model.addAttribute("summaryNumbers", summaryNumbers);
         model.addAttribute("invoices",invoiceDTOS);
-        model.addAttribute("exchangeRates", new ExchangeRate());
+        model.addAttribute("exchangeRates",dashboardService.listUsdExchangeRate());
 
 
         return "/dashboard";
     }
+
+
 }
