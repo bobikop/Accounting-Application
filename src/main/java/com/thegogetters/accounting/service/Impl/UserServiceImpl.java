@@ -59,17 +59,6 @@ public class UserServiceImpl implements UserService {
         return mapperUtil.convert(userRepository.findByUsername(username), new UserDTO());
     }
 
-
-    @Override
-    public void deleteUser(String username) {
-
-        User user = userRepository.findByUsername(username);
-        user.setIsDeleted(true);
-        user.setUsername(user.getUsername() + "-" + user.getId());
-        userRepository.save(user);
-
-    }
-
     @Override
     public UserDTO findById(Long id) {
         User user = userRepository.findById(id).orElseThrow(()->new NoSuchElementException("User not found"));
@@ -81,6 +70,16 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+
+    @Override
+    public void deleteUser(String username) {
+
+        User user = userRepository.findByUsername(username);
+            user.setIsDeleted(true);
+            user.setUsername(user.getUsername() + "-" + user.getId());
+            userRepository.save(user);
+
+    }
 
 
 
