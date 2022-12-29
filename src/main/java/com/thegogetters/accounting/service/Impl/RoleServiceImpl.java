@@ -28,9 +28,9 @@ public class RoleServiceImpl implements RoleService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public RoleDTO findById(Long id) {
         return mapperUtil.convert(roleRepository.findById(id), new RoleDTO());
     }
+
 }
