@@ -16,13 +16,18 @@ public interface InvoiceService {
 
     //-----------------------------------------------------------------//
 
+    InvoiceDTO create(InvoiceType invoiceType, InvoiceDTO invoiceDTO);
 
-    InvoiceDTO create(InvoiceDTO invoiceDTO);
+    //-----------------------------------------------------------------//
     InvoiceDTO update(Long id, InvoiceDTO invoiceDTO);
+
+    //-----------------------------------------------------------------//
     void deleteById(Long id);
 
+    //-----------------------------------------------------------------//
 
     InvoiceDTO findInvoiceById(Long id);
 
+    //-----------------------------------------------------------------//
     InvoiceDTO approveInvoice(Long invoiceId);
 }

@@ -76,7 +76,7 @@ public class InvoiceSalesController {
     @PostMapping("/create")
     public String createInvoice(@ModelAttribute("newSalesInvoice") InvoiceDTO invoiceDTO){
 
-        InvoiceDTO invoiceDto = invoiceService.create(invoiceDTO); // we take the id from DB after save , create method returns invoice dto with id
+        InvoiceDTO invoiceDto = invoiceService.create(InvoiceType.SALES,invoiceDTO); // we take the id from DB after save , create method returns invoice dto with id
 
         //invoiceProductService.save(invoiceDto.getId());
 

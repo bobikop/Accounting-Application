@@ -133,30 +133,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     //----------------------------PURCHASE - SALES CREATE ----------------------------------------------------//
 
     @Override
-    public InvoiceDTO create(InvoiceDTO invoiceDTO) {
+    public InvoiceDTO create(InvoiceType invoiceType, InvoiceDTO invoiceDTO) {
 
-
-        if (invoiceDTO.getInvoiceNo().startsWith("P")){
-            if (invoiceDTO.getInvoiceStatus() == null){
-                invoiceDTO.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
-            }
-
-            if (invoiceDTO.getInvoiceType() == null){
-                invoiceDTO.setInvoiceType(InvoiceType.PURCHASE);
-            }
-        }else {
-            if (invoiceDTO.getInvoiceStatus() == null){
-                invoiceDTO.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
-            }
-
-            if (invoiceDTO.getInvoiceType() == null){
-                invoiceDTO.setInvoiceType(InvoiceType.SALES);
-            }
-
-
-        }
-
-
+        invoiceDTO.setInvoiceType(invoiceType);
+        invoiceDTO.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
 
         if (invoiceDTO.getInvoiceProducts() == null){
             List<InvoiceProductDTO> invoiceProductDTOS = invoiceProductService.findInvoiceProductByInvoiceId(invoiceDTO.getId());
@@ -172,9 +152,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoiceRepository.save(convertInvoice);
 
-
         return mapperUtil.convert(convertInvoice,new InvoiceDTO());
-
 
     }
 
