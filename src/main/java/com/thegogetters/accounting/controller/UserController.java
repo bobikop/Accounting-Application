@@ -1,6 +1,7 @@
 package com.thegogetters.accounting.controller;
 
 import com.thegogetters.accounting.dto.UserDTO;
+import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.RoleService;
 import com.thegogetters.accounting.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -14,17 +15,18 @@ public class UserController {
 
     private final UserService userService;
     private final RoleService roleService;
+    private final CompanyService companyService;
 
-    public UserController(UserService userService, RoleService roleService) {
+    public UserController(UserService userService, RoleService roleService, CompanyService companyService) {
         this.userService = userService;
         this.roleService = roleService;
+        this.companyService = companyService;
     }
 
 
     @GetMapping("/list")
     public String listAllUsers(Model model){
-
-        model. addAttribute("users", userService.listAllUsers());
+        model. addAttribute("users", userService.listAllUsersByLoggedInStatus());
         return "user/user-list";
     }
 
@@ -34,66 +36,45 @@ public class UserController {
 
         model.addAttribute("newUser", new UserDTO());
         model.addAttribute("userRoles", roleService.listAllRoles());
-        model.addAttribute("users", userService.listAllUsers());
+        model.addAttribute("users", userService.listAllUsersByLoggedInStatus());
+        model.addAttribute("companies", companyService.listAll());
         return "user/user-create";
     }
+
 
     @PostMapping("/create")
     public String saveUser(@ModelAttribute("user") UserDTO user, BindingResult bindingResult, Model model){
 
         if (bindingResult.hasErrors()){
-            model.addAttribute("users", userService.listAllUsers());
-            model.addAttribute("roles", roleService.listAllRoles());
+            model.addAttribute("users", userService.listAllUsersByLoggedInStatus());
+            model.addAttribute("userRoles", roleService.listAllRoles());
+            model.addAttribute("companies", companyService.listAll());
             return "user/user-create";
         }
         userService.save(user);
-        return "redirect:/user-create";
+        return "redirect:/users/list";
     }
 
+    @GetMapping("/update/{id}")
+    public String editUser(@PathVariable ("id") Long id, Model model){
+        model.addAttribute("user",userService.findById(id));
+        model.addAttribute("userRoles", roleService.listAllRoles());
+        model.addAttribute("companies", companyService.listAll());
 
-    @GetMapping("/update/{username}")
-    public String editUser (@PathVariable("username") String username, Model model){
-
-        model.addAttribute("user", userService.findByUserName(username));
-        model.addAttribute("roles", roleService.listAllRoles());
         return "user/user-update";
     }
 
-
-    @PostMapping("/update")
-    public String update(@ModelAttribute("user") UserDTO userDTO, BindingResult bindingResult, Model model){
-
-        if (bindingResult.hasErrors()){
-            model.addAttribute("users", userService.listAllUsers());
-            model.addAttribute("roles", roleService.listAllRoles());
-            return "user/user-update";
-        }
+    @PostMapping("/update/{id}")
+    public String updateUser(@ModelAttribute ("user") UserDTO userDTO){
         userService.update(userDTO);
-        return "redirect:/user-list";
+        return "redirect:/users/list";
     }
 
-
-
-    @GetMapping("/delete/{username}")
-    public String deleteUser(@PathVariable("username") String username){
-
-        userService.deleteUser(username);
-        return "redirect:/user-list";
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable("id") Long id){
+        userService.deleteById(id);
+        return "redirect:/users/list";
     }
-
-
-
 
 
 }
-
-
-//GetMapping - list()
-
-//GetMapping - create()
-//PostMapping - create(InvoiceDto invoiceDto)
-
-//GetMapping - update(Long invoiceId)
-//PostMapping - update(Long invoiceId, InvoiceDto invoice)
-
-//GetMapping - delete(Long invoiceId)
