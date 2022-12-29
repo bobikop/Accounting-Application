@@ -8,7 +8,7 @@ import com.thegogetters.accounting.enums.ClientVendorType;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.ClientVendorRepository;
 import com.thegogetters.accounting.service.ClientVendorService;
-import com.thegogetters.accounting.service.UserService;
+import com.thegogetters.accounting.service.CompanyService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +21,15 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     private final ClientVendorRepository clientVendorRepository;
     private final MapperUtil mapperUtil;
 
-    private final UserService userService;
+    private final CompanyService companyService;
 
-
-    public ClientVendorServiceImpl(ClientVendorRepository clientVendorRepository, MapperUtil mapperUtil, UserService userService) {
+    public ClientVendorServiceImpl(ClientVendorRepository clientVendorRepository, MapperUtil mapperUtil, CompanyService companyService) {
         this.clientVendorRepository = clientVendorRepository;
         this.mapperUtil = mapperUtil;
-        this.userService = userService;
+        this.companyService = companyService;
     }
+
+
 
     /*
     @Override
@@ -46,8 +47,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     @Override
     public List<ClientVendorDto> findAllByClientVendorTypeBelongsToCompany(ClientVendorType vendor) {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();//security give user who log in
-        CompanyDto companyDto = userService.findCompanyByUserName(username);
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
         Company company = mapperUtil.convert(companyDto, new Company());
 
         List<ClientVendor> clientVendorList = clientVendorRepository.findAllByClientVendorTypeAndCompany(vendor, company);
