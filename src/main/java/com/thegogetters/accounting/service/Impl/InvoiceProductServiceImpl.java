@@ -97,60 +97,10 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
 
-    /*
-    @Override
-    public InvoiceProductDTO getInvoiceProductByInvoiceId(Long id) {
-
-        InvoiceProduct invoiceProduct = invoiceProductRepository.findByInvoice_Id(id);
-
-        return mapperUtil.convert(invoiceProduct,new InvoiceProductDTO());
-
-    }
 
 
-     */
-
-    /*
-    @Override
-    public InvoiceProductDTO save(Long invoiceId) {
-
-        InvoiceDTO invoiceDTO = invoiceService.findInvoiceById(invoiceId);
-
-        InvoiceProductDTO invoiceProductDTO = new InvoiceProductDTO();
-        invoiceProductDTO.setInvoiceDto(invoiceDTO);
-
-        InvoiceProduct invoiceProduct = mapperUtil.convert(invoiceProductDTO, new InvoiceProduct());
-
-        invoiceProductRepository.save(invoiceProduct);
-
-        return mapperUtil.convert(invoiceProduct,new InvoiceProductDTO());
-
-    }
 
 
- */
-
-    /*
-    @Override
-    public InvoiceProductDTO update(Long invoiceId, InvoiceProductDTO invoiceProductDTO) {
-
-
-        InvoiceProduct invoiceProduct = invoiceProductRepository.findByInvoice_Id(invoiceId);
-
-        invoiceProduct.setPrice(invoiceProductDTO.getPrice());
-        invoiceProduct.setQuantity(invoiceProductDTO.getQuantity());
-        invoiceProduct.setTax(invoiceProductDTO.getTax());
-        invoiceProduct.setProfitLoss(invoiceProductDTO.getProfitLoss());
-        invoiceProduct.setProduct( mapperUtil.convert(invoiceProductDTO.getProduct(), new Product()) );
-
-        InvoiceProduct savedInvoiceProduct = invoiceProductRepository.save(invoiceProduct);
-
-        InvoiceProductDTO invoice_productDTO = mapperUtil.convert(savedInvoiceProduct, new InvoiceProductDTO());
-
-        return invoice_productDTO;
-    }
-
-     */
 
     @Override
     public InvoiceProductDTO save(Long invoiceId, InvoiceProductDTO invoiceProductDTO) {
@@ -202,21 +152,4 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
 
 
-
-
-
-
-
-
-    /*
-    @Override
-    public InvoiceProductDTO findInvoiceProductByInvoiceId(Long id) {
-
-        InvoiceProduct invoiceProducts = invoiceProductRepository.findAllByInvoice_Id(id);
-
-        return mapperUtil.convert(invoiceProducts,new InvoiceProductDTO());
-    }
-
-
-     */
 }
