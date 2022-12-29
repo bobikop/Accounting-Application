@@ -45,6 +45,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
 
+    //---------------------------------PURCHASE - SALES INVOICE LIST------------------------------------------------------------------//
     @Override
     public List<InvoiceDTO> findAllPurchaseInvoices() { // for purchase Invoice list page
 
@@ -111,7 +112,64 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDTO getNewInvoiceDTO() {
+    public List<InvoiceDTO> findAllSalesInvoices() {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();//security give user who log in
+        CompanyDto companyDto = userService.findCompanyByUserName(username);
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        //CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); it returns null ??????????
+        ///Company company = mapperUtil.convert(companyDto, new Company());
+
+
+        List<Invoice>  invoices = invoiceRepository.findAllByCompanyAndInvoiceType(company, InvoiceType.SALES);
+
+
+        List<InvoiceDTO> invoiceDTOList = invoices.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO()))
+                .collect(Collectors.toList());
+
+
+        List<InvoiceDTO> collect = invoiceDTOList.stream().map(invoiceDTO -> {
+
+            List<InvoiceProductDTO> invoiceProductDTOList = invoiceProductService.findInvoiceProductByInvoiceId(invoiceDTO.getId());
+
+            BigDecimal sum_total_price = BigDecimal.ZERO;
+            int sum_total_tax = 0;
+            int sum_total = 0;
+            for (InvoiceProductDTO invoiceProductDTO : invoiceProductDTOList) {
+
+                BigDecimal totalPrice = invoiceProductDTO.getPrice().multiply(BigDecimal.valueOf(invoiceProductDTO.getQuantity()));
+                sum_total_price = sum_total_price.add(totalPrice);
+                invoiceDTO.setPrice(    sum_total_price         );
+
+                int totalTax =  (invoiceProductDTO.getTax() * invoiceDTO.getPrice().intValueExact() ) / 100;
+                sum_total_tax = totalTax;
+                invoiceDTO.setTax(  sum_total_tax  );
+
+                int totalPrice_withTax = invoiceDTO.getPrice().intValueExact() + invoiceDTO.getTax();
+                sum_total = totalPrice_withTax;
+                invoiceDTO.setTotal(BigDecimal.valueOf(sum_total) );
+
+
+                invoiceDTO.setInvoiceProducts(invoiceProductDTOList);
+            }
+
+
+            return invoiceDTO;
+
+        }).collect(Collectors.toList());
+
+
+
+        return collect;
+
+
+    }
+
+
+    //-----------------------------getNewInvoiceDTO Purchase - Sales ----------------------------------------------------//
+    @Override
+    public InvoiceDTO getNewPurchaseInvoiceDTO() {
 
         InvoiceDTO newInvoiceDTO = new InvoiceDTO();
         //newInvoiceDTO.setId(1L);
@@ -124,7 +182,20 @@ public class InvoiceServiceImpl implements InvoiceService {
         return newInvoiceDTO;
     }
 
+    @Override
+    public InvoiceDTO getNewSalesInvoiceDTO() {
 
+        InvoiceDTO newInvoiceDTO = new InvoiceDTO();
+        newInvoiceDTO.setInvoiceNo("S-015");
+        newInvoiceDTO.setDate(LocalDate.now());
+        newInvoiceDTO.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
+        newInvoiceDTO.setInvoiceType(InvoiceType.SALES);
+
+
+        return newInvoiceDTO;
+    }
+
+    //----------------------------PURCHASE - SALES CREATE ----------------------------------------------------//
 
     @Override
     public InvoiceDTO create(InvoiceDTO invoiceDTO) {
@@ -161,6 +232,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     }
 
+    //----------------------------PURCHASE - SALES UPDATE ----------------------------------------------------//
     @Override
     public InvoiceDTO update(Long id , InvoiceDTO invoiceDTO) {
 
@@ -178,6 +250,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     }
 
+
+    //----------------------------PURCHASE - SALES DELETE ----------------------------------------------------//
     @Override
     public void deleteById(Long id) {
 
@@ -192,6 +266,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     }
 
+
+    //----------------------------PURCHASE - SALES findInvoiceById ----------------------------------------------------//
     @Override
     public InvoiceDTO findInvoiceById(Long id) {
         Invoice invoice = invoiceRepository.findById(id).orElseThrow();
@@ -200,6 +276,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     }
 
+    //----------------------------PURCHASE - SALES APPROVE ----------------------------------------------------//
     @Override
     public InvoiceDTO approveInvoice(Long invoiceId) {
 

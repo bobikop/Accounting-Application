@@ -7,8 +7,14 @@ import java.util.List;
 public interface InvoiceService {
 
     List<InvoiceDTO> findAllPurchaseInvoices();
+    List<InvoiceDTO> findAllSalesInvoices();
 
-    InvoiceDTO getNewInvoiceDTO();
+    //-----------------------------------------------------------------//
+
+    InvoiceDTO getNewPurchaseInvoiceDTO();
+    InvoiceDTO getNewSalesInvoiceDTO();
+
+    //-----------------------------------------------------------------//
 
 
     InvoiceDTO create(InvoiceDTO invoiceDTO);
