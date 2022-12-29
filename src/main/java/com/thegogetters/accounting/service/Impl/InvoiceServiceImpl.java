@@ -164,9 +164,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();//security give user who log in
-
-        CompanyDto companyDto = userService.findCompanyByUserName(username);
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
 
         invoiceDTO.setCompany(companyDto);
 
