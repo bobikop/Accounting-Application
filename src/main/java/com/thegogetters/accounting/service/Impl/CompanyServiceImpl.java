@@ -44,6 +44,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         return companyDtoList;
     }
+
     //=========================================================================//
     @Override
     public CompanyDto findById(Long id) {
@@ -55,6 +56,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         return companyDto;
     }
+
     //=========================================================================//
     @Override
     public void save(CompanyDto companyDto) {
@@ -69,6 +71,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         companyRepository.save(company);
     }
+
     //=========================================================================//
     @Override
     public void changeCompanyStatusById(Long id) {
@@ -97,8 +100,6 @@ public class CompanyServiceImpl implements CompanyService {
         CompanyDto oldCompany = findById(companyDto.getId());
 
         companyDto.setCompanyStatus(oldCompany.getCompanyStatus());
-
-        companyDto.getAddress().setCountry("Unite States");
 
         Company company = mapperUtil.convert(companyDto, new Company());
 
