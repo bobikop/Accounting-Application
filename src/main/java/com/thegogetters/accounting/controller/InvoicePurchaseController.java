@@ -57,7 +57,7 @@ public class InvoicePurchaseController {
     @GetMapping("/create")
     public String createInvoice(Model model){
 
-        model.addAttribute("newPurchaseInvoice", invoiceService.getNewPurchaseInvoiceDTO());
+        model.addAttribute("newPurchaseInvoice", invoiceService.getNewInvoiceDTO(InvoiceType.PURCHASE));
 
         //List<ClientVendorDto> clientVendorDtoList = clientVendorService.findAllByClientVendorType(ClientVendorType.VENDOR);
 

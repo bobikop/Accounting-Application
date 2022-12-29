@@ -103,32 +103,32 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
     //-----------------------------getNewInvoiceDTO Purchase - Sales ----------------------------------------------------//
+
     @Override
-    public InvoiceDTO getNewPurchaseInvoiceDTO() {
+    public InvoiceDTO getNewInvoiceDTO(InvoiceType invoiceType) {
 
         InvoiceDTO newInvoiceDTO = new InvoiceDTO();
-        //newInvoiceDTO.setId(1L);
-        newInvoiceDTO.setInvoiceNo("P-015");
+
+        if (invoiceType.getValue().equals("Purchase")){
+            newInvoiceDTO.setInvoiceNo("P-015");
+            newInvoiceDTO.setInvoiceType(InvoiceType.PURCHASE);
+        }else{
+            newInvoiceDTO.setInvoiceNo("S-015");
+            newInvoiceDTO.setInvoiceType(InvoiceType.SALES);
+        }
+
         newInvoiceDTO.setDate(LocalDate.now());
         newInvoiceDTO.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
-        newInvoiceDTO.setInvoiceType(InvoiceType.PURCHASE);
+
 
 
         return newInvoiceDTO;
+
+
+
     }
 
-    @Override
-    public InvoiceDTO getNewSalesInvoiceDTO() {
 
-        InvoiceDTO newInvoiceDTO = new InvoiceDTO();
-        newInvoiceDTO.setInvoiceNo("S-015");
-        newInvoiceDTO.setDate(LocalDate.now());
-        newInvoiceDTO.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
-        newInvoiceDTO.setInvoiceType(InvoiceType.SALES);
-
-
-        return newInvoiceDTO;
-    }
 
     //----------------------------PURCHASE - SALES CREATE ----------------------------------------------------//
 

@@ -12,8 +12,7 @@ public interface InvoiceService {
 
     //-----------------------------------------------------------------//
 
-    InvoiceDTO getNewPurchaseInvoiceDTO();
-    InvoiceDTO getNewSalesInvoiceDTO();
+    InvoiceDTO getNewInvoiceDTO(InvoiceType invoiceType);
 
     //-----------------------------------------------------------------//
 
