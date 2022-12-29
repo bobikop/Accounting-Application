@@ -3,6 +3,7 @@ package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.config.SecurityConfig;
 import com.thegogetters.accounting.dto.UserDTO;
+import com.thegogetters.accounting.entity.Product;
 import com.thegogetters.accounting.entity.User;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.UserRepository;
@@ -83,6 +84,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
-    // delete impl here
+    @Override
+    public void deleteById(Long id) {
+        User user = userRepository.findById(id).get();
+        user.setIsDeleted(true);
+        user.setUsername(user.getUsername() + "-" + user.getId());
+        userRepository.save(user);
+    }
 }
