@@ -88,9 +88,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 invoiceDTO.setTotal(BigDecimal.valueOf(sum_total) );
 
 
-                invoiceDTO.setInvoiceProducts(invoiceProductDTOList);
+
             }
 
+            invoiceDTO.setInvoiceProducts(invoiceProductDTOList);
 
             return invoiceDTO;
 
