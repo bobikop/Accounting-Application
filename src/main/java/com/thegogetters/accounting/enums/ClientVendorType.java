@@ -2,7 +2,7 @@ package com.thegogetters.accounting.enums;
 
 public enum ClientVendorType {
 
-   CLIENT("Vendor") , VENDOR("Vendor");
+   CLIENT("Client") , VENDOR("Vendor");
 
     private String value;
 
