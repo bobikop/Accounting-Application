@@ -23,6 +23,6 @@ public class InvoiceProductDTO {
 
     private InvoiceDTO invoiceDto;
 
-//    private ProductDTO product;
+    private ProductDTO product;
 
 }
