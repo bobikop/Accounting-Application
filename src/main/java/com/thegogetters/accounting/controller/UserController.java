@@ -26,7 +26,7 @@ public class UserController {
 
     @GetMapping("/list")
     public String listAllUsers(Model model){
-        model. addAttribute("users", userService.listAllUsers());
+        model. addAttribute("users", userService.listAllUsersByLoggedInStatus());
         return "user/user-list";
     }
 
@@ -36,7 +36,7 @@ public class UserController {
 
         model.addAttribute("newUser", new UserDTO());
         model.addAttribute("userRoles", roleService.listAllRoles());
-        model.addAttribute("users", userService.listAllUsers());
+        model.addAttribute("users", userService.listAllUsersByLoggedInStatus());
         model.addAttribute("companies", companyService.listAll());
         return "user/user-create";
     }
@@ -46,7 +46,7 @@ public class UserController {
     public String saveUser(@ModelAttribute("user") UserDTO user, BindingResult bindingResult, Model model){
 
         if (bindingResult.hasErrors()){
-            model.addAttribute("users", userService.listAllUsers());
+            model.addAttribute("users", userService.listAllUsersByLoggedInStatus());
             model.addAttribute("userRoles", roleService.listAllRoles());
             model.addAttribute("companies", companyService.listAll());
             return "user/user-create";
@@ -70,12 +70,12 @@ public class UserController {
         return "redirect:/users/list";
     }
 
-    @GetMapping("/delete/{username}")
-    public String deleteUser(@PathVariable("username") String username){
-        userService.deleteUser(username);
-
-        return "redirect:/user-list";
-    }
+//    @GetMapping("/delete/{id}")
+//    public String deleteUser(@PathVariable("id") Long id){
+//
+//        userService.deleteUserById(id);
+//        return "user/user-list";
+//    }
 
 
 }

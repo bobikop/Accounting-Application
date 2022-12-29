@@ -1,16 +1,20 @@
 package com.thegogetters.accounting.service.Impl;
 
 
+import com.thegogetters.accounting.config.SecurityConfig;
 import com.thegogetters.accounting.dto.UserDTO;
 import com.thegogetters.accounting.entity.User;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.UserRepository;
+import com.thegogetters.accounting.service.SecurityService;
 import com.thegogetters.accounting.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,12 +24,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final MapperUtil mapperUtil;
     private final PasswordEncoder passwordEncoder;
+    private final SecurityService securityService;
 
-
-    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, PasswordEncoder passwordEncoder, @Lazy SecurityService securityService) {
         this.userRepository = userRepository;
         this.mapperUtil = mapperUtil;
         this.passwordEncoder = passwordEncoder;
+        this.securityService = securityService;
     }
 
 
@@ -66,21 +71,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> getAllUsersByLoggedInUser() {
-        return null;
+    public List<UserDTO> listAllUsersByLoggedInStatus() {
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Admin")) {
+            return listAllUsers().stream()
+                    .filter(userDTO -> userDTO.getCompany().getId().equals(securityService.getLoggedInUser()
+                                    .getCompany().getId())).collect(Collectors.toList());
+        } else if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
+            return listAllUsers().stream().filter(userDTO -> userDTO.getRole().getDescription().equals("Admin")).collect(Collectors.toList());
+        } else {
+            throw new NoSuchElementException("No users is available");
+        }
     }
-
-
-    @Override
-    public void deleteUser(String username) {
-
-        User user = userRepository.findByUsername(username);
-            user.setIsDeleted(true);
-            user.setUsername(user.getUsername() + "-" + user.getId());
-            userRepository.save(user);
-
-    }
-
-
-
 }
