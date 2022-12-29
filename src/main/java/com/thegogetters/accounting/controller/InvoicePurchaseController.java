@@ -39,7 +39,7 @@ public class InvoicePurchaseController {
     //GetMapping - list()
 
     @GetMapping("/list")
-    public String listInvoices(Model model){
+    public String listPurchaseInvoices(Model model){
 
         List<InvoiceDTO> invoiceDTOList = invoiceService.findAllPurchaseInvoices();
 

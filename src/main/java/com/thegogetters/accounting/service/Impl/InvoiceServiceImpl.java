@@ -200,12 +200,25 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDTO create(InvoiceDTO invoiceDTO) {
 
-        if (invoiceDTO.getInvoiceStatus() == null){
-            invoiceDTO.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
-        }
 
-        if (invoiceDTO.getInvoiceType() == null){
-            invoiceDTO.setInvoiceType(InvoiceType.PURCHASE);
+        if (invoiceDTO.getInvoiceNo().startsWith("P")){
+            if (invoiceDTO.getInvoiceStatus() == null){
+                invoiceDTO.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
+            }
+
+            if (invoiceDTO.getInvoiceType() == null){
+                invoiceDTO.setInvoiceType(InvoiceType.PURCHASE);
+            }
+        }else {
+            if (invoiceDTO.getInvoiceStatus() == null){
+                invoiceDTO.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
+            }
+
+            if (invoiceDTO.getInvoiceType() == null){
+                invoiceDTO.setInvoiceType(InvoiceType.SALES);
+            }
+
+
         }
 
 
