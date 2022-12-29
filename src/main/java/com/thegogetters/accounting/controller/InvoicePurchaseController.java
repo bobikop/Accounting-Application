@@ -5,6 +5,7 @@ import com.thegogetters.accounting.dto.InvoiceDTO;
 import com.thegogetters.accounting.dto.InvoiceProductDTO;
 import com.thegogetters.accounting.dto.ProductDTO;
 import com.thegogetters.accounting.enums.ClientVendorType;
+import com.thegogetters.accounting.enums.InvoiceType;
 import com.thegogetters.accounting.service.ClientVendorService;
 import com.thegogetters.accounting.service.InvoiceProductService;
 import com.thegogetters.accounting.service.InvoiceService;
@@ -41,7 +42,7 @@ public class InvoicePurchaseController {
     @GetMapping("/list")
     public String listPurchaseInvoices(Model model){
 
-        List<InvoiceDTO> invoiceDTOList = invoiceService.findAllPurchaseInvoices();
+        List<InvoiceDTO> invoiceDTOList = invoiceService.findAllInvoicesBelongsToCompany(InvoiceType.PURCHASE);
 
         model.addAttribute("invoices", invoiceDTOList);
 

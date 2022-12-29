@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,25 +47,22 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
     //---------------------------------PURCHASE - SALES INVOICE LIST------------------------------------------------------------------//
+
     @Override
-    public List<InvoiceDTO> findAllPurchaseInvoices() { // for purchase Invoice list page
+    public List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType) {
 
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();//security give user who log in
-        CompanyDto companyDto = userService.findCompanyByUserName(username);
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); //it returns null,
         Company company = mapperUtil.convert(companyDto, new Company());
 
+        List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType)
+                .stream().sorted(Comparator.comparing(Invoice::getInvoiceNo))
+                .collect(Collectors.toList());
 
 
+        return getInvoiceDTOS(invoiceList);
+    }
 
-        //CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); it returns null
-        ///Company company = mapperUtil.convert(companyDto, new Company());
-
-
-
-
-        List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceType(company, InvoiceType.PURCHASE);
-
+    private List<InvoiceDTO> getInvoiceDTOS(List<Invoice> invoiceList) {
         List<InvoiceDTO> invoiceDTOList = invoiceList.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO()))
                 .collect(Collectors.toList());
 
@@ -99,72 +97,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         }).collect(Collectors.toList());
 
 
-
         return collect;
-
-
-
-
-
-
-
-
     }
 
-    @Override
-    public List<InvoiceDTO> findAllSalesInvoices() {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();//security give user who log in
-        CompanyDto companyDto = userService.findCompanyByUserName(username);
-        Company company = mapperUtil.convert(companyDto, new Company());
-
-        //CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); it returns null ??????????
-        ///Company company = mapperUtil.convert(companyDto, new Company());
-
-
-        List<Invoice>  invoices = invoiceRepository.findAllByCompanyAndInvoiceType(company, InvoiceType.SALES);
-
-
-        List<InvoiceDTO> invoiceDTOList = invoices.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO()))
-                .collect(Collectors.toList());
-
-
-        List<InvoiceDTO> collect = invoiceDTOList.stream().map(invoiceDTO -> {
-
-            List<InvoiceProductDTO> invoiceProductDTOList = invoiceProductService.findInvoiceProductByInvoiceId(invoiceDTO.getId());
-
-            BigDecimal sum_total_price = BigDecimal.ZERO;
-            int sum_total_tax = 0;
-            int sum_total = 0;
-            for (InvoiceProductDTO invoiceProductDTO : invoiceProductDTOList) {
-
-                BigDecimal totalPrice = invoiceProductDTO.getPrice().multiply(BigDecimal.valueOf(invoiceProductDTO.getQuantity()));
-                sum_total_price = sum_total_price.add(totalPrice);
-                invoiceDTO.setPrice(    sum_total_price         );
-
-                int totalTax =  (invoiceProductDTO.getTax() * invoiceDTO.getPrice().intValueExact() ) / 100;
-                sum_total_tax = totalTax;
-                invoiceDTO.setTax(  sum_total_tax  );
-
-                int totalPrice_withTax = invoiceDTO.getPrice().intValueExact() + invoiceDTO.getTax();
-                sum_total = totalPrice_withTax;
-                invoiceDTO.setTotal(BigDecimal.valueOf(sum_total) );
-
-
-                invoiceDTO.setInvoiceProducts(invoiceProductDTOList);
-            }
-
-
-            return invoiceDTO;
-
-        }).collect(Collectors.toList());
-
-
-
-        return collect;
-
-
-    }
 
 
     //-----------------------------getNewInvoiceDTO Purchase - Sales ----------------------------------------------------//
