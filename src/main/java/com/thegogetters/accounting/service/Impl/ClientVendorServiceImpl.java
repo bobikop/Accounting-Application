@@ -9,6 +9,7 @@ import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.ClientVendorRepository;
 import com.thegogetters.accounting.service.ClientVendorService;
 import com.thegogetters.accounting.service.CompanyService;
+import com.thegogetters.accounting.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +24,12 @@ public class ClientVendorServiceImpl implements ClientVendorService {
 
     private final CompanyService companyService;
 
+
     public ClientVendorServiceImpl(ClientVendorRepository clientVendorRepository, MapperUtil mapperUtil, CompanyService companyService) {
         this.clientVendorRepository = clientVendorRepository;
         this.mapperUtil = mapperUtil;
         this.companyService = companyService;
     }
-
-
 
     /*
     @Override
