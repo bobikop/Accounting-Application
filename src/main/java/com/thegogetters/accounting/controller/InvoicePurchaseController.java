@@ -58,8 +58,9 @@ public class InvoicePurchaseController {
 
         model.addAttribute("newPurchaseInvoice", invoiceService.getNewInvoiceDTO());
 
-        List<ClientVendorDto> clientVendorDtoList = clientVendorService.findAllByClientVendorType(ClientVendorType.VENDOR);
+        //List<ClientVendorDto> clientVendorDtoList = clientVendorService.findAllByClientVendorType(ClientVendorType.VENDOR);
 
+        List<ClientVendorDto> clientVendorDtoList = clientVendorService.findAllByClientVendorTypeBelongsToCompany(ClientVendorType.VENDOR);
         model.addAttribute("vendors",  clientVendorDtoList);
 
         return "invoice/purchase-invoice-create";

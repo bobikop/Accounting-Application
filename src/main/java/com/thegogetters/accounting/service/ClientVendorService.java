@@ -7,11 +7,13 @@ import java.util.List;
 
 public interface ClientVendorService {
 
-    List<ClientVendorDto> findAllByClientVendorType(ClientVendorType clientVendorType);
+    //List<ClientVendorDto> findAllByClientVendorType(ClientVendorType clientVendorType);
 
     ClientVendorDto findById(long id);
 
+    List<ClientVendorDto> findAllByClientVendorTypeBelongsToCompany(ClientVendorType vendor);
 
-    //List<ClientVendorDto> findAll();
+
+
 
 }
