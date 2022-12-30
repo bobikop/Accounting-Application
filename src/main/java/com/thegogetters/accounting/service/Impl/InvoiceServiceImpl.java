@@ -3,6 +3,7 @@ package com.thegogetters.accounting.service.Impl;
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.dto.InvoiceDTO;
 import com.thegogetters.accounting.dto.InvoiceProductDTO;
+import com.thegogetters.accounting.dto.ProductDTO;
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Invoice;
 import com.thegogetters.accounting.enums.InvoiceStatus;
@@ -10,7 +11,6 @@ import com.thegogetters.accounting.enums.InvoiceType;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.InvoiceRepository;
 import com.thegogetters.accounting.service.*;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,13 +36,16 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final CompanyService companyService;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, InvoiceProductService invoiceProductService, ClientVendorService clientVendorService, UserService userService, CompanyService companyService) {
+    private final ProductService productService;
+
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, InvoiceProductService invoiceProductService, ClientVendorService clientVendorService, UserService userService, CompanyService companyService, ProductService productService) {
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
         this.invoiceProductService = invoiceProductService;
         this.clientVendorService = clientVendorService;
         this.userService = userService;
         this.companyService = companyService;
+        this.productService = productService;
     }
 
 
@@ -231,10 +234,39 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow();
 
-        invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
 
+
+
+        invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
         invoiceRepository.save(invoice);
 
+
+        updateQuantityOfProductAfterApproved(invoiceId);
+
+
         return mapperUtil.convert(invoice,new InvoiceDTO());
+    }
+
+    private void updateQuantityOfProductAfterApproved(Long invoiceId) {
+
+        List<InvoiceProductDTO> invoiceProductDTOList = invoiceProductService.findInvoiceProductByInvoiceId(invoiceId);
+
+        invoiceProductDTOList.stream().map(invoiceProductDTO -> {
+
+            ProductDTO productDTO = productService.getProductById(invoiceProductDTO.getProduct().getId());
+
+            Integer quantityOfInvoiceProduct = invoiceProductDTO.getQuantity();
+            Integer quantityInStockOfProduct = productDTO.getQuantityInStock();
+            Integer increasedTotalQuantityInStock = quantityInStockOfProduct + quantityOfInvoiceProduct;
+
+            productDTO.setQuantityInStock(increasedTotalQuantityInStock);
+
+            productService.update(productDTO);
+
+            return invoiceProductDTO;
+
+        }).collect(Collectors.toList());
+
+
     }
 }
