@@ -1,6 +1,5 @@
 package com.thegogetters.accounting.service.Impl;
 
-import com.thegogetters.accounting.dto.CategoryDto;
 import com.thegogetters.accounting.dto.ProductDTO;
 import com.thegogetters.accounting.entity.Product;
 import com.thegogetters.accounting.mapper.MapperUtil;
@@ -9,7 +8,6 @@ import com.thegogetters.accounting.service.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,30 +44,30 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findProductById(productDTO.getId());
         ProductDTO convertedProduct = mapperUtil.convert(product, new ProductDTO());
         convertedProduct.setId(product.getId());
-        convertedProduct.setCategory(mapperUtil.convert(product.getCategory(), new CategoryDto()));
-        convertedProduct.setName(product.getName());
-        convertedProduct.setProductUnit(product.getProductUnit());
-        convertedProduct.setLowLimitAlert(product.getLowLimitAlert());
-        convertedProduct.setQuantityInStock(product.getQuantityInStock());
+        convertedProduct.setCategory(productDTO.getCategory());
+        convertedProduct.setName(productDTO.getName());
+        convertedProduct.setProductUnit(productDTO.getProductUnit());
+        convertedProduct.setLowLimitAlert(productDTO.getLowLimitAlert());
+
+        convertedProduct.setQuantityInStock(productDTO.getQuantityInStock()); // don't confused , dot worry  =) added by Hasan Can
+
         productRepository.save(mapperUtil.convert(convertedProduct, new Product()));
     }
 
     @Override
     public void deleteById(Long id) {
-    Product product = productRepository.findProductById(id);
-    product.setIsDeleted(true);
-    productRepository.save(product);
-    }
-    @Override
-    public void createProduct(ProductDTO productDTO) {
-        Product product = mapperUtil.convert(productDTO, new Product());
+        Product product = productRepository.findProductById(id);
+        product.setIsDeleted(true);
         productRepository.save(product);
     }
 
     @Override
     public boolean checkAnyProductExist(Long id) {
-        List<Product> products = productRepository.findAllByCategoryId(id);
-        if (products.size() > 0) return true;
-        return false;
+        List <Product> products = productRepository.findAllByCategoryId(id);
+        return products.size() > 0;
+    }
+    @Override
+    public boolean isInStock(Long id){
+        return  productRepository.getQuantityInStock(id) > 0;
     }
 }

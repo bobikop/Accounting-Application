@@ -3,6 +3,7 @@ package com.thegogetters.accounting.service.Impl;
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.dto.InvoiceDTO;
 import com.thegogetters.accounting.dto.InvoiceProductDTO;
+import com.thegogetters.accounting.dto.ProductDTO;
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Invoice;
 import com.thegogetters.accounting.enums.InvoiceStatus;
@@ -10,7 +11,6 @@ import com.thegogetters.accounting.enums.InvoiceType;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.InvoiceRepository;
 import com.thegogetters.accounting.service.*;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,13 +36,16 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final CompanyService companyService;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, InvoiceProductService invoiceProductService, ClientVendorService clientVendorService, UserService userService, CompanyService companyService) {
+    private final ProductService productService;
+
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, InvoiceProductService invoiceProductService, ClientVendorService clientVendorService, UserService userService, CompanyService companyService, ProductService productService) {
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
         this.invoiceProductService = invoiceProductService;
         this.clientVendorService = clientVendorService;
         this.userService = userService;
         this.companyService = companyService;
+        this.productService = productService;
     }
 
 
@@ -88,9 +91,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 invoiceDTO.setTotal(BigDecimal.valueOf(sum_total) );
 
 
-                invoiceDTO.setInvoiceProducts(invoiceProductDTOList);
+
             }
 
+            invoiceDTO.setInvoiceProducts(invoiceProductDTOList);
 
             return invoiceDTO;
 
@@ -104,21 +108,27 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     //-----------------------------getNewInvoiceDTO Purchase - Sales ----------------------------------------------------//
 
-    @Override
     public InvoiceDTO getNewInvoiceDTO(InvoiceType invoiceType) {
 
         InvoiceDTO newInvoiceDTO = new InvoiceDTO();
 
+        newInvoiceDTO.setInvoiceNo(  getInvoiceNo(invoiceType) );
+
+
         if (invoiceType.getValue().equals("Purchase")){
-            newInvoiceDTO.setInvoiceNo("P-015");
+
+            //newInvoiceDTO.setInvoiceNo("P-015");
+
             newInvoiceDTO.setInvoiceType(InvoiceType.PURCHASE);
         }else{
-            newInvoiceDTO.setInvoiceNo("S-015");
+            //newInvoiceDTO.setInvoiceNo("S-015");
             newInvoiceDTO.setInvoiceType(InvoiceType.SALES);
         }
 
         newInvoiceDTO.setDate(LocalDate.now());
         newInvoiceDTO.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
+
+
 
 
 
@@ -128,6 +138,24 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     }
 
+    private String getInvoiceNo(InvoiceType invoiceType) {
+
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        Invoice invoice = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType).stream()
+                .sorted(Comparator.comparing(Invoice::getInvoiceNo).reversed())
+                .findAny().get();
+
+        String invoiceNo = invoice.getInvoiceNo(); // P-002
+
+        int i = invoiceNo.length();
+        String s = invoiceNo.substring(0, i-1) + (  Integer.parseInt(invoiceNo.substring(i-1)) +1 ); // P-003
+
+
+        return s;
+
+    }
 
 
     //----------------------------PURCHASE - SALES CREATE ----------------------------------------------------//
@@ -207,9 +235,42 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow();
 
         invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
-
         invoiceRepository.save(invoice);
 
+
+        updateQuantityOfProductAfterApproved(invoice.getInvoiceType(),invoiceId);
+
+
         return mapperUtil.convert(invoice,new InvoiceDTO());
+    }
+
+    private void updateQuantityOfProductAfterApproved(InvoiceType invoiceType,Long invoiceId) {
+
+        List<InvoiceProductDTO> invoiceProductDTOList = invoiceProductService.findInvoiceProductByInvoiceId(invoiceId);
+
+        invoiceProductDTOList.stream().map(invoiceProductDTO -> {
+
+            ProductDTO productDTO = productService.getProductById(invoiceProductDTO.getProduct().getId());
+            Integer quantityOfInvoiceProduct = invoiceProductDTO.getQuantity();
+            Integer quantityInStockOfProduct = productDTO.getQuantityInStock();
+            if (invoiceType.getValue().equals("Purchase")){
+                Integer increasedTotalQuantityInStock = quantityInStockOfProduct + quantityOfInvoiceProduct;
+                productDTO.setQuantityInStock(increasedTotalQuantityInStock);
+            }else{
+                if (quantityOfInvoiceProduct <= quantityInStockOfProduct){
+                    Integer decreasedTotalQuantityInStock = quantityInStockOfProduct - quantityOfInvoiceProduct;
+                    productDTO.setQuantityInStock(decreasedTotalQuantityInStock);
+                }else {
+                    throw new RuntimeException("Quantity of product  is not enough to sell : " + (quantityInStockOfProduct - quantityOfInvoiceProduct) ) ;
+                }
+            }
+
+            productService.update(productDTO);
+
+            return invoiceProductDTO;
+
+        }).collect(Collectors.toList());
+
+
     }
 }

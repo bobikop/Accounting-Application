@@ -33,7 +33,7 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public String createCategory(@Valid @ModelAttribute("newCategory") CategoryDto categoryDto, BindingResult bindingResult, Model model){
+    public String createCategory(@Valid @ModelAttribute("newCategory") CategoryDto categoryDto, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes){
 
         if(bindingResult.hasErrors()){
 
@@ -41,6 +41,12 @@ public class CategoryController {
 
             return "/category/category-create";
         }
+
+        if (categoryService.createCategory(categoryDto) != null){
+            redirectAttributes.addFlashAttribute("error",categoryDto.getDescription()+" category already exists");
+            return "redirect:/categories/list";
+        }
+
         categoryService.createCategory(categoryDto);
 
         return "redirect:/categories/list";
@@ -68,12 +74,7 @@ public class CategoryController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteCategory(@PathVariable("id") Long id, RedirectAttributes redirectAttributes){
-
-//        if (productService.checkAnyProductExist(id)){
-//            redirectAttributes.addFlashAttribute("error","This category has products, so you cant delete...");
-//            return "redirect:/categories/list";
-//        }
+    public String deleteCategory(@PathVariable("id") Long id){
 
         categoryService.deleteCategory(id);
         return "redirect:/categories/list";
