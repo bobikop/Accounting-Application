@@ -57,12 +57,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto findByDescription(String description) {
-        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
-        return mapperUtil.convert(categoryRepository.findByDescriptionAndCompanyId(description, companyDto.getId()), new CategoryDto());
-    }
-
-    @Override
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id).orElseThrow();
         category.setIsDeleted(true);
@@ -70,11 +64,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void createCategory(CategoryDto categoryDto) {
+    public CategoryDto createCategory(CategoryDto categoryDto) {
         CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
         categoryDto.setCompany(companyDto);
         Category category = mapperUtil.convert(categoryDto, new Category());
-        if(!ifCategoryExist(category.getDescription())) categoryRepository.save(category);
+        if(!ifCategoryExist(category.getDescription())) {
+            categoryRepository.save(category);
+            return null;
+        }
+        else return categoryDto;
     }
 
     @Override
