@@ -17,6 +17,7 @@ public class CategoryDtoConverter implements Converter<String, CategoryDto> {
 
     @Override
     public CategoryDto convert(String description) {
-        return categoryService.findByDescription(description);
+        return categoryService.findById(Long.valueOf(description));
+//        return categoryService.findByDescription(description);
     }
 }
