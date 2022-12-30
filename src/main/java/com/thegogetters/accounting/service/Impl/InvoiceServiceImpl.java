@@ -234,32 +234,36 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow();
 
-
-
-
         invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
         invoiceRepository.save(invoice);
 
 
-        updateQuantityOfProductAfterApproved(invoiceId);
+        updateQuantityOfProductAfterApproved(invoice.getInvoiceType(),invoiceId);
 
 
         return mapperUtil.convert(invoice,new InvoiceDTO());
     }
 
-    private void updateQuantityOfProductAfterApproved(Long invoiceId) {
+    private void updateQuantityOfProductAfterApproved(InvoiceType invoiceType,Long invoiceId) {
 
         List<InvoiceProductDTO> invoiceProductDTOList = invoiceProductService.findInvoiceProductByInvoiceId(invoiceId);
 
         invoiceProductDTOList.stream().map(invoiceProductDTO -> {
 
             ProductDTO productDTO = productService.getProductById(invoiceProductDTO.getProduct().getId());
-
             Integer quantityOfInvoiceProduct = invoiceProductDTO.getQuantity();
             Integer quantityInStockOfProduct = productDTO.getQuantityInStock();
-            Integer increasedTotalQuantityInStock = quantityInStockOfProduct + quantityOfInvoiceProduct;
-
-            productDTO.setQuantityInStock(increasedTotalQuantityInStock);
+            if (invoiceType.getValue().equals("Purchase")){
+                Integer increasedTotalQuantityInStock = quantityInStockOfProduct + quantityOfInvoiceProduct;
+                productDTO.setQuantityInStock(increasedTotalQuantityInStock);
+            }else{
+                if (quantityOfInvoiceProduct <= quantityInStockOfProduct){
+                    Integer decreasedTotalQuantityInStock = quantityInStockOfProduct - quantityOfInvoiceProduct;
+                    productDTO.setQuantityInStock(decreasedTotalQuantityInStock);
+                }else {
+                    throw new RuntimeException("Quantity of product  is not enough to sell : " + (quantityInStockOfProduct - quantityOfInvoiceProduct) ) ;
+                }
+            }
 
             productService.update(productDTO);
 
