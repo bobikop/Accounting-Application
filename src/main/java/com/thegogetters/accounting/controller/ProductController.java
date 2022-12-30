@@ -49,35 +49,43 @@ public class ProductController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("products", productService.listAllProducts());
             model.addAttribute("companies", companyService.listAll());
+            model.addAttribute("categories", categoryService.listCategories());
             return "product/product-create";
         }
         productService.save(productDTO);
-        return "redirect:/product/list";
+        return "redirect:/products/list";
     }
 
     //get product by Id for update
     @GetMapping("/update/{id}")
     public String getUpdateProduct(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("products", productService.getProductById(id));
+        model.addAttribute("product", productService.getProductById(id));
+        model.addAttribute("productUnits", Arrays.asList(ProductUnit.values()));
+        model.addAttribute("categories", categoryService.listCategories());
+//        model.addAttribute("categories", categoryService.findById(id));
         return "product/product-update";
     }
 
     //update product by Id
     @PostMapping("/update/{id}")
-    public String updateProduct(@PathVariable("id") Long id, ProductDTO productDTO) {
-        productService.update(productDTO);
-        return "redirect:/product/list";
+    public String updateProduct(@ModelAttribute("product") ProductDTO product, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()){
+            model.addAttribute("productUnits", Arrays.asList(ProductUnit.values()));
+            model.addAttribute("categories", categoryService.listCategories());
+            return "product/product-update";
+        }
+        productService.update(product);
+        return "redirect:/products/list";
     }
 
     //delete product by Id
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        if (productService.checkAnyProductExist(id)) {
-            redirectAttributes.addFlashAttribute("error", "This category has products, so you can not delete");
-            return "redirect:/product/list";
+        if (productService.isInStock(id)) {
+            redirectAttributes.addFlashAttribute("error", "This product is still in stock, so you can not delete");
+            return "redirect:/products/list";
         }
         productService.deleteById(id);
-        return "product/product-list";
+        return "redirect:/products/list";
     }
-
 }
