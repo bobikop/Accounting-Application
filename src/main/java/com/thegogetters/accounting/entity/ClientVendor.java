@@ -2,6 +2,7 @@ package com.thegogetters.accounting.entity;
 
 import com.thegogetters.accounting.enums.ClientVendorType;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "clients_vendors")
+@Where(clause = "is_deleted = false")
 public class ClientVendor extends BaseEntity{
 
     @Id
@@ -24,7 +26,7 @@ public class ClientVendor extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private ClientVendorType clientVendorType;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Address address;
 
     @ManyToOne

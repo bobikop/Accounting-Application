@@ -12,8 +12,12 @@ import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,7 +25,6 @@ public class ClientVendorServiceImpl implements ClientVendorService {
 
     private final ClientVendorRepository clientVendorRepository;
     private final MapperUtil mapperUtil;
-
     private final CompanyService companyService;
 
 
@@ -31,17 +34,42 @@ public class ClientVendorServiceImpl implements ClientVendorService {
         this.companyService = companyService;
     }
 
-    /*
     @Override
-    public List<ClientVendorDto> findAllByClientVendorType(ClientVendorType clientVendorType) {
-
-        List<ClientVendor> clientVendorList = clientVendorRepository.findAllByClientVendorType(clientVendorType);
+    public List<ClientVendorDto> listAll() {
+        List<ClientVendor> clientVendorList = clientVendorRepository.findAll();
         return clientVendorList.stream().
                 map(clientVendor -> mapperUtil.convert(clientVendor, new ClientVendorDto()))
                 .collect(Collectors.toList());
     }
 
-     */
+    @Override
+    public void update(ClientVendorDto clientVendorDto) {
+
+        ClientVendor clientVendor = clientVendorRepository.findById(clientVendorDto.getId()).orElseThrow();
+        clientVendorDto.setClientVendorType(clientVendorDto
+                .getClientVendorType() == null ? clientVendor.getClientVendorType() : clientVendorDto.getClientVendorType());
+        ClientVendor convertedClientVendor = mapperUtil.convert(clientVendorDto, new ClientVendor());
+        clientVendorRepository.save(convertedClientVendor);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow();
+        clientVendor.setIsDeleted(true);
+        clientVendorRepository.save(clientVendor);
+    }
+
+    @Override
+    public ClientVendorDto findById(long id) {
+        ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow();
+        return mapperUtil.convert(clientVendor, new ClientVendorDto());
+    }
+
+    @Override
+    public void save(ClientVendorDto clientVendorDto) {
+        ClientVendor clientVendor = mapperUtil.convert(clientVendorDto, new ClientVendor());
+        clientVendorRepository.save(clientVendor);
+    }
 
 
     @Override
@@ -58,29 +86,4 @@ public class ClientVendorServiceImpl implements ClientVendorService {
 
     }
 
-    @Override
-    public ClientVendorDto findById(long id) {
-
-        ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow();
-
-        return mapperUtil.convert(clientVendor,new ClientVendorDto());
-    }
-
-
-
-
-
-
-    /*
-    @Override
-    public List<ClientVendorDto> findAllByCompanyId(Long companyId) {
-
-        List<ClientVendor> clientVendorList = clientVendorRepository.findAllByCompany_Id(companyId);
-
-       return clientVendorList.stream().
-                map(clientVendor -> mapperUtil.convert(clientVendor, new ClientVendorDto()))
-                .collect(Collectors.toList());
-    }
-
-     */
 }
