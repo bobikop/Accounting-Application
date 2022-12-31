@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.Impl;
+package com.thegogetters.accounting.service.impl;
 
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.entity.Company;
@@ -43,8 +43,6 @@ public class CompanyServiceImpl implements CompanyService {
                 collect(Collectors.toList());
 
 
-
-
         return companyDtoList;
     }
 
@@ -55,9 +53,7 @@ public class CompanyServiceImpl implements CompanyService {
         Optional<Company> company = companyRepository.findById(id);
         // handle exception here
 
-        CompanyDto companyDto = mapperUtil.convert(company, new CompanyDto());
-
-        return companyDto;
+        return mapperUtil.convert(company, new CompanyDto());
     }
 
     //=========================================================================//
@@ -70,9 +66,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         }
 
-        Company company = mapperUtil.convert(companyDto, new Company());
-
-        companyRepository.save(company);
+        companyRepository.save(mapperUtil.convert(companyDto, new Company()));
     }
 
     //=========================================================================//
@@ -104,15 +98,14 @@ public class CompanyServiceImpl implements CompanyService {
 
         companyDto.setCompanyStatus(oldCompany.getCompanyStatus());
 
-        Company company = mapperUtil.convert(companyDto, new Company());
-
-        companyRepository.save(company);
+        companyRepository.save(mapperUtil.convert(companyDto, new Company()));
 
         return findById(companyDto.getId());
     }
 
     @Override
     public CompanyDto getCompanyOfLoggedInUser() {
+
         return securityService.getLoggedInUser().getCompany();
     }
     //=========================================================================//

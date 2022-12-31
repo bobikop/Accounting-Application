@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface InvoiceProductRepository extends JpaRepository<InvoiceProduct,Long> {
 
+    List<InvoiceProduct> findAllByIdAndAndIsDeleted(Long id, Boolean deleted);
+
 
     InvoiceProduct findByInvoice_Id(Long id);
     List<InvoiceProduct> findAllByInvoice_Id(Long id);

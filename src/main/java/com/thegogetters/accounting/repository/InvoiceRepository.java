@@ -2,6 +2,7 @@ package com.thegogetters.accounting.repository;
 
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Invoice;
+import com.thegogetters.accounting.entity.InvoiceProduct;
 import com.thegogetters.accounting.enums.ClientVendorType;
 import com.thegogetters.accounting.enums.InvoiceType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,8 @@ import java.util.List;
 
 @Repository
 public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
+
+
 
     //List<Invoice> findAllByInvoiceType(InvoiceType invoiceType);
 

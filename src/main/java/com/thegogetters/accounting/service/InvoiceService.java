@@ -8,6 +8,7 @@ import java.util.List;
 public interface InvoiceService {
 
 
+
     List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType);
 
     //-----------------------------------------------------------------//
