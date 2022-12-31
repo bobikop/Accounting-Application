@@ -27,22 +27,18 @@ public class DashboardController {
 
 
     @GetMapping
-    public String retrieveDashboard(Model model){
+    public String retrieveDashboard(Model model) {
 
         Map<String, Double> summaryNumbers = new HashMap<String, Double>();
 
-        summaryNumbers.put("totalCost",1000.00);
-        summaryNumbers.put("totalSales",1000.00);
-        summaryNumbers.put("profitLoss",1000.00);
+        summaryNumbers.put("totalCost", 1000.00);
+        summaryNumbers.put("totalSales", 1000.00);
+        summaryNumbers.put("profitLoss", 1000.00);
 
-//        InvoiceDTO invoiceDTO = new InvoiceDTO("001", LocalDate.now(),new ClientVendorDto(),new BigDecimal(600),60,new BigDecimal(660));
-//
-//        List<InvoiceDTO> invoiceDTOS = new ArrayList<>();
-//        invoiceDTOS.add(invoiceDTO);
 
         model.addAttribute("summaryNumbers", summaryNumbers);
-        model.addAttribute("invoices",dashboardService.listLatestThreeApprovedInvoices());
-        model.addAttribute("exchangeRates",dashboardService.listUsdExchangeRate());
+        model.addAttribute("invoices", dashboardService.listLatestThreeApprovedInvoices());
+        model.addAttribute("exchangeRates", dashboardService.listUsdExchangeRate());
 
 
         return "/dashboard";
