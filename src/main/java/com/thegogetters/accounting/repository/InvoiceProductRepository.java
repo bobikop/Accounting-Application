@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface InvoiceProductRepository extends JpaRepository<InvoiceProduct,Long> {
 
-    List<InvoiceProduct> findAllByIdAndAndIsDeleted(Long id, Boolean deleted);
+    List<InvoiceProduct> findAll();
 
 
     InvoiceProduct findByInvoice_Id(Long id);

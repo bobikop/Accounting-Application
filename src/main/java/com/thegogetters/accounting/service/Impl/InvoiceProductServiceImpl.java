@@ -1,11 +1,10 @@
-package com.thegogetters.accounting.service.Impl;
+package com.thegogetters.accounting.service.impl;
 
-import com.thegogetters.accounting.dto.InvoiceDTO;
-import com.thegogetters.accounting.dto.InvoiceProductDTO;
-import com.thegogetters.accounting.dto.ProductDTO;
+import com.thegogetters.accounting.dto.*;
 import com.thegogetters.accounting.entity.InvoiceProduct;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.InvoiceProductRepository;
+import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.InvoiceProductService;
 import com.thegogetters.accounting.service.InvoiceService;
 import org.springframework.context.annotation.Lazy;
@@ -25,19 +24,27 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
     private final InvoiceService invoiceService;
 
-    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, MapperUtil mapperUtil, @Lazy InvoiceService invoiceService) {
+    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, MapperUtil mapperUtil, CompanyService companyService, @Lazy InvoiceService invoiceService) {
         this.invoiceProductRepository = invoiceProductRepository;
         this.mapperUtil = mapperUtil;
         this.invoiceService = invoiceService;
     }
+
+    //----get All invoiceProducts----//
+
+    List<InvoiceProduct> getAllInvoiceProducts(){
+
+        return invoiceProductRepository.findAll();
+    }
+
 
     @Override
     public List<InvoiceProductDTO> findInvoiceProductByInvoiceId(Long id) {
 
         List<InvoiceProduct> invoiceProductList = invoiceProductRepository.findAllByInvoice_Id(id);
 
-       return invoiceProductList.stream()
-                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct,new InvoiceProductDTO()))
+        return invoiceProductList.stream()
+                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDTO()))
                 .collect(Collectors.toList());
 
     }
@@ -49,7 +56,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
 
         // for initializing the list for line 116 in the InvoicePurchaseController
-        if (invoiceProductList.size() <= 0){
+        if (invoiceProductList.size() <= 0) {
             return new ArrayList<>();
         }
 
@@ -68,19 +75,18 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
                 //invoiceProductDTO.setPrice(invoiceProduct.getPrice());
                 //invoiceProductDTO.setTax(invoiceProduct.getTax());
 
-                int totalTax =  (invoiceProductDTO.getTax() * invoiceProductDTO.getPrice().intValueExact() * invoiceProductDTO.getQuantity() ) / 100;
+                int totalTax = (invoiceProductDTO.getTax() * invoiceProductDTO.getPrice().intValueExact() * invoiceProductDTO.getQuantity()) / 100;
 
                 int totalPrice = invoiceProductDTO.getPrice().intValueExact() * invoiceProductDTO.getQuantity();
 
-                int total_withTax = ( totalPrice + totalTax );
+                int total_withTax = (totalPrice + totalTax);
 
                 invoiceProductDTO.setTotal(BigDecimal.valueOf(total_withTax));
 
 
-               //invoiceProductDTO.setProduct(mapperUtil.convert(invoiceProduct.getProduct(), new ProductDTO()));
-               invoiceProductDTO.setProduct(mapperUtil.convert(invoiceProductDTO.getProduct(), new ProductDTO()));
+                //invoiceProductDTO.setProduct(mapperUtil.convert(invoiceProduct.getProduct(), new ProductDTO()));
+                invoiceProductDTO.setProduct(mapperUtil.convert(invoiceProductDTO.getProduct(), new ProductDTO()));
             }
-
 
 
             return invoiceProductDTO;
@@ -91,15 +97,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         return collect;
 
 
-
-
-
     }
-
-
-
-
-
 
 
     @Override
@@ -123,11 +121,9 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         invoiceProductRepository.save(invoiceProduct);
 
 
-
-        return mapperUtil.convert(invoiceProduct,new InvoiceProductDTO());
+        return mapperUtil.convert(invoiceProduct, new InvoiceProductDTO());
 
     }
-
 
 
     @Override
@@ -149,7 +145,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         invoiceProductList.forEach(invoiceProduct -> deleteById(invoiceProduct.getId()));
 
     }
-
 
 
 }

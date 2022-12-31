@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface InvoiceProductService {
 
-    List<InvoiceDTO> latestThreeTransactions();
+
 
     //-----------------------------------------------------------------//
 
