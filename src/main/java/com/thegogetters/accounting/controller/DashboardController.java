@@ -29,13 +29,6 @@ public class DashboardController {
     @GetMapping
     public String retrieveDashboard(Model model) {
 
-        Map<String, Double> summaryNumbers = new HashMap<String, Double>();
-
-        summaryNumbers.put("totalCost", 1000.00);
-        summaryNumbers.put("totalSales", 1000.00);
-        summaryNumbers.put("profitLoss", 1000.00);
-
-
         model.addAttribute("summaryNumbers", dashboardService.profitLoss());
         model.addAttribute("invoices", dashboardService.listLatestThreeApprovedInvoices());
         model.addAttribute("exchangeRates", dashboardService.listUsdExchangeRate());
