@@ -32,11 +32,11 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
     //----get All invoiceProducts----//
 
-    List<InvoiceProduct> getAllInvoiceProducts(){
 
+    @Override
+    public List<InvoiceProduct> FindAllInvoiceProducts() {
         return invoiceProductRepository.findAll();
     }
-
 
     @Override
     public List<InvoiceProductDTO> findInvoiceProductByInvoiceId(Long id) {

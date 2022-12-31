@@ -53,6 +53,28 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
     @Override
+    public List<InvoiceDTO> lastThreeTransactions() {
+
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+
+     return    invoiceProductService.FindAllInvoiceProducts().stream()
+                .filter(invoiceProduct -> invoiceProduct.getInvoice().getCompany().getId().equals(companyDto.getId()))
+                .sorted(Comparator.comparing(invoiceProduct -> invoiceProduct.getInvoice().getDate()))
+                .limit(3)
+                .map(invoiceProduct -> {
+                    InvoiceDTO invoiceDTO = new InvoiceDTO();
+                    invoiceDTO.setInvoiceNo(invoiceProduct.getInvoice().getInvoiceNo());
+                    invoiceDTO.setClientVendor(mapperUtil.convert(invoiceProduct.getInvoice().getClientVendor(),new ClientVendorDto()));
+                    invoiceDTO.setPrice(invoiceProduct.getPrice());
+                    invoiceDTO.setTax(invoiceProduct.getTax());
+                    invoiceDTO.setTotal(new BigDecimal(100));
+                    return invoiceDTO;
+                })
+                .collect(Collectors.toList());
+
+    }
+
+    @Override
     public List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType) {
 
         CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); //it returns null,
@@ -266,6 +288,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         }).collect(Collectors.toList());
 
+        //----------------------------Find All Approved Invoices Belongs to Company ----------------------------------------------------//
+
 
     }
+
+
 }
