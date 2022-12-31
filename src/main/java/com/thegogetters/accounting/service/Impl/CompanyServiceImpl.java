@@ -9,10 +9,12 @@ import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.SecurityService;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
 
 
 @Service
@@ -37,9 +39,10 @@ public class CompanyServiceImpl implements CompanyService {
 
         List<CompanyDto> companyDtoList = list.stream().
                 map(company -> mapperUtil.convert(company, new CompanyDto())).
+                sorted(comparing(CompanyDto::getCompanyStatus)).
                 collect(Collectors.toList());
 
-        companyDtoList.sort(Comparator.comparing(CompanyDto::getCompanyStatus));
+
 
 
         return companyDtoList;
