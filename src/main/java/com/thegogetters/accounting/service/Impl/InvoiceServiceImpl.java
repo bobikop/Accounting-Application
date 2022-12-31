@@ -3,6 +3,7 @@ package com.thegogetters.accounting.service.impl;
 import com.thegogetters.accounting.dto.*;
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Invoice;
+import com.thegogetters.accounting.entity.InvoiceProduct;
 import com.thegogetters.accounting.enums.InvoiceStatus;
 import com.thegogetters.accounting.enums.InvoiceType;
 import com.thegogetters.accounting.mapper.MapperUtil;
@@ -14,8 +15,12 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -57,21 +62,70 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
 
-     return    invoiceProductService.FindAllInvoiceProducts().stream()
+        return invoiceProductService.FindAllInvoiceProducts().stream()
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getCompany().getId().equals(companyDto.getId()))
-                .sorted(Comparator.comparing(invoiceProduct -> invoiceProduct.getInvoice().getDate()))
-                .limit(3)
+                .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceStatus().equals(InvoiceStatus.APPROVED))
                 .map(invoiceProduct -> {
+                    BigDecimal tax = BigDecimal.valueOf(invoiceProduct.getTax());
                     InvoiceDTO invoiceDTO = new InvoiceDTO();
                     invoiceDTO.setInvoiceNo(invoiceProduct.getInvoice().getInvoiceNo());
-                    invoiceDTO.setClientVendor(mapperUtil.convert(invoiceProduct.getInvoice().getClientVendor(),new ClientVendorDto()));
+                    invoiceDTO.setClientVendor(mapperUtil.convert(invoiceProduct.getInvoice().getClientVendor(), new ClientVendorDto()));
+                    invoiceDTO.setDate(invoiceProduct.getInvoice().getDate());
                     invoiceDTO.setPrice(invoiceProduct.getPrice());
                     invoiceDTO.setTax(invoiceProduct.getTax());
-                    invoiceDTO.setTotal(new BigDecimal(100));
+                    invoiceDTO.setTotal(invoiceProduct.getPrice().add(tax));
                     return invoiceDTO;
                 })
+                .sorted(comparing(InvoiceDTO::getDate).reversed())
+                .limit(3)
                 .collect(Collectors.toList());
 
+    }
+
+
+    @Override
+    public Map<String, Double> calculateCostSummary() {
+
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+
+
+        List<InvoiceProduct> invoiceProductList = invoiceProductService.FindAllInvoiceProducts().stream()
+                .filter(invoiceProduct -> invoiceProduct.getInvoice().getCompany().getId().equals(companyDto.getId()))
+                .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceStatus().equals(InvoiceStatus.APPROVED)).toList();
+
+        // cost of the product
+
+
+        double totalCost = 0.00;
+        double totalSales= 0.00;
+
+        for (InvoiceProduct invoiceProduct : invoiceProductList) {
+
+            if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE))
+            {
+                totalCost+=invoiceProduct.getPrice().doubleValue();
+            }
+            if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES))
+            {
+                totalSales+=invoiceProduct.getPrice().doubleValue();
+            }
+
+        }
+
+
+
+        // profitLost
+        double profitLoss = totalSales - totalCost;
+
+        Map<String,Double> costSummary = new HashMap<>();
+
+        costSummary.put("totalCost",totalCost);
+        costSummary.put("totalSales", totalSales);
+        costSummary.put("profitLoss", profitLoss);
+
+
+
+        return costSummary;
     }
 
     @Override
@@ -81,7 +135,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Company company = mapperUtil.convert(companyDto, new Company());
 
         List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType)
-                .stream().sorted(Comparator.comparing(Invoice::getInvoiceNo))
+                .stream().sorted(comparing(Invoice::getInvoiceNo))
                 .collect(Collectors.toList());
 
 
@@ -161,7 +215,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Company company = mapperUtil.convert(companyDto, new Company());
 
         Invoice invoice = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType).stream()
-                .sorted(Comparator.comparing(Invoice::getInvoiceNo).reversed())
+                .sorted(comparing(Invoice::getInvoiceNo).reversed())
                 .findAny().get();
 
         String invoiceNo = invoice.getInvoiceNo(); // P-002

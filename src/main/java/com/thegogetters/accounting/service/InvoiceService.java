@@ -5,8 +5,11 @@ import com.thegogetters.accounting.enums.InvoiceStatus;
 import com.thegogetters.accounting.enums.InvoiceType;
 
 import java.util.List;
+import java.util.Map;
 
 public interface InvoiceService {
+
+    Map<String, Double> calculateCostSummary();
 
     List<InvoiceDTO> lastThreeTransactions();
 

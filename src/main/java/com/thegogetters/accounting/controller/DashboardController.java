@@ -36,7 +36,7 @@ public class DashboardController {
         summaryNumbers.put("profitLoss", 1000.00);
 
 
-        model.addAttribute("summaryNumbers", summaryNumbers);
+        model.addAttribute("summaryNumbers", dashboardService.profitLoss());
         model.addAttribute("invoices", dashboardService.listLatestThreeApprovedInvoices());
         model.addAttribute("exchangeRates", dashboardService.listUsdExchangeRate());
 
