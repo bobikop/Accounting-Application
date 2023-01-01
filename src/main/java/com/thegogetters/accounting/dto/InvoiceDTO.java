@@ -19,9 +19,12 @@ public class InvoiceDTO {
 
     private Long id;
     private String invoiceNo;
+
     private InvoiceStatus invoiceStatus;
+
     private InvoiceType invoiceType;
     private LocalDate date;
+
     private CompanyDto company;
     private ClientVendorDto clientVendor;
 

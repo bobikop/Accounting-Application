@@ -1,10 +1,16 @@
 package com.thegogetters.accounting.service;
 
+import com.thegogetters.accounting.dto.InvoiceDTO;
 import com.thegogetters.accounting.dto.InvoiceProductDTO;
+import com.thegogetters.accounting.entity.InvoiceProduct;
 
 import java.util.List;
 
 public interface InvoiceProductService {
+
+    List<InvoiceProduct> FindAllInvoiceProducts();
+
+    //-----------------------------------------------------------------//
 
     //InvoiceProductDTO findInvoiceProductByInvoiceId(Long id);
     List<InvoiceProductDTO> findInvoiceProductByInvoiceId(Long id); // for purchase invoice list page
