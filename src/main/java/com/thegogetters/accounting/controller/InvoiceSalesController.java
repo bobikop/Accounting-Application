@@ -193,5 +193,36 @@ public class InvoiceSalesController {
 
 
 
+
+    //GetMapping - printInvoice----------------------------------------------------------------9
+    @GetMapping("/print/{id}")
+    public String printInvoice(@PathVariable("id") Long invoiceId,Model model){
+
+        InvoiceDTO invoice = invoiceService.findInvoiceById(invoiceId);
+
+        model.addAttribute("company", invoice.getCompany() );
+
+        model.addAttribute("invoice", invoice);
+
+        model.addAttribute(invoice.getPrice());
+        model.addAttribute(invoice.getTax());
+        model.addAttribute(invoice.getTotal());
+
+        model.addAttribute(invoice.getClientVendor().getClientVendorName());
+        model.addAttribute(invoice.getClientVendor().getAddress().getZipCode());
+        model.addAttribute(invoice.getClientVendor().getAddress().getState());
+        model.addAttribute(invoice.getClientVendor().getWebsite());
+
+
+        List<InvoiceProductDTO> invoiceProductDTOS = invoiceProductService.findInvoiceProductByInvoiceId_for_productList(invoiceId);
+
+        model.addAttribute("invoiceProducts", invoiceProductDTOS);
+
+
+        return "/invoice/invoice_print";
+    }
+
+
+
 }
 
