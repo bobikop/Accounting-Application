@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.repository;
 
+import com.thegogetters.accounting.entity.ClientVendor;
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Invoice;
 import com.thegogetters.accounting.entity.InvoiceProduct;
