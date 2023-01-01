@@ -56,7 +56,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getCompany().getId().equals(companyDto.getId()))
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceStatus().equals(InvoiceStatus.APPROVED))
                 .map(invoiceProduct -> {
-                    BigDecimal tax = BigDecimal.valueOf(invoiceProduct.getTax()/100);
+                    BigDecimal tax = BigDecimal.valueOf(invoiceProduct.getTax());
 
                     InvoiceDTO invoiceDTO = new InvoiceDTO();
                     invoiceDTO.setInvoiceNo(invoiceProduct.getInvoice().getInvoiceNo());
@@ -64,7 +64,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                     invoiceDTO.setDate(invoiceProduct.getInvoice().getDate());
                     invoiceDTO.setPrice(invoiceProduct.getPrice());
                     invoiceDTO.setTax(invoiceProduct.getTax());
-                    invoiceDTO.setTotal(invoiceProduct.getPrice().multiply(tax).add(invoiceProduct.getPrice()));
+                    invoiceDTO.setTotal(invoiceProduct.getPrice().multiply(tax.divide(BigDecimal.valueOf(100))).add(invoiceProduct.getPrice()));
                     return invoiceDTO;
                 })
                 .sorted(comparing(InvoiceDTO::getDate).reversed())
