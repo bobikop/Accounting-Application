@@ -96,11 +96,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE))
             {
-                totalCost+=invoiceProduct.getPrice().doubleValue();
+                totalCost+=invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax()/100 + invoiceProduct.getPrice().doubleValue();
             }
             if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES))
             {
-                totalSales+=invoiceProduct.getPrice().doubleValue();
+                totalSales+=invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax()/100 + invoiceProduct.getPrice().doubleValue();
             }
 
         }
