@@ -55,6 +55,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceProductService.FindAllInvoiceProducts().stream()
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getCompany().getId().equals(companyDto.getId()))
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceStatus().equals(InvoiceStatus.APPROVED))
+                .filter(invoiceProduct -> invoiceProduct.getInvoice().getDate().getYear() == (LocalDate.now().getYear()))
                 .map(invoiceProduct -> {
                     BigDecimal tax = BigDecimal.valueOf(invoiceProduct.getTax());
                     InvoiceDTO invoiceDTO = new InvoiceDTO();
