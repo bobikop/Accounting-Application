@@ -28,18 +28,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final MapperUtil mapperUtil;
-
-
     private final InvoiceProductService invoiceProductService;
-
     private final ClientVendorService clientVendorService;
-
-
     private final UserService userService;
-
-
     private final CompanyService companyService;
-
     private final ProductService productService;
 
     public InvoiceServiceImpl(InvoiceProductRepository invoiceProductRepository, InvoiceRepository invoiceRepository, MapperUtil mapperUtil, InvoiceProductService invoiceProductService, ClientVendorService clientVendorService, UserService userService, CompanyService companyService, ProductService productService) {

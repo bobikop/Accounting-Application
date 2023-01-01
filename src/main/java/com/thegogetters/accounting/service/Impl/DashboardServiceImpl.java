@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.impl;
+package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.client.ExchangeClient;
 import com.thegogetters.accounting.dto.*;
@@ -20,17 +20,11 @@ import java.util.stream.Collectors;
 public class DashboardServiceImpl implements DashboardService {
 
     private final ExchangeClient exchangeClient;
-
     private final InvoiceService invoiceService;
 
-
-
-    public DashboardServiceImpl(ExchangeClient exchangeClient, InvoiceService invoiceService, InvoiceProductService invoiceProductService, InvoiceService invoiceService1, InvoiceProductService invoiceProductService1, CompanyServiceImpl companyService, MapperUtil mapperUtil) {
+    public DashboardServiceImpl(ExchangeClient exchangeClient, InvoiceService invoiceService1) {
         this.exchangeClient = exchangeClient;
-
-
         this.invoiceService = invoiceService1;
-
     }
 
     //----------------------------------------------------------------------------------///
@@ -70,9 +64,6 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public List<InvoiceDTO> listLatestThreeApprovedInvoices() {
-
-
-
 
         return invoiceService.lastThreeTransactions();
 
