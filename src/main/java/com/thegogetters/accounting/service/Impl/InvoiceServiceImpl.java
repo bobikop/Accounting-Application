@@ -7,17 +7,13 @@ import com.thegogetters.accounting.entity.InvoiceProduct;
 import com.thegogetters.accounting.enums.InvoiceStatus;
 import com.thegogetters.accounting.enums.InvoiceType;
 import com.thegogetters.accounting.mapper.MapperUtil;
-import com.thegogetters.accounting.repository.InvoiceProductRepository;
 import com.thegogetters.accounting.repository.InvoiceRepository;
 import com.thegogetters.accounting.service.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
@@ -129,10 +125,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .collect(Collectors.toList());
 
 
-        return getInvoiceDTOS(invoiceList);
+        return calculateInvoiceDetails(invoiceList);
     }
 
-    private List<InvoiceDTO> getInvoiceDTOS(List<Invoice> invoiceList) {
+    private List<InvoiceDTO> calculateInvoiceDetails(List<Invoice> invoiceList) {
         List<InvoiceDTO> invoiceDTOList = invoiceList.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO()))
                 .collect(Collectors.toList());
 
@@ -283,9 +279,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     //----------------------------PURCHASE - SALES findInvoiceById ----------------------------------------------------//
     @Override
     public InvoiceDTO findInvoiceById(Long id) {
+
         Invoice invoice = invoiceRepository.findById(id).orElseThrow();
 
-        return mapperUtil.convert(invoice, new InvoiceDTO());
+        List<InvoiceDTO> invoiceDTOS = calculateInvoiceDetails(Arrays.asList(invoice));
+
+        InvoiceDTO invoiceDTO = invoiceDTOS.get(0);
+
+        return invoiceDTO;
 
     }
 
