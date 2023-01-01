@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.impl;
+package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.dto.*;
 import com.thegogetters.accounting.entity.Company;
@@ -29,18 +29,16 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final MapperUtil mapperUtil;
     private final InvoiceProductService invoiceProductService;
-    private final ClientVendorService clientVendorService;
-    private final UserService userService;
     private final CompanyService companyService;
     private final ProductService productService;
 
-    public InvoiceServiceImpl(InvoiceProductRepository invoiceProductRepository, InvoiceRepository invoiceRepository, MapperUtil mapperUtil, InvoiceProductService invoiceProductService, ClientVendorService clientVendorService, UserService userService, CompanyService companyService, ProductService productService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil,
+                              InvoiceProductService invoiceProductService,
+                              CompanyService companyService, ProductService productService) {
 
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
         this.invoiceProductService = invoiceProductService;
-        this.clientVendorService = clientVendorService;
-        this.userService = userService;
         this.companyService = companyService;
         this.productService = productService;
     }
