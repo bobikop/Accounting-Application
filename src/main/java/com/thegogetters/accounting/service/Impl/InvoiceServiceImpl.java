@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.Impl;
+package com.thegogetters.accounting.service.impl;
 
 import com.thegogetters.accounting.dto.*;
 import com.thegogetters.accounting.entity.Company;
@@ -56,14 +56,15 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getCompany().getId().equals(companyDto.getId()))
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceStatus().equals(InvoiceStatus.APPROVED))
                 .map(invoiceProduct -> {
-                    BigDecimal tax = BigDecimal.valueOf(invoiceProduct.getTax());
+                    BigDecimal tax = BigDecimal.valueOf(invoiceProduct.getTax()/100);
+
                     InvoiceDTO invoiceDTO = new InvoiceDTO();
                     invoiceDTO.setInvoiceNo(invoiceProduct.getInvoice().getInvoiceNo());
                     invoiceDTO.setClientVendor(mapperUtil.convert(invoiceProduct.getInvoice().getClientVendor(), new ClientVendorDto()));
                     invoiceDTO.setDate(invoiceProduct.getInvoice().getDate());
                     invoiceDTO.setPrice(invoiceProduct.getPrice());
                     invoiceDTO.setTax(invoiceProduct.getTax());
-                    invoiceDTO.setTotal(invoiceProduct.getPrice().add(tax));
+                    invoiceDTO.setTotal(invoiceProduct.getPrice().multiply(tax).add(invoiceProduct.getPrice()));
                     return invoiceDTO;
                 })
                 .sorted(comparing(InvoiceDTO::getDate).reversed())
@@ -81,7 +82,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         List<InvoiceProduct> invoiceProductList = invoiceProductService.FindAllInvoiceProducts().stream()
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getCompany().getId().equals(companyDto.getId()))
-                .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceStatus().equals(InvoiceStatus.APPROVED)).toList();
+                .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceStatus().equals(InvoiceStatus.APPROVED))
+                .filter(invoiceProduct -> invoiceProduct.getInvoice().getDate().getYear() == (LocalDate.now().getYear()))
+                .toList();
 
         // cost of the product
 
@@ -93,11 +96,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE))
             {
-                totalCost+=invoiceProduct.getPrice().doubleValue();
+                totalCost+=invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax()/100 + invoiceProduct.getPrice().doubleValue();
             }
             if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES))
             {
-                totalSales+=invoiceProduct.getPrice().doubleValue();
+                totalSales+=invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax()/100 + invoiceProduct.getPrice().doubleValue();
             }
 
         }
