@@ -30,7 +30,8 @@ public class ProductController {
     //display all products in the product_list page.
     @GetMapping("/list")
     public String listProducts(Model model) {
-        model.addAttribute("products", productService.listAllProducts());
+        model.addAttribute("products", productService.getAllProductsByCompany());
+//        model.addAttribute("products", productService.listAllProducts());
         return "product/product-list";
     }
 
