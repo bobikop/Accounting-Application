@@ -82,36 +82,42 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getDate().getYear() == (LocalDate.now().getYear()))
                 .toList();
 
+        // totalSales
+
+        double totalNetSales =invoiceProductList.stream()
+                .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES))
+                .collect(Collectors.summingDouble(invoiceProduct -> invoiceProduct.getPrice().doubleValue()));
+
+        double totalNetPurchase=invoiceProductList.stream()
+                .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE))
+                .collect(Collectors.summingDouble(invoiceProduct->invoiceProduct.getPrice().doubleValue()));
+
         // cost of the product
 
 
         double totalCost = 0.00;
-        double totalSales= 0.00;
+        double totalSales = 0.00;
 
         for (InvoiceProduct invoiceProduct : invoiceProductList) {
 
-            if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE))
-            {
-                totalCost+=invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax()/100 + invoiceProduct.getPrice().doubleValue();
+            if (invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE)) {
+                totalCost += invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax() / 100 + invoiceProduct.getPrice().doubleValue();
             }
-            if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES))
-            {
-                totalSales+=invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax()/100 + invoiceProduct.getPrice().doubleValue();
+            if (invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES)) {
+                totalSales += invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax() / 100 + invoiceProduct.getPrice().doubleValue();
             }
 
         }
 
 
-
         // profitLost
         double profitLoss = totalSales - totalCost;
 
-        Map<String,Double> costSummary = new HashMap<>();
+        Map<String, Double> costSummary = new HashMap<>();
 
-        costSummary.put("totalCost",totalCost);
+        costSummary.put("totalCost", totalCost);
         costSummary.put("totalSales", totalSales);
         costSummary.put("profitLoss", profitLoss);
-
 
 
         return costSummary;
