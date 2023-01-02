@@ -1,7 +1,9 @@
 package com.thegogetters.accounting.service;
 
 import com.thegogetters.accounting.dto.ClientVendorDto;
+import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.entity.ClientVendor;
+import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.enums.ClientVendorType;
 
 import java.util.List;
@@ -18,6 +20,8 @@ public interface ClientVendorService {
     void save(ClientVendorDto clientVendorDto);
 
     boolean isClientVendorCanBeDeleted(Long id);
+
+    List<ClientVendorDto> findAllByCompany();
 
 
 

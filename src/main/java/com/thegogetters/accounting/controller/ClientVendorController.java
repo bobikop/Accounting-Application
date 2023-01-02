@@ -27,7 +27,7 @@ public class ClientVendorController {
 
     @GetMapping("/list")
     public String listAll(Model model) {
-        model.addAttribute("clientVendors", clientVendorService.listAll());
+        model.addAttribute("clientVendors", clientVendorService.findAllByCompany());
         return "clientVendor/clientVendor-list";
     }
     //*******************************************************************************************
@@ -74,7 +74,8 @@ public class ClientVendorController {
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes){
         if(clientVendorService.isClientVendorCanBeDeleted(id)){
-            redirectAttributes.addFlashAttribute("Error", "Can not be deleted...You have invoices with this client/vendor");
+            redirectAttributes.addFlashAttribute("error", "Can not be deleted..." +
+                    "You have invoices with this client/vendor");
             return "redirect:/clientVendors/list";
         }
         clientVendorService.deleteById(id);
