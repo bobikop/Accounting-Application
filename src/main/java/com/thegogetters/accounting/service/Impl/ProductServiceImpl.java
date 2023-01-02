@@ -3,8 +3,11 @@ package com.thegogetters.accounting.service.Impl;
 import com.thegogetters.accounting.dto.ProductDTO;
 import com.thegogetters.accounting.entity.Product;
 import com.thegogetters.accounting.mapper.MapperUtil;
+import com.thegogetters.accounting.repository.CompanyRepository;
 import com.thegogetters.accounting.repository.ProductRepository;
+import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.ProductService;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,15 +17,18 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
     private final MapperUtil mapperUtil;
     private final ProductRepository productRepository;
+    private final CompanyService companyService;
 
-    public ProductServiceImpl(MapperUtil mapperUtil, ProductRepository productRepository) {
+    public ProductServiceImpl(MapperUtil mapperUtil, ProductRepository productRepository, CompanyRepository companyRepository, CompanyService companyService) {
         this.mapperUtil = mapperUtil;
         this.productRepository = productRepository;
+        this.companyService = companyService;
     }
 
     @Override
     public List<ProductDTO> listAllProducts() {
-        return productRepository.findAll().stream()
+        return productRepository.findAll(Sort.by("category_id", "name").ascending())
+                .stream()
                 .map(product -> mapperUtil.convert(product, new ProductDTO()))
                 .collect(Collectors.toList());
     }
@@ -48,9 +54,8 @@ public class ProductServiceImpl implements ProductService {
         convertedProduct.setName(productDTO.getName());
         convertedProduct.setProductUnit(productDTO.getProductUnit());
         convertedProduct.setLowLimitAlert(productDTO.getLowLimitAlert());
-
-        convertedProduct.setQuantityInStock(productDTO.getQuantityInStock()); // don't confused , dot worry  =) added by Hasan Can
-
+        convertedProduct.setQuantityInStock(productDTO.getQuantityInStock());
+        convertedProduct.setQuantityInStock(productDTO.getQuantityInStock());
         productRepository.save(mapperUtil.convert(convertedProduct, new Product()));
     }
 
@@ -60,14 +65,21 @@ public class ProductServiceImpl implements ProductService {
         product.setIsDeleted(true);
         productRepository.save(product);
     }
-
     @Override
     public boolean checkAnyProductExist(Long id) {
-        List <Product> products = productRepository.findAllByCategoryId(id);
+        List<Product> products = productRepository.findAllByCategoryId(id);
         return products.size() > 0;
     }
     @Override
-    public boolean isInStock(Long id){
-        return  productRepository.getQuantityInStock(id) > 0;
+    public boolean isInStock(Long id) {
+        return productRepository.getQuantityInStock(id) > 0;
+    }
+    @Override
+    public List<ProductDTO> getAllProductsByCompany() {
+        List<Product> products = productRepository.findAllByCompanyId(companyService.getCompanyOfLoggedInUser().getId());
+        return products
+                .stream()
+                .map(product-> mapperUtil.convert(product, new ProductDTO()))
+                .collect(Collectors.toList());
     }
 }

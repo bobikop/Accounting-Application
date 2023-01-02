@@ -82,36 +82,33 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getDate().getYear() == (LocalDate.now().getYear()))
                 .toList();
 
+
         // cost of the product
 
 
         double totalCost = 0.00;
-        double totalSales= 0.00;
+        double totalSales = 0.00;
 
         for (InvoiceProduct invoiceProduct : invoiceProductList) {
 
-            if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE))
-            {
-                totalCost+=invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax()/100 + invoiceProduct.getPrice().doubleValue();
+            if (invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE)) {
+                totalCost += invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax() / 100 + invoiceProduct.getPrice().doubleValue();
             }
-            if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES))
-            {
-                totalSales+=invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax()/100 + invoiceProduct.getPrice().doubleValue();
+            if (invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES)) {
+                totalSales += invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax() / 100 + invoiceProduct.getPrice().doubleValue();
             }
 
         }
 
 
-
         // profitLost
         double profitLoss = totalSales - totalCost;
 
-        Map<String,Double> costSummary = new HashMap<>();
+        Map<String, Double> costSummary = new HashMap<>();
 
-        costSummary.put("totalCost",totalCost);
+        costSummary.put("totalCost", totalCost);
         costSummary.put("totalSales", totalSales);
         costSummary.put("profitLoss", profitLoss);
-
 
 
         return costSummary;
@@ -308,6 +305,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
         return mapperUtil.convert(invoice, new InvoiceDTO());
+    }
+
+    @Override
+    public List<InvoiceDTO> findAllByClientVendorId(Long id) {
+        List<Invoice> invoiceList = invoiceRepository.findAllByClientVendorId(id);
+        return invoiceList.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO())).collect(Collectors.toList());
+
     }
 
     private void updateQuantityOfProductAfterApproved(InvoiceType invoiceType, Long invoiceId) {

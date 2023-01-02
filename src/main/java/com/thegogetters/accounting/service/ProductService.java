@@ -4,7 +4,6 @@ import com.thegogetters.accounting.dto.ProductDTO;
 import java.util.List;
 
 public interface ProductService {
-
     ProductDTO getProductById(Long id);
     List<ProductDTO> listAllProducts();
     void save(ProductDTO productDTO);
@@ -12,4 +11,5 @@ public interface ProductService {
     void deleteById(Long id);
     boolean checkAnyProductExist(Long id);
     boolean isInStock(Long id);
+    List<ProductDTO> getAllProductsByCompany();
 }
