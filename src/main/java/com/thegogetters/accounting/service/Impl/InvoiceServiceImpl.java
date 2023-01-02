@@ -82,15 +82,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getDate().getYear() == (LocalDate.now().getYear()))
                 .toList();
 
-        // totalSales
-
-        double totalNetSales =invoiceProductList.stream()
-                .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES))
-                .collect(Collectors.summingDouble(invoiceProduct -> invoiceProduct.getPrice().doubleValue()));
-
-        double totalNetPurchase=invoiceProductList.stream()
-                .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE))
-                .collect(Collectors.summingDouble(invoiceProduct->invoiceProduct.getPrice().doubleValue()));
 
         // cost of the product
 
