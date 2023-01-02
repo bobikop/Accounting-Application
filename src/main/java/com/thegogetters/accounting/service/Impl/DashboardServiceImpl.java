@@ -1,19 +1,39 @@
 package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.client.ExchangeClient;
-import com.thegogetters.accounting.dto.ExchangeRate;
+import com.thegogetters.accounting.dto.*;
+import com.thegogetters.accounting.enums.InvoiceStatus;
+import com.thegogetters.accounting.enums.InvoiceType;
+import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.service.DashboardService;
+import com.thegogetters.accounting.service.InvoiceProductService;
+import com.thegogetters.accounting.service.InvoiceService;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
 
     private final ExchangeClient exchangeClient;
+    private final InvoiceService invoiceService;
 
-    public DashboardServiceImpl(ExchangeClient exchangeClient) {
+    public DashboardServiceImpl(ExchangeClient exchangeClient, InvoiceService invoiceService1) {
         this.exchangeClient = exchangeClient;
+        this.invoiceService = invoiceService1;
     }
 
+    //----------------------------------------------------------------------------------///
+
+
+    @Override
+    public Map<String, Double> profitLoss() {
+        return invoiceService.calculateCostSummary();
+    }
 
     @Override
     public ExchangeRate listUsdExchangeRate() {
@@ -39,4 +59,19 @@ public class DashboardServiceImpl implements DashboardService {
         return exchangeRate;
 
     }
+
+    //---------------------------------------------------------------------------------//
+
+    @Override
+    public List<InvoiceDTO> listLatestThreeApprovedInvoices() {
+
+        return invoiceService.lastThreeTransactions();
+
+
+    }
+
+    //-----------------------------------------------------------------------------------//
+
+
+
 }

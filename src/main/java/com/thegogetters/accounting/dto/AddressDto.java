@@ -37,6 +37,6 @@ public class AddressDto {
     private String country;
 
     @NotBlank
-    @Pattern(regexp ="^\\\\d{5}([-]|\\\\s*)?(\\\\d{4})?$")
+    @Pattern(regexp = "^\\d{5}([-]|\\s*)?(\\d{4})?$")
     private String zipCode;
 }

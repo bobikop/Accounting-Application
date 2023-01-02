@@ -37,8 +37,9 @@ public class InvoicePurchaseController {
         this.invoiceProductService = invoiceProductService;
     }
 
-    //GetMapping - list()
 
+
+    //GetMapping - list()----------------------------------------------------------------1
     @GetMapping("/list")
     public String listPurchaseInvoices(Model model){
 
@@ -52,7 +53,7 @@ public class InvoicePurchaseController {
 
 
 
-    //GetMapping - create()
+    //GetMapping - create()----------------------------------------------------------------2
 
     @GetMapping("/create")
     public String createInvoice(Model model){
@@ -69,7 +70,7 @@ public class InvoicePurchaseController {
 
 
 
-    //PostMapping - create(InvoiceDto invoiceDto)
+    //PostMapping - create(InvoiceDto invoiceDto)----------------------------------------------------------------3
 
     @PostMapping("/create")
     public String createInvoice(@ModelAttribute("newPurchaseInvoice") InvoiceDTO invoiceDTO){
@@ -84,7 +85,8 @@ public class InvoicePurchaseController {
     }
 
 
-    //GetMapping - update(Long invoiceId)
+    //GetMapping - update(Long invoiceId)----------------------------------------------------------------4
+
     @GetMapping("/update/{id}")
     public String editInvoice(@PathVariable("id") Long invoiceId,Model model){
 
@@ -123,7 +125,7 @@ public class InvoicePurchaseController {
 
     }
 
-    //PostMapping - update(Long invoiceId, InvoiceDto invoice)
+    //PostMapping - update(Long invoiceId, InvoiceDto invoice)----------------------------------------------------------------5
 
     @PostMapping("/update/{id}")
     public String updateInvoice(@PathVariable("id") Long invoiceId, @ModelAttribute("invoice") InvoiceDTO invoiceDTO){
@@ -159,8 +161,7 @@ public class InvoicePurchaseController {
     }
 
 
-
-    //GetMapping - delete(Long invoiceId)
+    //GetMapping - delete(Long invoiceId)----------------------------------------------------------------6
 
     @GetMapping("/delete/{id}")
     public String deleteInvoice(@PathVariable("id") Long invoiceId){
@@ -173,6 +174,7 @@ public class InvoicePurchaseController {
     }
 
 
+    //GetMapping - approveInvoiceStatus(Long invoiceId)----------------------------------------------------------------7
     @GetMapping("/approve/{id}")
     public String approveInvoiceStatus(@PathVariable("id") Long invoiceId){
 
@@ -181,6 +183,8 @@ public class InvoicePurchaseController {
         return "redirect:/purchaseInvoices/list";
     }
 
+
+    //GetMapping - removeInvoiceProduct(Long invoiceId)----------------------------------------------------------------8
 
     @GetMapping("/removeInvoiceProduct/{invoiceId}/{invoiceProductId}") //soft delete
     public String removeInvoiceProduct(@PathVariable("invoiceId") Long invoiceId, @PathVariable("invoiceProductId") Long invoiceProductId){
@@ -192,6 +196,37 @@ public class InvoicePurchaseController {
 
         return "redirect:/purchaseInvoices/update/" + invoiceId;
     }
+
+    //GetMapping - printInvoice----------------------------------------------------------------9
+
+    @GetMapping("/print/{id}")
+    public String printInvoice(@PathVariable("id") Long invoiceId,Model model){
+
+        InvoiceDTO invoice = invoiceService.findInvoiceById(invoiceId);
+
+        model.addAttribute("company", invoice.getCompany() );
+
+        model.addAttribute("invoice", invoice);
+
+        model.addAttribute(invoice.getPrice());
+        model.addAttribute(invoice.getTax());
+        model.addAttribute(invoice.getTotal());
+
+        model.addAttribute(invoice.getClientVendor().getClientVendorName());
+        model.addAttribute(invoice.getClientVendor().getAddress().getZipCode());
+        model.addAttribute(invoice.getClientVendor().getAddress().getState());
+        model.addAttribute(invoice.getClientVendor().getWebsite());
+
+
+        List<InvoiceProductDTO> invoiceProductDTOS = invoiceProductService.findInvoiceProductByInvoiceId_for_productList(invoiceId);
+
+        model.addAttribute("invoiceProducts", invoiceProductDTOS);
+
+
+        return "/invoice/invoice_print";
+    }
+
+
 
 
 

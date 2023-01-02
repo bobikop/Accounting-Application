@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.Impl;
+package com.thegogetters.accounting.service.impl;
 
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.entity.Company;
@@ -9,10 +9,12 @@ import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.SecurityService;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
 
 
 @Service
@@ -37,9 +39,8 @@ public class CompanyServiceImpl implements CompanyService {
 
         List<CompanyDto> companyDtoList = list.stream().
                 map(company -> mapperUtil.convert(company, new CompanyDto())).
+                sorted(comparing(CompanyDto::getCompanyStatus)).
                 collect(Collectors.toList());
-
-        companyDtoList.sort(Comparator.comparing(CompanyDto::getCompanyStatus));
 
 
         return companyDtoList;
@@ -52,9 +53,7 @@ public class CompanyServiceImpl implements CompanyService {
         Optional<Company> company = companyRepository.findById(id);
         // handle exception here
 
-        CompanyDto companyDto = mapperUtil.convert(company, new CompanyDto());
-
-        return companyDto;
+        return mapperUtil.convert(company, new CompanyDto());
     }
 
     //=========================================================================//
@@ -67,9 +66,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         }
 
-        Company company = mapperUtil.convert(companyDto, new Company());
-
-        companyRepository.save(company);
+        companyRepository.save(mapperUtil.convert(companyDto, new Company()));
     }
 
     //=========================================================================//
@@ -101,15 +98,14 @@ public class CompanyServiceImpl implements CompanyService {
 
         companyDto.setCompanyStatus(oldCompany.getCompanyStatus());
 
-        Company company = mapperUtil.convert(companyDto, new Company());
-
-        companyRepository.save(company);
+        companyRepository.save(mapperUtil.convert(companyDto, new Company()));
 
         return findById(companyDto.getId());
     }
 
     @Override
     public CompanyDto getCompanyOfLoggedInUser() {
+
         return securityService.getLoggedInUser().getCompany();
     }
     //=========================================================================//

@@ -55,6 +55,7 @@ public class ProductServiceImpl implements ProductService {
         convertedProduct.setProductUnit(productDTO.getProductUnit());
         convertedProduct.setLowLimitAlert(productDTO.getLowLimitAlert());
         convertedProduct.setQuantityInStock(productDTO.getQuantityInStock());
+        convertedProduct.setQuantityInStock(productDTO.getQuantityInStock());
         productRepository.save(mapperUtil.convert(convertedProduct, new Product()));
     }
 

@@ -11,11 +11,9 @@ public interface CategoryService {
 
     void updateCategory(CategoryDto categoryDto);
 
-    CategoryDto findByDescription(String description);
-
     void deleteCategory(Long id);
 
-    void createCategory(CategoryDto categoryDto);
+    CategoryDto createCategory(CategoryDto categoryDto);
 
     boolean ifCategoryExist(String description);
 
