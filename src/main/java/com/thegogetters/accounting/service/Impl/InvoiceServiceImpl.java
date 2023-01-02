@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.impl;
+package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.dto.*;
 import com.thegogetters.accounting.entity.Company;
