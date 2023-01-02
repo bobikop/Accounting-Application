@@ -17,6 +17,10 @@ public interface ClientVendorService {
     void deleteById(Long id);
     void save(ClientVendorDto clientVendorDto);
 
+    boolean isClientVendorCanBeDeleted(Long id);
+
+
+
 
 
 

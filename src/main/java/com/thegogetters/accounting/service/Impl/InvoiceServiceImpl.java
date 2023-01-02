@@ -306,6 +306,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         return mapperUtil.convert(invoice, new InvoiceDTO());
     }
 
+    @Override
+    public List<InvoiceDTO> findAllByClientVendorId(Long id) {
+        List<Invoice> invoiceList = invoiceRepository.findAllByClientVendorId(id);
+        return invoiceList.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO())).collect(Collectors.toList());
+
+    }
+
     private void updateQuantityOfProductAfterApproved(InvoiceType invoiceType, Long invoiceId) {
 
         List<InvoiceProductDTO> invoiceProductDTOList = invoiceProductService.findInvoiceProductByInvoiceId(invoiceId);
