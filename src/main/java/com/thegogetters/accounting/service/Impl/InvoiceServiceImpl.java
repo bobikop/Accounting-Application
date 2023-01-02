@@ -327,7 +327,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                     Integer decreasedTotalQuantityInStock = quantityInStockOfProduct - quantityOfInvoiceProduct;
                     productDTO.setQuantityInStock(decreasedTotalQuantityInStock);
                 } else {
-                    throw new RuntimeException("Quantity of product  is not enough to sell : " + (quantityInStockOfProduct - quantityOfInvoiceProduct));
+                    throw new RuntimeException("Quantity of " + productDTO.getName() + " is not enough to sell : " + (quantityInStockOfProduct - quantityOfInvoiceProduct) ) ;
                 }
             }
 
