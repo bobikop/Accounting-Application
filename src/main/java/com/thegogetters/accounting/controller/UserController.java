@@ -81,7 +81,13 @@ public class UserController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateUser(@ModelAttribute ("user") UserDTO userDTO){
+    public String updateUser(@Valid @ModelAttribute ("user") UserDTO userDTO, BindingResult bindingResult, Model model){
+        if(bindingResult.hasErrors()){
+            model.addAttribute("userRoles", roleService.listAllRoles());
+            model.addAttribute("companies", companyService.listAll());
+
+            return "user/user-update";
+        }
         userService.update(userDTO);
         return "redirect:/users/list";
     }
