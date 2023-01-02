@@ -91,4 +91,9 @@ public class UserServiceImpl implements UserService {
         user.setUsername(user.getUsername() + "-" + user.getId());
         userRepository.save(user);
     }
+
+    @Override
+    public boolean usernameExist(String username) {
+        return userRepository.existsByUsername(username);
+    }
 }

@@ -24,10 +24,5 @@ public interface UserService {
 */
 
     List<UserDTO> listAllUsersByLoggedInStatus();
-
-
-
-
-
-
+    boolean usernameExist(String username);
 }

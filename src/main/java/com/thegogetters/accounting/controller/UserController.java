@@ -1,6 +1,7 @@
 package com.thegogetters.accounting.controller;
 
 import com.thegogetters.accounting.dto.UserDTO;
+import com.thegogetters.accounting.enums.ClientVendorType;
 import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.RoleService;
 import com.thegogetters.accounting.service.UserService;
@@ -8,6 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("/users")
@@ -24,6 +28,13 @@ public class UserController {
     }
 
 
+    @ModelAttribute
+    public void commonAttributes(Model model){
+        model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
+
+    }
+
+
     @GetMapping("/list")
     public String listAllUsers(Model model){
         model. addAttribute("users", userService.listAllUsersByLoggedInStatus());
@@ -35,7 +46,7 @@ public class UserController {
     public String createUser(Model model){
 
         model.addAttribute("newUser", new UserDTO());
-        model.addAttribute("userRoles", roleService.listAllRoles());
+        model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
         model.addAttribute("users", userService.listAllUsersByLoggedInStatus());
         model.addAttribute("companies", companyService.listAll());
         return "user/user-create";
@@ -43,7 +54,12 @@ public class UserController {
 
 
     @PostMapping("/create")
-    public String saveUser(@ModelAttribute("user") UserDTO user, BindingResult bindingResult, Model model){
+    public String saveUser(@Valid @ModelAttribute("user") UserDTO user, BindingResult bindingResult, Model model){
+
+        boolean usernameExist = userService.usernameExist(user.getUsername());
+        if(usernameExist){
+            bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try with different email.");
+        }
 
         if (bindingResult.hasErrors()){
             model.addAttribute("users", userService.listAllUsersByLoggedInStatus());
