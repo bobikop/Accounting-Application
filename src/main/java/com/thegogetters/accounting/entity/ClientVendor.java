@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 
 @Entity
 @Getter
@@ -26,6 +27,7 @@ public class ClientVendor extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private ClientVendorType clientVendorType;
 
+    @Valid
     @OneToOne(cascade = CascadeType.ALL)
     private Address address;
 
