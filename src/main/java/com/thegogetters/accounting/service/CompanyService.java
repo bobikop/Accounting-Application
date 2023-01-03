@@ -25,4 +25,6 @@ public interface CompanyService {
     CompanyDto getCompanyOfLoggedInUser();
 
 
+    // Boban wrote this method here to get company By User
+    List<CompanyDto> listAllByUser();
 }

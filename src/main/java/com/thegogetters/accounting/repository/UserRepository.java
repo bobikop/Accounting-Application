@@ -1,7 +1,10 @@
 package com.thegogetters.accounting.repository;
 
+import com.thegogetters.accounting.entity.Category;
+import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -14,6 +17,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
     List<User> findAll();
     boolean existsByUsername (String username);
+    List<User> findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription(String role, Company company);
+
+    List<User> findAllByCompanyOrderByRoleDescription(Company company);
+
+    List<User> findAllByRoleDescriptionOrderByCompanyTitle(String role);
 
 
 

@@ -3,6 +3,7 @@ package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.config.SecurityConfig;
 import com.thegogetters.accounting.dto.UserDTO;
+import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Product;
 import com.thegogetters.accounting.entity.User;
 import com.thegogetters.accounting.mapper.MapperUtil;
@@ -39,9 +40,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> listAllUsers() {
-        List<User> userList = userRepository.findAll();
-        return userList.stream().map(user -> mapperUtil.convert(user, new UserDTO()))
-                .collect(Collectors.toList());
+//        List<User> userList = userRepository.findAll();
+//        return userList.stream().map(user -> mapperUtil.convert(user, new UserDTO()))
+//                .collect(Collectors.toList());
+
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
+            return userRepository.findAllByRoleDescriptionOrderByCompanyTitle("Admin").stream()
+                    .map(user -> mapperUtil.convert(user, new UserDTO()))
+                    .peek(userDto -> userDto.setOnlyAdmin(isOnlyAdmin(userDto)))
+                    .collect(Collectors.toList());
+        } else {
+
+            Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
+
+            return userRepository.findAllByCompanyOrderByRoleDescription(company).stream()
+                    .map(user -> mapperUtil.convert(user, new UserDTO()))
+                    .peek(userDto -> userDto.setOnlyAdmin(isOnlyAdmin(userDto)))
+                    .collect(Collectors.toList());
+        }
+
     }
 
     @Override
@@ -75,12 +92,13 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> listAllUsersByLoggedInStatus() {
         if (securityService.getLoggedInUser().getRole().getDescription().equals("Admin")) {
             return listAllUsers().stream()
-                    .filter(userDTO -> userDTO.getCompany().getId().equals(securityService.getLoggedInUser()
-                                    .getCompany().getId())).collect(Collectors.toList());
+                    .filter(userDTO -> userDTO.getCompany().getId().equals(securityService.getLoggedInUser().getCompany().getId()))
+                    .collect(Collectors.toList());
         } else if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
-            return listAllUsers().stream().filter(userDTO -> userDTO.getRole().getDescription().equals("Admin")).collect(Collectors.toList());
+            return listAllUsers().stream()
+                    .filter(userDTO -> userDTO.getRole().getDescription().equals("Admin")).collect(Collectors.toList());
         } else {
-            throw new NoSuchElementException("No users is available");
+            throw new NoSuchElementException("No users available");
         }
     }
 
@@ -95,5 +113,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean usernameExist(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    private boolean isOnlyAdmin(UserDTO userDTO){
+
+        Company company = mapperUtil.convert(userDTO.getCompany(), new Company());
+        List<User> admins = userRepository.findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription("Admin",company);
+        return userDTO.getRole().getDescription().equals("Admin") && admins.size() == 1;
     }
 }

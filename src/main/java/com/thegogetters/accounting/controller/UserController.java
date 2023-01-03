@@ -28,16 +28,14 @@ public class UserController {
     }
 
 
-    @ModelAttribute
-    public void commonAttributes(Model model){
-        model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
-
-    }
+//    @ModelAttribute
+//    public void commonAttributes(Model model){
+//    }
 
 
     @GetMapping("/list")
     public String listAllUsers(Model model){
-        model. addAttribute("users", userService.listAllUsersByLoggedInStatus());
+        model. addAttribute("users", userService.listAllUsers());
         return "user/user-list";
     }
 
@@ -47,8 +45,8 @@ public class UserController {
 
         model.addAttribute("newUser", new UserDTO());
         model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
-        model.addAttribute("users", userService.listAllUsersByLoggedInStatus());
-        model.addAttribute("companies", companyService.listAll());
+        model.addAttribute("users", userService.listAllUsers());
+        model.addAttribute("companies", companyService.listAllByUser());
         return "user/user-create";
     }
 
@@ -56,7 +54,7 @@ public class UserController {
     @PostMapping("/create")
     public String saveUser(@Valid @ModelAttribute("user") UserDTO user, BindingResult bindingResult, Model model){
 
-        boolean usernameExist = userService.usernameExist(user.getUsername());
+     /*   boolean usernameExist = userService.usernameExist(user.getUsername());
         if(usernameExist){
             bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try with different email.");
         }
@@ -65,6 +63,15 @@ public class UserController {
             model.addAttribute("users", userService.listAllUsersByLoggedInStatus());
             model.addAttribute("userRoles", roleService.listAllRoles());
             model.addAttribute("companies", companyService.listAll());
+            return "user/user-create";*/
+
+        if (bindingResult.hasErrors() || userService.usernameExist(user.getUsername())) {
+            if (userService.usernameExist(user.getUsername())) {
+                bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try with different email.");
+            }
+            model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
+            model.addAttribute("companies", companyService.listAllByUser());
+
             return "user/user-create";
         }
         userService.save(user);
@@ -75,7 +82,7 @@ public class UserController {
     public String editUser(@PathVariable ("id") Long id, Model model){
         model.addAttribute("user",userService.findById(id));
         model.addAttribute("userRoles", roleService.listAllRoles());
-        model.addAttribute("companies", companyService.listAll());
+        model.addAttribute("companies", companyService.listAllByUser());
 
         return "user/user-update";
     }
@@ -84,7 +91,7 @@ public class UserController {
     public String updateUser(@Valid @ModelAttribute ("user") UserDTO userDTO, BindingResult bindingResult, Model model){
         if(bindingResult.hasErrors()){
             model.addAttribute("userRoles", roleService.listAllRoles());
-            model.addAttribute("companies", companyService.listAll());
+            model.addAttribute("companies", companyService.listAllByUser());
 
             return "user/user-update";
         }
@@ -94,6 +101,7 @@ public class UserController {
 
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id){
+
         userService.deleteById(id);
         return "redirect:/users/list";
     }

@@ -44,7 +44,6 @@ public class RoleServiceImpl implements RoleService {
                     .filter(roleDTO -> roleDTO.getId() != 2L)
                     .collect(Collectors.toList());
         }
-
         if(securityService.getLoggedInUser().getRole().getId() == 2L){
             return listAllRoles().stream()
                     .filter(roleDTO -> roleDTO.getId() != 1L)

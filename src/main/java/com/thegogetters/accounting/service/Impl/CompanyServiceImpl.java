@@ -110,4 +110,26 @@ public class CompanyServiceImpl implements CompanyService {
     }
     //=========================================================================//
 
+
+    @Override
+    public List<CompanyDto> listAllByUser() {
+
+        CompanyDto loggedInCompany = securityService.getLoggedInUser().getCompany();
+
+        if(securityService.getLoggedInUser().getRole().getDescription().equals("Root user")){
+            return companyRepository.findAll().stream()
+                    .filter(company -> !company.getTitle().equals(loggedInCompany.getTitle()))
+                    .map(company -> mapperUtil.convert(company, new CompanyDto()))
+                    .collect(Collectors.toList());
+        }else {
+            return companyRepository.findAll().stream()
+                    .filter(company -> company.getTitle().equals(loggedInCompany.getTitle()))
+                    .map(company -> mapperUtil.convert(company, new CompanyDto()))
+                    .collect(Collectors.toList());
+        }
+
+    }
+
+
+
 }
