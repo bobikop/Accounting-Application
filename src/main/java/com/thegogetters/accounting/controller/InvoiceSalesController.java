@@ -13,8 +13,10 @@ import com.thegogetters.accounting.service.InvoiceService;
 import com.thegogetters.accounting.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -74,14 +76,17 @@ public class InvoiceSalesController {
     //PostMapping - create(InvoiceDto invoiceDto)----------------------------------------------------------------3
 
     @PostMapping("/create")
-    public String createInvoice(@ModelAttribute("newSalesInvoice") InvoiceDTO invoiceDTO){
+    public String createInvoice(@Valid @ModelAttribute("newSalesInvoice") InvoiceDTO invoiceDTO, BindingResult bindingResult, Model model){
+
+        if(bindingResult.hasErrors()){
+            List<ClientVendorDto> clientVendorDtoList = clientVendorService.findAllByClientVendorTypeBelongsToCompany(ClientVendorType.CLIENT);
+            model.addAttribute("clients", clientVendorDtoList);
+            return "invoice/sales-invoice-create";
+        }
 
         InvoiceDTO invoiceDto = invoiceService.create(InvoiceType.SALES,invoiceDTO); // we take the id from DB after save , create method returns invoice dto with id
 
-        //invoiceProductService.save(invoiceDto.getId());
 
-        //return "/invoice/purchase-invoice-update" + invoiceDTO.getId();
-        //return "redirect:/purchaseInvoice/update/{id}(id=${invoiceDTO.getId()})" + invoiceDTO.getId();
         return "redirect:/salesInvoices/update/"+ invoiceDto.getId();
     }
 
@@ -139,10 +144,26 @@ public class InvoiceSalesController {
     }
 
     @PostMapping("/addInvoiceProduct/{id}")
-    public String updateInvoice(@PathVariable("id") Long invoiceId, @ModelAttribute("newInvoiceProduct") InvoiceProductDTO invoiceProductDTO){
+    public String updateInvoice(@PathVariable("id") Long invoiceId,@Valid @ModelAttribute("newInvoiceProduct") InvoiceProductDTO invoiceProductDTO,BindingResult bindingResult,Model model){
 
-        //save
-        //invoiceProductService.update(invoiceId, invoiceProductDTO);
+        if(bindingResult.hasErrors()){
+            InvoiceDTO invoiceDTO = invoiceService.findInvoiceById(invoiceId);
+            model.addAttribute("invoice", invoiceDTO);
+
+            ClientVendorDto clientVendorDto = clientVendorService.findById(invoiceDTO.getClientVendor().getId());
+            model.addAttribute("clients", clientVendorDto);
+
+
+            model.addAttribute("newInvoiceProduct", invoiceProductDTO);
+
+            List<ProductDTO> productDTOList = productService.listAllProducts();
+            model.addAttribute("products",productDTOList);
+
+            List<InvoiceProductDTO> invoiceProductDTOList = invoiceProductService.findInvoiceProductByInvoiceId_for_productList(invoiceDTO.getId());
+            model.addAttribute("invoiceProducts", invoiceProductDTOList);
+
+            return "/invoice/sales-invoice-update";
+        }
 
         InvoiceProductDTO savedInvoiceProductDTO = invoiceProductService.save(invoiceId, invoiceProductDTO);
 

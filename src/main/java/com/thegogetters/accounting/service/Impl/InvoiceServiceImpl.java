@@ -117,7 +117,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType) {
 
-        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); //it returns null,
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
         Company company = mapperUtil.convert(companyDto, new Company());
 
         List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType)
@@ -297,6 +297,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow();
 
         invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
+        invoice.setDate(LocalDate.now());
         invoiceRepository.save(invoice);
 
 
@@ -336,7 +337,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                     Integer decreasedTotalQuantityInStock = quantityInStockOfProduct - quantityOfInvoiceProduct;
                     productDTO.setQuantityInStock(decreasedTotalQuantityInStock);
                 } else {
-                    throw new RuntimeException("Quantity of product  is not enough to sell : " + (quantityInStockOfProduct - quantityOfInvoiceProduct));
+                    throw new RuntimeException("Quantity of " + productDTO.getName() + " is not enough to sell : " + (quantityInStockOfProduct - quantityOfInvoiceProduct) ) ;
                 }
             }
 
