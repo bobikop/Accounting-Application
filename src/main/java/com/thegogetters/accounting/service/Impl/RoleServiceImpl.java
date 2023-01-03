@@ -39,16 +39,17 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<RoleDTO> listRolesByLoggedUser() {
 
-        if(securityService.getLoggedInUser().getRole().getId() == 1L){
-            return listAllRoles().stream()
-                    .filter(roleDTO -> roleDTO.getId() != 2L)
+        // when logged-in as a root user show only Admin role (if no Admin user role) list root User role only
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
+            return roleRepository.findAll().stream()
+                    .filter(role -> role.getDescription().equals("Admin"))
+                    .map(role -> mapperUtil.convert(role, new RoleDTO()))
+                    .collect(Collectors.toList());
+        } else {
+            return roleRepository.findAll().stream()
+                    .filter(role -> !role.getDescription().equals("Root User"))
+                    .map(role -> mapperUtil.convert(role, new RoleDTO()))
                     .collect(Collectors.toList());
         }
-        if(securityService.getLoggedInUser().getRole().getId() == 2L){
-            return listAllRoles().stream()
-                    .filter(roleDTO -> roleDTO.getId() != 1L)
-                    .collect(Collectors.toList());
-        }
-        return null;
     }
 }

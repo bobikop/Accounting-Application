@@ -36,29 +36,12 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    // Method implementation
 
     @Override
     public List<UserDTO> listAllUsers() {
-//        List<User> userList = userRepository.findAll();
-//        return userList.stream().map(user -> mapperUtil.convert(user, new UserDTO()))
-//                .collect(Collectors.toList());
-
-        if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
-            return userRepository.findAllByRoleDescriptionOrderByCompanyTitle("Admin").stream()
-                    .map(user -> mapperUtil.convert(user, new UserDTO()))
-                    .peek(userDto -> userDto.setOnlyAdmin(isOnlyAdmin(userDto)))
-                    .collect(Collectors.toList());
-        } else {
-
-            Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
-
-            return userRepository.findAllByCompanyOrderByRoleDescription(company).stream()
-                    .map(user -> mapperUtil.convert(user, new UserDTO()))
-                    .peek(userDto -> userDto.setOnlyAdmin(isOnlyAdmin(userDto)))
-                    .collect(Collectors.toList());
-        }
-
+        List<User> userList = userRepository.findAll();
+        return userList.stream().map(user -> mapperUtil.convert(user, new UserDTO()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -90,15 +73,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> listAllUsersByLoggedInStatus() {
-        if (securityService.getLoggedInUser().getRole().getDescription().equals("Admin")) {
-            return listAllUsers().stream()
-                    .filter(userDTO -> userDTO.getCompany().getId().equals(securityService.getLoggedInUser().getCompany().getId()))
+
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
+
+            return userRepository.findAllByRoleDescriptionOrderByCompanyTitle("Admin").stream()
+                    .map(user -> mapperUtil.convert(user, new UserDTO()))
+                    .peek(userDto -> userDto.setOnlyAdmin(isOnlyAdmin(userDto)))
                     .collect(Collectors.toList());
-        } else if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
-            return listAllUsers().stream()
-                    .filter(userDTO -> userDTO.getRole().getDescription().equals("Admin")).collect(Collectors.toList());
         } else {
-            throw new NoSuchElementException("No users available");
+
+            Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
+
+            return userRepository.findAllByCompanyOrderByRoleDescription(company).stream()
+                    .map(user -> mapperUtil.convert(user, new UserDTO()))
+                    .peek(userDto -> userDto.setOnlyAdmin(isOnlyAdmin(userDto)))
+                    .collect(Collectors.toList());
         }
     }
 

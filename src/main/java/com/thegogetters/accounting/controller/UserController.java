@@ -35,7 +35,7 @@ public class UserController {
 
     @GetMapping("/list")
     public String listAllUsers(Model model){
-        model. addAttribute("users", userService.listAllUsers());
+        model. addAttribute("users", userService.listAllUsersByLoggedInStatus());
         return "user/user-list";
     }
 
@@ -45,7 +45,7 @@ public class UserController {
 
         model.addAttribute("newUser", new UserDTO());
         model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
-        model.addAttribute("users", userService.listAllUsers());
+        model.addAttribute("users", userService.listAllUsersByLoggedInStatus());
         model.addAttribute("companies", companyService.listAllByUser());
         return "user/user-create";
     }
@@ -58,12 +58,12 @@ public class UserController {
         if(usernameExist){
             bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try with different email.");
         }
-
         if (bindingResult.hasErrors()){
             model.addAttribute("users", userService.listAllUsersByLoggedInStatus());
             model.addAttribute("userRoles", roleService.listAllRoles());
             model.addAttribute("companies", companyService.listAll());
-            return "user/user-create";*/
+            return "user/user-create";
+      */
 
         if (bindingResult.hasErrors() || userService.usernameExist(user.getUsername())) {
             if (userService.usernameExist(user.getUsername())) {
