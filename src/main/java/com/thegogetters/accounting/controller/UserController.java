@@ -51,7 +51,7 @@ public class UserController {
 
 
     @PostMapping("/create")
-    public String saveUser(@Valid @ModelAttribute("user") UserDTO user, BindingResult bindingResult, Model model){
+    public String saveUser(@Valid @ModelAttribute("newUser") UserDTO user, BindingResult bindingResult, Model model){
 
         if (bindingResult.hasErrors() || userService.usernameExist(user.getUsername())) {
             if (userService.usernameExist(user.getUsername())) {
