@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.impl;
+package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.entity.Company;
@@ -110,4 +110,19 @@ public class CompanyServiceImpl implements CompanyService {
     }
     //=========================================================================//
 
+
+    @Override
+    public List<CompanyDto> listAllByUser() {
+
+        if (securityService.getLoggedInUser().getRole().getId() == 1){
+            return listAll();
+        }
+        if (securityService.getLoggedInUser().getRole().getId() == 2){
+            return listAll().stream()
+                    .filter(companyDto -> companyDto.getId().equals(securityService.getLoggedInUser().getCompany().getId()))
+                    .collect(Collectors.toList());
+        }
+        return null;
+
+    }
 }
