@@ -154,7 +154,7 @@ public class InvoicePurchaseController {
             ClientVendorDto clientVendorDto = clientVendorService.findById(invoiceDTO.getClientVendor().getId());
             model.addAttribute("vendors", clientVendorDto);
 
-            List<ProductDTO> productDTOList = productService.listAllProducts();
+            List<ProductDTO> productDTOList = productService.getAllProductsByCompany();
             model.addAttribute("products",productDTOList);
 
             List<InvoiceProductDTO> invoiceProductDTOList = invoiceProductService.findInvoiceProductByInvoiceId_for_productList(invoiceDTO.getId());
