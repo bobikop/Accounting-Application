@@ -27,10 +27,9 @@ public class UserController {
         this.companyService = companyService;
     }
 
-
-//    @ModelAttribute
-//    public void commonAttributes(Model model){
-//    }
+ /*   @ModelAttribute
+    public void commonAttributes(Model model){
+    }*/
 
 
     @GetMapping("/list")
@@ -54,50 +53,41 @@ public class UserController {
     @PostMapping("/create")
     public String saveUser(@Valid @ModelAttribute("user") UserDTO user, BindingResult bindingResult, Model model){
 
-     /*   boolean usernameExist = userService.usernameExist(user.getUsername());
-        if(usernameExist){
-            bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try with different email.");
-        }
-        if (bindingResult.hasErrors()){
-            model.addAttribute("users", userService.listAllUsersByLoggedInStatus());
-            model.addAttribute("userRoles", roleService.listAllRoles());
-            model.addAttribute("companies", companyService.listAll());
-            return "user/user-create";
-      */
-
         if (bindingResult.hasErrors() || userService.usernameExist(user.getUsername())) {
             if (userService.usernameExist(user.getUsername())) {
                 bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try with different email.");
             }
             model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
             model.addAttribute("companies", companyService.listAllByUser());
-
             return "user/user-create";
         }
         userService.save(user);
         return "redirect:/users/list";
     }
 
+
     @GetMapping("/update/{id}")
     public String editUser(@PathVariable ("id") Long id, Model model){
+
         model.addAttribute("user",userService.findById(id));
         model.addAttribute("userRoles", roleService.listAllRoles());
         model.addAttribute("companies", companyService.listAllByUser());
-
         return "user/user-update";
     }
 
+
     @PostMapping("/update/{id}")
     public String updateUser(@Valid @ModelAttribute ("user") UserDTO userDTO, BindingResult bindingResult, Model model){
+
         if(bindingResult.hasErrors()){
             model.addAttribute("userRoles", roleService.listAllRoles());
             model.addAttribute("companies", companyService.listAllByUser());
-
             return "user/user-update";
         }
         userService.update(userDTO);
         return "redirect:/users/list";
     }
+
 
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id){
@@ -105,6 +95,4 @@ public class UserController {
         userService.deleteById(id);
         return "redirect:/users/list";
     }
-
-
 }

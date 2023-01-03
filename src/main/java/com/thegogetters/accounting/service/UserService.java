@@ -19,10 +19,8 @@ public interface UserService {
     Need to separate listed users depending on who is looged-in to application
             Case 1: root user is looged in = show all the companies -users -Admins only
             Case 2: admin is logged in = show managers, admins, employees for assigned company only
-            otherwise trow exception
 
 */
-
     List<UserDTO> listAllUsersByLoggedInStatus();
     boolean usernameExist(String username);
 }
