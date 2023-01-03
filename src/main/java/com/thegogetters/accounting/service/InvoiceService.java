@@ -37,4 +37,7 @@ public interface InvoiceService {
 
     //-----------------------------------------------------------------//
     InvoiceDTO approveInvoice(Long invoiceId);
+
+    List<InvoiceDTO> findAllByClientVendorId(Long id);
+
 }

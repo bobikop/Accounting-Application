@@ -82,36 +82,33 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .filter(invoiceProduct -> invoiceProduct.getInvoice().getDate().getYear() == (LocalDate.now().getYear()))
                 .toList();
 
+
         // cost of the product
 
 
         double totalCost = 0.00;
-        double totalSales= 0.00;
+        double totalSales = 0.00;
 
         for (InvoiceProduct invoiceProduct : invoiceProductList) {
 
-            if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE))
-            {
-                totalCost+=invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax()/100 + invoiceProduct.getPrice().doubleValue();
+            if (invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE)) {
+                totalCost += invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax() / 100 + invoiceProduct.getPrice().doubleValue();
             }
-            if(invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES))
-            {
-                totalSales+=invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax()/100 + invoiceProduct.getPrice().doubleValue();
+            if (invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES)) {
+                totalSales += invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax() / 100 + invoiceProduct.getPrice().doubleValue();
             }
 
         }
 
 
-
         // profitLost
         double profitLoss = totalSales - totalCost;
 
-        Map<String,Double> costSummary = new HashMap<>();
+        Map<String, Double> costSummary = new HashMap<>();
 
-        costSummary.put("totalCost",totalCost);
+        costSummary.put("totalCost", totalCost);
         costSummary.put("totalSales", totalSales);
         costSummary.put("profitLoss", profitLoss);
-
 
 
         return costSummary;
@@ -120,7 +117,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType) {
 
-        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); //it returns null,
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
         Company company = mapperUtil.convert(companyDto, new Company());
 
         List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType)
@@ -300,6 +297,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow();
 
         invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
+        invoice.setDate(LocalDate.now());
         invoiceRepository.save(invoice);
 
 
@@ -307,6 +305,19 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
         return mapperUtil.convert(invoice, new InvoiceDTO());
+    }
+
+
+    @Override
+    public List<InvoiceDTO> findAllByClientVendorId(Long id) {
+
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); //it returns null,
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndClientVendor_IdAndInvoiceStatus(company, id, InvoiceStatus.APPROVED);
+
+        return invoiceList.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO())).collect(Collectors.toList());
+
     }
 
     private void updateQuantityOfProductAfterApproved(InvoiceType invoiceType, Long invoiceId) {
@@ -326,7 +337,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                     Integer decreasedTotalQuantityInStock = quantityInStockOfProduct - quantityOfInvoiceProduct;
                     productDTO.setQuantityInStock(decreasedTotalQuantityInStock);
                 } else {
-                    throw new RuntimeException("Quantity of product  is not enough to sell : " + (quantityInStockOfProduct - quantityOfInvoiceProduct));
+                    throw new RuntimeException("Quantity of " + productDTO.getName() + " is not enough to sell : " + (quantityInStockOfProduct - quantityOfInvoiceProduct) ) ;
                 }
             }
 

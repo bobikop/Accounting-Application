@@ -11,6 +11,7 @@ import com.thegogetters.accounting.service.InvoiceService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,19 +42,19 @@ public class DashboardServiceImpl implements DashboardService {
         ExchangeRate exchangeRate = new ExchangeRate();
 
         double euro = exchangeClient.getUsdExchangeRate().getUsd().getEur();
-        exchangeRate.setEuro(euro);
+        exchangeRate.setEuro(BigDecimal.valueOf(euro).setScale(2, RoundingMode.CEILING));
 
         double gdb = exchangeClient.getUsdExchangeRate().getUsd().getGbp();
-        exchangeRate.setBritishPound(gdb);
+        exchangeRate.setBritishPound(BigDecimal.valueOf(gdb).setScale(2,RoundingMode.CEILING));
 
         double cad = exchangeClient.getUsdExchangeRate().getUsd().getCad();
-        exchangeRate.setCanadianDollar(cad);
+        exchangeRate.setCanadianDollar(BigDecimal.valueOf(cad).setScale(2,RoundingMode.CEILING));
 
         double jpy = exchangeClient.getUsdExchangeRate().getUsd().getJpy();
-        exchangeRate.setJapaneseYen(jpy);
+        exchangeRate.setJapaneseYen(BigDecimal.valueOf(jpy).setScale(2,RoundingMode.CEILING));
 
         double inr = exchangeClient.getUsdExchangeRate().getUsd().getInr();
-        exchangeRate.setIndianRupee(inr);
+        exchangeRate.setIndianRupee(BigDecimal.valueOf(inr).setScale(2,RoundingMode.CEILING));
 
 
         return exchangeRate;
