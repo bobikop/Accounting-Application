@@ -117,7 +117,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType) {
 
-        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); //it returns null,
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
         Company company = mapperUtil.convert(companyDto, new Company());
 
         List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType)
