@@ -17,7 +17,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
     List<User> findAll();
     boolean existsByUsername (String username);
+
+    //------------------------------------------------------------------------
     List<User> findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription(String role, Company company);
+
+
+//    @Query("SELECT u from User u where u.role =?1 and u.company.title = ?2 order by u.company.title, u.role.description asc")
+//    List<User> getUsersByRoleAndCompany(String role, Company company);
+
+
+
+    //---------------------------------------
 
     List<User> findAllByCompanyOrderByRoleDescription(Company company);
 
