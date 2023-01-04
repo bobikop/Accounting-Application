@@ -1,12 +1,15 @@
 package com.thegogetters.accounting.service.Impl;
 
 
+import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.dto.UserDTO;
 import com.thegogetters.accounting.entity.User;
 import com.thegogetters.accounting.entity.common.UserPrincipal;
 import com.thegogetters.accounting.repository.UserRepository;
+import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.SecurityService;
 import com.thegogetters.accounting.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,10 +21,12 @@ public class SecurityServiceImpl implements SecurityService {
     private final UserRepository userRepository;
 
     private final UserService userService;
+    private final CompanyService companyService;
 
-    public SecurityServiceImpl(UserRepository userRepository, UserService userService) {
+    public SecurityServiceImpl(UserRepository userRepository, @Lazy UserService userService, @Lazy CompanyService companyService) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.companyService = companyService;
     }
 
     @Override
@@ -37,6 +42,12 @@ public class SecurityServiceImpl implements SecurityService {
     public UserDTO getLoggedInUser() {
         var currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         return userService.findByUserName(currentUsername);
+    }
+
+    @Override
+    public CompanyDto getLoggedInCompany() {
+        CompanyDto company = getLoggedInUser().getCompany();
+        return companyService.findById(company.getId());
     }
 
 
