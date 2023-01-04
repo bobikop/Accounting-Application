@@ -70,8 +70,9 @@ public class UserController {
     public String editUser(@PathVariable ("id") Long id, Model model){
 
         model.addAttribute("user",userService.findById(id));
-        model.addAttribute("userRoles", roleService.listAllRoles());
+        model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
         model.addAttribute("companies", companyService.listAllByUser());
+
         return "user/user-update";
     }
 
@@ -80,7 +81,7 @@ public class UserController {
     public String updateUser(@Valid @ModelAttribute ("user") UserDTO userDTO, BindingResult bindingResult, Model model){
 
         if(bindingResult.hasErrors()){
-            model.addAttribute("userRoles", roleService.listAllRoles());
+            model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
             model.addAttribute("companies", companyService.listAllByUser());
             return "user/user-update";
         }
