@@ -153,14 +153,13 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         invoiceProductRepository.save(invoiceProduct);
 
     }
-//Added by Evgenia. Need for Product delete.
+
     @Override
-    public List<InvoiceProductDTO> findInvoiceProductsByProductID(Long Id) {
-        return invoiceProductRepository.findAllByProductId(Id)
-                .stream()
-                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDTO()))
-                .collect(Collectors.toList());
+    public boolean check_productQuantity_if_it_is_enough_to_sell(InvoiceProductDTO salesInvoiceProduct) {
+        return salesInvoiceProduct.getProduct().getQuantityInStock() >= salesInvoiceProduct.getQuantity();
     }
+
+
 
     @Override
     public void deleteByInvoiceId(Long invoiceId) { // for invoiceProduct list belongs to specific invoice
@@ -171,5 +170,14 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
     }
 
+
+    //Added by Evgenia. Need for Product delete.
+    @Override
+    public List<InvoiceProductDTO> findInvoiceProductsByProductID(Long Id) {
+        return invoiceProductRepository.findAllByProductId(Id)
+                .stream()
+                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDTO()))
+                .collect(Collectors.toList());
+    }
 
 }
