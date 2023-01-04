@@ -73,7 +73,7 @@ public class ProductController {
 
     //update product by Id
     @PostMapping("/update/{id}")
-    public String updateProduct(@Valid @PathVariable("id") Long id, @ModelAttribute("product") ProductDTO productDTO, BindingResult bindingResult, Model model) {
+    public String updateProduct(@PathVariable("id") Long id,@Valid @ModelAttribute("product") ProductDTO productDTO, BindingResult bindingResult, Model model) {
         productDTO.setId(id);
         boolean isNameExist = productService.isNameExist(productDTO.getName(), id);
         if (isNameExist) {

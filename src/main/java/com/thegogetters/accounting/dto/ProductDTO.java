@@ -15,8 +15,8 @@ public class ProductDTO {
 
     private Long id;
 
-    @NotBlank
-    @Size(max = 100, min = 2)
+    @NotBlank(message = "Product Name is required field.")
+    @Size(max = 100, min = 2, message = "Product Name must be between 2 and 100 characters long.")
     private String name;
 
     private Integer quantityInStock;  // This field belongs to product total quantity in stock
