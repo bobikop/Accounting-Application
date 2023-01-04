@@ -361,11 +361,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             BigDecimal totalProfit_would_be_if_I_sell_purchase_quantity = multiply.divide(BigDecimal.valueOf(quantity)); //  (1650 * 10 ) / 5 : 3300
 
-            int totalProfit_for_purchase_quantity = totalProfit_would_be_if_I_sell_purchase_quantity.intValueExact() - totalPrice; // 3300 - 2750 : 550
+            double totalProfit_for_purchase_quantity = totalProfit_would_be_if_I_sell_purchase_quantity.doubleValue() - totalPrice; // 3300 - 2750 : 550
 
-            int profit_for_one_quantity = totalProfit_for_purchase_quantity / totalQuantity; // 550 / 10 : 55
+            double profit_for_one_quantity = totalProfit_for_purchase_quantity / totalQuantity; // 550 / 10 : 55
 
-            int profit_for_sales_quantity = quantity * profit_for_one_quantity; // 5 * 55 : 275
+            double profit_for_sales_quantity = quantity * profit_for_one_quantity; // 5 * 55 : 275
 
             if(invoice.getInvoiceType().getValue().equals("Sales")) {
 
