@@ -303,10 +303,83 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         updateQuantityOfProductAfterApproved(invoice.getInvoiceType(), invoiceId);
 
+        calculateProfitLoss(invoiceId, invoice);
 
         return mapperUtil.convert(invoice, new InvoiceDTO());
     }
 
+
+    private void updateQuantityOfProductAfterApproved(InvoiceType invoiceType,Long invoiceId) {
+
+        List<InvoiceProductDTO> invoiceProductDTOList = invoiceProductService.findInvoiceProductByInvoiceId(invoiceId);
+
+        invoiceProductDTOList.stream().map(invoiceProductDTO -> {
+
+            ProductDTO productDTO = productService.getProductById(invoiceProductDTO.getProduct().getId());
+            Integer quantityOfInvoiceProduct = invoiceProductDTO.getQuantity();
+            Integer quantityInStockOfProduct = productDTO.getQuantityInStock();
+            if (invoiceType.getValue().equals("Purchase")){
+                Integer increasedTotalQuantityInStock = quantityInStockOfProduct + quantityOfInvoiceProduct;
+                productDTO.setQuantityInStock(increasedTotalQuantityInStock);
+                invoiceProductDTO.setRemainingQuantity(increasedTotalQuantityInStock);
+            }else{
+                if (quantityOfInvoiceProduct <= quantityInStockOfProduct){
+                    Integer decreasedTotalQuantityInStock = quantityInStockOfProduct - quantityOfInvoiceProduct;
+                    productDTO.setQuantityInStock(decreasedTotalQuantityInStock);
+                    invoiceProductDTO.setRemainingQuantity(decreasedTotalQuantityInStock);
+                }else {
+                    throw new RuntimeException("Quantity of " + productDTO.getName() + " is not enough to sell : " + (quantityInStockOfProduct - quantityOfInvoiceProduct) ) ;
+                }
+            }
+
+            productService.update(productDTO);
+            invoiceProductService.save(invoiceId,invoiceProductDTO);
+
+            return invoiceProductDTO;
+
+        }).collect(Collectors.toList());
+
+
+    }
+
+    private void calculateProfitLoss(Long invoiceId, Invoice invoice) {
+        List<InvoiceProductDTO> productList = invoiceProductService.findInvoiceProductByInvoiceId_for_productList(invoiceId);
+
+        productList.stream().map(invoiceProductDTO -> {
+
+            Integer quantity = invoiceProductDTO.getQuantity();//5
+
+            BigDecimal total = invoiceProductDTO.getTotal();//1650
+
+            Integer totalQuantity = invoiceRepository.retrieveTotalQuantityForPurchaseInvoices(invoice.getCompany().getId(),invoiceProductDTO.getProduct().getId());
+            Integer totalPrice = invoiceRepository.retrieveTotalPriceForPurchaseInvoices(invoice.getCompany().getId(),invoiceProductDTO.getProduct().getId());
+
+            if (totalQuantity == null) totalQuantity = 1;
+            if (totalPrice == null) totalPrice = 0;
+
+            BigDecimal multiply = total.multiply(BigDecimal.valueOf(totalQuantity)); // 1650 * 10
+
+            BigDecimal totalProfit_would_be_if_I_sell_purchase_quantity = multiply.divide(BigDecimal.valueOf(quantity)); //  (1650 * 10 ) / 5 : 3300
+
+            int totalProfit_for_purchase_quantity = totalProfit_would_be_if_I_sell_purchase_quantity.intValueExact() - totalPrice; // 3300 - 2750 : 550
+
+            int profit_for_one_quantity = totalProfit_for_purchase_quantity / totalQuantity; // 550 / 10 : 55
+
+            int profit_for_sales_quantity = quantity * profit_for_one_quantity; // 5 * 55 : 275
+
+            if(invoice.getInvoiceType().getValue().equals("Sales")) {
+
+                invoiceProductDTO.setProfitLoss(BigDecimal.valueOf(profit_for_sales_quantity));
+
+            }else{
+                invoiceProductDTO.setProfitLoss(BigDecimal.valueOf(0));
+            }
+
+            invoiceProductService.save(invoiceId, invoiceProductDTO);
+
+            return invoiceProductDTO;
+        }).collect(Collectors.toList());
+    }
 
     @Override
     public List<InvoiceDTO> findAllByClientVendorId(Long id) {
@@ -319,38 +392,5 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceList.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO())).collect(Collectors.toList());
 
     }
-
-    private void updateQuantityOfProductAfterApproved(InvoiceType invoiceType, Long invoiceId) {
-
-        List<InvoiceProductDTO> invoiceProductDTOList = invoiceProductService.findInvoiceProductByInvoiceId(invoiceId);
-
-        invoiceProductDTOList.stream().map(invoiceProductDTO -> {
-
-            ProductDTO productDTO = productService.getProductById(invoiceProductDTO.getProduct().getId());
-            Integer quantityOfInvoiceProduct = invoiceProductDTO.getQuantity();
-            Integer quantityInStockOfProduct = productDTO.getQuantityInStock();
-            if (invoiceType.getValue().equals("Purchase")) {
-                Integer increasedTotalQuantityInStock = quantityInStockOfProduct + quantityOfInvoiceProduct;
-                productDTO.setQuantityInStock(increasedTotalQuantityInStock);
-            } else {
-                if (quantityOfInvoiceProduct <= quantityInStockOfProduct) {
-                    Integer decreasedTotalQuantityInStock = quantityInStockOfProduct - quantityOfInvoiceProduct;
-                    productDTO.setQuantityInStock(decreasedTotalQuantityInStock);
-                } else {
-                    throw new RuntimeException("Quantity of " + productDTO.getName() + " is not enough to sell : " + (quantityInStockOfProduct - quantityOfInvoiceProduct) ) ;
-                }
-            }
-
-            productService.update(productDTO);
-
-            return invoiceProductDTO;
-
-        }).collect(Collectors.toList());
-
-        //----------------------------Find All Approved Invoices Belongs to Company ----------------------------------------------------//
-
-
-    }
-
 
 }
