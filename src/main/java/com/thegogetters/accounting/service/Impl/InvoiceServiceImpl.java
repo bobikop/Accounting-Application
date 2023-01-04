@@ -3,7 +3,6 @@ package com.thegogetters.accounting.service.Impl;
 import com.thegogetters.accounting.dto.*;
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Invoice;
-import com.thegogetters.accounting.entity.InvoiceProduct;
 import com.thegogetters.accounting.enums.InvoiceStatus;
 import com.thegogetters.accounting.enums.InvoiceType;
 import com.thegogetters.accounting.mapper.MapperUtil;
@@ -40,7 +39,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
 
-    //---------------------------------PURCHASE - SALES INVOICE LIST------------------------------------------------------------------//
+
+
+    //-----------------------------------DASHBOARD---------------------
 
 
     @Override
@@ -71,38 +72,39 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
     @Override
-    public Map<String, Double> calculateCostSummary() {
+    public List<InvoiceDTO> findAllApprovedInvoicesBelongsToCompany(InvoiceStatus invoiceStatus, InvoiceType invoiceType) {
 
         CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceStatusAndInvoiceType(company,invoiceStatus,invoiceType)
+                .stream()
+                .sorted(Comparator.comparing(Invoice::getInvoiceNo))
+                .collect(Collectors.toList());
 
 
-        List<InvoiceProduct> invoiceProductList = invoiceProductService.FindAllInvoiceProducts().stream()
-                .filter(invoiceProduct -> invoiceProduct.getInvoice().getCompany().getId().equals(companyDto.getId()))
-                .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceStatus().equals(InvoiceStatus.APPROVED))
-                .filter(invoiceProduct -> invoiceProduct.getInvoice().getDate().getYear() == (LocalDate.now().getYear()))
-                .toList();
+        return calculateInvoiceDetails(invoiceList);
 
 
-        // cost of the product
 
+    }
 
-        double totalCost = 0.00;
-        double totalSales = 0.00;
+    @Override
+    public Map<String, Double> calculateCostSummary() {
 
-        for (InvoiceProduct invoiceProduct : invoiceProductList) {
+        List<InvoiceDTO> allApprovedPurchaseInvoicesBelongsToCompany = findAllApprovedInvoicesBelongsToCompany(InvoiceStatus.APPROVED,InvoiceType.PURCHASE);
 
-            if (invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.PURCHASE)) {
-                totalCost += invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax() / 100 + invoiceProduct.getPrice().doubleValue();
-            }
-            if (invoiceProduct.getInvoice().getInvoiceType().equals(InvoiceType.SALES)) {
-                totalSales += invoiceProduct.getPrice().doubleValue() * invoiceProduct.getTax() / 100 + invoiceProduct.getPrice().doubleValue();
-            }
+        List<InvoiceDTO> allApprovedSalesInvoicesBelongsToCompany = findAllApprovedInvoicesBelongsToCompany(InvoiceStatus.APPROVED,InvoiceType.SALES);
 
-        }
+        double totalCost = allApprovedPurchaseInvoicesBelongsToCompany.stream().map(InvoiceDTO::getTotal).mapToDouble(BigDecimal::doubleValue).sum(); // company : 2, total cost : 2750
 
-
+        double totalSales = allApprovedSalesInvoicesBelongsToCompany.stream().map(InvoiceDTO::getTotal).mapToDouble(BigDecimal::doubleValue).sum();// company : 2, total sales  : 660
         // profitLost
-        double profitLoss = totalSales - totalCost;
+        double profitLoss = allApprovedSalesInvoicesBelongsToCompany.stream()
+                .flatMap(invoiceDTO -> invoiceDTO.getInvoiceProducts().stream())
+                .map(InvoiceProductDTO::getProfitLoss)
+                .mapToDouble(BigDecimal::doubleValue)
+                .sum(); //110
 
         Map<String, Double> costSummary = new HashMap<>();
 
@@ -114,19 +116,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         return costSummary;
     }
 
-    @Override
-    public List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType) {
 
-        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
-        Company company = mapperUtil.convert(companyDto, new Company());
-
-        List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType)
-                .stream().sorted(comparing(Invoice::getInvoiceNo))
-                .collect(Collectors.toList());
-
-
-        return calculateInvoiceDetails(invoiceList);
-    }
 
     private List<InvoiceDTO> calculateInvoiceDetails(List<Invoice> invoiceList) {
         List<InvoiceDTO> invoiceDTOList = invoiceList.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO()))
@@ -167,6 +157,24 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
 
+
+    //---------------------------------PURCHASE - SALES INVOICE LIST------------------------------------------------------------------//
+
+
+
+    @Override
+    public List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType) {
+
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType)
+                .stream().sorted(comparing(Invoice::getInvoiceNo))
+                .collect(Collectors.toList());
+
+
+        return calculateInvoiceDetails(invoiceList);
+    }
     //-----------------------------getNewInvoiceDTO Purchase - Sales ----------------------------------------------------//
 
     public InvoiceDTO getNewInvoiceDTO(InvoiceType invoiceType) {
