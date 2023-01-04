@@ -36,7 +36,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public List<UserDTO> listAllUsers() {
         List<User> userList = userRepository.findAll();
@@ -54,7 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(UserDTO userDTO) {
         User user1 = userRepository.findById(userDTO.getId()).get();
-        User convertedUser = mapperUtil.convert(userDTO,new User());
+        User convertedUser = mapperUtil.convert(userDTO, new User());
         convertedUser.setId(user1.getId());
         userRepository.save(convertedUser);
 
@@ -67,7 +66,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO findById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(()->new NoSuchElementException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User not found"));
         return mapperUtil.convert(user, new UserDTO());
     }
 
@@ -104,10 +103,19 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUsername(username);
     }
 
-    private boolean isOnlyAdmin(UserDTO userDTO){
+//    private boolean isOnlyAdmin(UserDTO userDTO){
+//
+//        Company company = mapperUtil.convert(userDTO.getCompany(), new Company());
+//        List<User> admins = userRepository.findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription("Admin",company);
+//        return userDTO.getRole().getDescription().equals("Admin") && admins.size() == 1;
+//    }
 
-        Company company = mapperUtil.convert(userDTO.getCompany(), new Company());
-        List<User> admins = userRepository.findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription("Admin",company);
-        return userDTO.getRole().getDescription().equals("Admin") && admins.size() == 1;
+    public boolean isOnlyAdmin(UserDTO userDTO) {
+
+        List<User> admin = userRepository.findById(userDTO.getId()).stream()
+                .filter(user -> user.getRole().getDescription().equals("Admin"))
+                .collect(Collectors.toList());
+
+        return admin.size() == 1;
     }
 }
