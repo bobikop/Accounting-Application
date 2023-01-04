@@ -6,10 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAll();
-    Product findProductById(Long id);
+    Optional<Product> findProductById(Long id);
 
     @Query(nativeQuery = true, value = "SELECT * FROM products WHERE category_id = :id")
     List<Product> findAllByCategoryId(@Param("id") Long id);
@@ -22,4 +23,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "WHERE c.company_id = :compId AND products.is_deleted = FALSE " +
             "ORDER BY description, name;")
     List<Product> findAllByCompanyId(@Param("compId")Long id);
+
+    Optional<Product> findProductByName(String name);
 }

@@ -47,10 +47,14 @@ public class ProductController {
     //save new created product
     @PostMapping("/create")
     public String insertProduct(@Valid @ModelAttribute("newProduct") ProductDTO productDTO, BindingResult bindingResult, Model model) {
+        boolean isNameExist = productService.isNameExist(productDTO.getName(), null);
+        if (isNameExist) {
+            bindingResult.rejectValue("name", " ", "This product name already exist");
+        }
         if (bindingResult.hasErrors()) {
-            model.addAttribute("products", productService.listAllProducts());
-            model.addAttribute("companies", companyService.listAll());
+            model.addAttribute("newProduct", productDTO);
             model.addAttribute("categories", categoryService.listCategories());
+            model.addAttribute("productUnits", Arrays.asList(ProductUnit.values()));
             return "product/product-create";
         }
         productService.save(productDTO);
@@ -69,21 +73,26 @@ public class ProductController {
 
     //update product by Id
     @PostMapping("/update/{id}")
-    public String updateProduct(@ModelAttribute("product") ProductDTO product, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()){
+    public String updateProduct(@Valid @PathVariable("id") Long id, @ModelAttribute("product") ProductDTO productDTO, BindingResult bindingResult, Model model) {
+        productDTO.setId(id);
+        boolean isNameExist = productService.isNameExist(productDTO.getName(), id);
+        if (isNameExist) {
+            bindingResult.rejectValue("name", " ", "This product name already exist");
+        }
+        if (bindingResult.hasErrors()) {
             model.addAttribute("productUnits", Arrays.asList(ProductUnit.values()));
             model.addAttribute("categories", categoryService.listCategories());
             return "product/product-update";
         }
-        productService.update(product);
+        productService.update(productDTO);
         return "redirect:/products/list";
     }
 
     //delete product by Id
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        if (productService.isInStock(id)) {
-            redirectAttributes.addFlashAttribute("error", "This product is still in stock, so you can not delete");
+        if (productService.checkAnyInvoiceExist(id)) {
+            redirectAttributes.addFlashAttribute("error", "This product has Invoices, so you can not delete");
             return "redirect:/products/list";
         }
         productService.deleteById(id);
