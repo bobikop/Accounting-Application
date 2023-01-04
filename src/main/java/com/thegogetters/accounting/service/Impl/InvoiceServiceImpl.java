@@ -118,6 +118,29 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
 
+
+
+
+
+    //---------------------------------PURCHASE - SALES INVOICE LIST------------------------------------------------------------------//
+
+
+
+    @Override
+    public List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType) {
+
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType)
+                .stream().sorted(comparing(Invoice::getInvoiceNo))
+                .collect(Collectors.toList());
+
+
+        return calculateInvoiceDetails(invoiceList);
+    }
+
+
     private List<InvoiceDTO> calculateInvoiceDetails(List<Invoice> invoiceList) {
         List<InvoiceDTO> invoiceDTOList = invoiceList.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO()))
                 .collect(Collectors.toList());
@@ -156,25 +179,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return collect;
     }
 
-
-
-    //---------------------------------PURCHASE - SALES INVOICE LIST------------------------------------------------------------------//
-
-
-
-    @Override
-    public List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType) {
-
-        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
-        Company company = mapperUtil.convert(companyDto, new Company());
-
-        List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceType(company, invoiceType)
-                .stream().sorted(comparing(Invoice::getInvoiceNo))
-                .collect(Collectors.toList());
-
-
-        return calculateInvoiceDetails(invoiceList);
-    }
     //-----------------------------getNewInvoiceDTO Purchase - Sales ----------------------------------------------------//
 
     public InvoiceDTO getNewInvoiceDTO(InvoiceType invoiceType) {
