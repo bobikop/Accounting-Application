@@ -29,8 +29,7 @@
                                                                 <div class="controls">
                                                                     <label>Client/Vendor Name</label>
                                                                     <input type="text" th:field="*{clientVendorName}"
-                                                                           placeholder="Client/Vendor Name"
-                                                                           class="form-control">
+                                                                           placeholder="Client/Vendor Name" class="form-control">
                                                                     <div th:if="${#fields.hasErrors('clientVendorName')}">
                                                                         <ul>
                                                                             <li class="validation"
@@ -48,7 +47,7 @@
                                                                     <select id="clientVendorType" class="form-control"
                                                                             th:field="*{clientVendorType}">
                                                                         <option th:if="${clientVendorTypes.size() > 1}"
-                                                                                th:value="''" th:text="'Select'"
+                                                                                th:value="''" th:text="'Select'" th:placeholder="Select"
                                                                                 selected></option>
                                                                         <option th:each="clientVendorType:${clientVendorTypes}"
                                                                                 th:value="${clientVendorType}"
@@ -198,7 +197,7 @@
                                                                 <div class="controls">
                                                                     <label>Country</label>
                                                                     <input type="text" th:field="*{address.country}"
-                                                                           placeholder="State"
+                                                                           placeholder="Country"
                                                                            class="form-control">
                                                                     <div th:if="${#fields.hasErrors('address.country')}">
                                                                         <ul>

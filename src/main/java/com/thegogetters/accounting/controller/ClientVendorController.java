@@ -42,7 +42,13 @@ public class ClientVendorController {
     //*******************************************************************************************
 
     @PostMapping("/create")
-    public String save(ClientVendorDto clientVendorDto){
+    public String save(@Valid @ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model){
+
+        if(bindingResult.hasErrors()){
+            model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
+            return "clientVendor/clientVendor-create";
+        }
+
         clientVendorService.save(clientVendorDto);
         return "redirect:/clientVendors/list";
     }
@@ -60,15 +66,20 @@ public class ClientVendorController {
 
 
     @PostMapping("/update/{id}")
-    public String update(@Valid @ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model){
+    public String update(/*@Valid */@ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model){
+
         if(bindingResult.hasErrors()){
             model.addAttribute("clientVendor", clientVendorDto);
-            return "/clientVendor/clientVendor-update";
-        }
-        clientVendorService.update(clientVendorDto);
+            model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
 
+            return "clientVendor/clientVendor-update";
+        }
+
+        clientVendorService.update(clientVendorDto);
         return "redirect:/clientVendors/list";
     }
+
+
     //****************************************************************************************
 
     @GetMapping("/delete/{id}")
