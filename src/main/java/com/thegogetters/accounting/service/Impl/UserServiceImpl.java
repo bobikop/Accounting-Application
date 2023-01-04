@@ -103,19 +103,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUsername(username);
     }
 
-//    private boolean isOnlyAdmin(UserDTO userDTO){
-//
-//        Company company = mapperUtil.convert(userDTO.getCompany(), new Company());
-//        List<User> admins = userRepository.findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription("Admin",company);
-//        return userDTO.getRole().getDescription().equals("Admin") && admins.size() == 1;
-//    }
+    private boolean isOnlyAdmin(UserDTO userDTO){
 
-    public boolean isOnlyAdmin(UserDTO userDTO) {
-
-        List<User> admin = userRepository.findById(userDTO.getId()).stream()
-                .filter(user -> user.getRole().getDescription().equals("Admin"))
-                .collect(Collectors.toList());
-
-        return admin.size() == 1;
+        Company company = mapperUtil.convert(userDTO.getCompany(), new Company());
+        List<User> admins = userRepository.findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription("Admin",company);
+        return userDTO.getRole().getDescription().equals("Admin") && admins.size() == 1;
     }
+
 }
