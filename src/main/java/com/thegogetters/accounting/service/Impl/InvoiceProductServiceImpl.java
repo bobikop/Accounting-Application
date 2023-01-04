@@ -100,28 +100,45 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
 
+
     @Override
     public InvoiceProductDTO save(Long invoiceId, InvoiceProductDTO invoiceProductDTO) {
 
         InvoiceDTO invoiceDTO = invoiceService.findInvoiceById(invoiceId);
 
+        if (invoiceProductDTO .getTotal() != null || invoiceProductDTO.getRemainingQuantity() != null){ // after approve button, invoiceProductDto will come with getTotal(), then it will be updated for the field profitLoss
 
-        InvoiceProductDTO new_invoiceProductDTO = new InvoiceProductDTO();
-        new_invoiceProductDTO.setInvoiceDto(invoiceDTO);
+            invoiceProductDTO.setInvoiceDto(invoiceDTO);
 
-        new_invoiceProductDTO.setPrice(invoiceProductDTO.getPrice());
-        new_invoiceProductDTO.setQuantity(invoiceProductDTO.getQuantity());
-        new_invoiceProductDTO.setTax(invoiceProductDTO.getTax());
-        new_invoiceProductDTO.setProfitLoss(invoiceProductDTO.getProfitLoss());
-        new_invoiceProductDTO.setProduct(invoiceProductDTO.getProduct());
+            InvoiceProduct invoiceProduct = invoiceProductRepository.findById(invoiceProductDTO.getId()).orElseThrow();
 
+            invoiceProduct.setRemainingQuantity(invoiceProductDTO.getRemainingQuantity());
+            invoiceProduct.setProfitLoss(invoiceProductDTO.getProfitLoss());
+            invoiceProductRepository.save(invoiceProduct);
 
-        InvoiceProduct invoiceProduct = mapperUtil.convert(new_invoiceProductDTO, new InvoiceProduct());
-
-        invoiceProductRepository.save(invoiceProduct);
+            return mapperUtil.convert(invoiceProduct,new InvoiceProductDTO());
 
 
-        return mapperUtil.convert(invoiceProduct, new InvoiceProductDTO());
+        }else {
+
+            InvoiceProductDTO new_invoiceProductDTO = new InvoiceProductDTO();
+            new_invoiceProductDTO.setInvoiceDto(invoiceDTO);
+            new_invoiceProductDTO.setPrice(invoiceProductDTO.getPrice());
+            new_invoiceProductDTO.setQuantity(invoiceProductDTO.getQuantity());
+            new_invoiceProductDTO.setTax(invoiceProductDTO.getTax());
+            new_invoiceProductDTO.setProfitLoss(invoiceProductDTO.getProfitLoss());
+            new_invoiceProductDTO.setProduct(invoiceProductDTO.getProduct());
+
+
+            InvoiceProduct invoiceProduct = mapperUtil.convert(new_invoiceProductDTO, new InvoiceProduct());
+
+            InvoiceProduct invoiceProduct1 = invoiceProductRepository.save(invoiceProduct);
+
+            return mapperUtil.convert(invoiceProduct1,new InvoiceProductDTO());
+
+        }
+
+
 
     }
 

@@ -34,7 +34,7 @@ public class InvoiceProductDTO {
 
     private BigDecimal total;       // Total Price with tax included
     private BigDecimal profitLoss;  // You need to calculate profit/loss once invoice approved
-    private Integer remainingQty;   // Once you approve a purchase invoice, this invoiceProduct remaining_quantity
+    private Integer remainingQuantity;   // Once you approve a purchase invoice, this invoiceProduct remaining_quantity
                                     // will help you to calculate how many item you left from that invoice_product
                                     // Use this value to keep track of your products FIFO logic..
     private InvoiceDTO invoiceDto;

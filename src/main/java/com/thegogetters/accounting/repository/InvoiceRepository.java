@@ -28,5 +28,20 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
 
     List<Invoice> findAllByCompanyAndInvoiceType(Company company , InvoiceType invoiceType);
 
+    //*******************************************PROFIT LOSS
+
+
+    @Query(value = "select sum(quantity) from invoices\n" +
+            "join invoice_products ip on invoices.id = ip.invoice_id\n" +
+            "where invoice_type = 'PURCHASE' and company_id = ?1 and product_id = ?2",nativeQuery = true)
+    Integer retrieveTotalQuantityForPurchaseInvoices(Long companyId, Long productId);
+
+    @Query(value = "select sum( (price * quantity ) + (price * quantity * tax) / 100) from invoices\n" +
+            "join invoice_products ip on invoices.id = ip.invoice_id\n" +
+            "where invoice_type = 'PURCHASE' and company_id = ?1 and product_id = ?2",nativeQuery = true)
+    Integer retrieveTotalPriceForPurchaseInvoices(Long companyId,Long productId);
+
+
+
 
 }
