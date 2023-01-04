@@ -66,7 +66,7 @@ public class ClientVendorController {
 
 
     @PostMapping("/update/{id}")
-    public String update(/*@Valid */@ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model){
+    public String update(@Valid @ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model){
 
         if(bindingResult.hasErrors()){
             model.addAttribute("clientVendor", clientVendorDto);
