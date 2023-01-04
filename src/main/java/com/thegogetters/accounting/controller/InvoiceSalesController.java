@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -144,7 +145,7 @@ public class InvoiceSalesController {
     }
 
     @PostMapping("/addInvoiceProduct/{id}")
-    public String updateInvoice(@PathVariable("id") Long invoiceId,@Valid @ModelAttribute("newInvoiceProduct") InvoiceProductDTO invoiceProductDTO,BindingResult bindingResult,Model model){
+    public String updateInvoice(@PathVariable("id") Long invoiceId, @Valid @ModelAttribute("newInvoiceProduct") InvoiceProductDTO invoiceProductDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes,Model model){
 
         if(bindingResult.hasErrors()){
             InvoiceDTO invoiceDTO = invoiceService.findInvoiceById(invoiceId);
@@ -163,6 +164,12 @@ public class InvoiceSalesController {
             model.addAttribute("invoiceProducts", invoiceProductDTOList);
 
             return "/invoice/sales-invoice-update";
+        }
+
+
+        if(!invoiceProductService.check_productQuantity_if_it_is_enough_to_sell(invoiceProductDTO)){
+            redirectAttributes.addFlashAttribute("error","Quantity of " + invoiceProductDTO.getProduct().getName() + " is not enough to sell!");
+            return "redirect:/salesInvoices/update/" + invoiceId;
         }
 
         InvoiceProductDTO savedInvoiceProductDTO = invoiceProductService.save(invoiceId, invoiceProductDTO);

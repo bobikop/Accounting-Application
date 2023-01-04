@@ -30,5 +30,11 @@ public interface InvoiceProductService {
 
     void deleteById(Long invoiceProductId);
 
+
+
+
+    boolean check_productQuantity_if_it_is_enough_to_sell(InvoiceProductDTO salesInvoiceProduct);
+
+
     List<InvoiceProductDTO> findInvoiceProductsByProductID(Long Id);//Added by Evgenia. Need for Product delete.
 }
