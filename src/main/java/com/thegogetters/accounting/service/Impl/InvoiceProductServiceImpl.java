@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.impl;
+package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.dto.*;
 import com.thegogetters.accounting.entity.InvoiceProduct;
@@ -135,6 +135,14 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
         invoiceProductRepository.save(invoiceProduct);
 
+    }
+//Added by Evgenia. Need for Product delete.
+    @Override
+    public List<InvoiceProductDTO> findInvoiceProductsByProductID(Long Id) {
+        return invoiceProductRepository.findAllByProductId(Id)
+                .stream()
+                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDTO()))
+                .collect(Collectors.toList());
     }
 
     @Override
