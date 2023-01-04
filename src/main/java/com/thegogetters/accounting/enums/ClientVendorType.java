@@ -1,10 +1,13 @@
 package com.thegogetters.accounting.enums;
 
+import javax.validation.constraints.NotNull;
+
 public enum ClientVendorType {
 
    CLIENT("Client") , VENDOR("Vendor");
 
-    private String value;
+   @NotNull
+   private String value;
 
     ClientVendorType(String value) {
         this.value = value;

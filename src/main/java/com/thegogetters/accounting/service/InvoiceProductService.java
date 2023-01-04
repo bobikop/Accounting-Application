@@ -29,4 +29,6 @@ public interface InvoiceProductService {
     void deleteByInvoiceId(Long invoiceId);
 
     void deleteById(Long invoiceProductId);
+
+    List<InvoiceProductDTO> findInvoiceProductsByProductID(Long Id);//Added by Evgenia. Need for Product delete.
 }

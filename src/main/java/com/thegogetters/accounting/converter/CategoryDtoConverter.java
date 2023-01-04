@@ -17,6 +17,9 @@ public class CategoryDtoConverter implements Converter<String, CategoryDto> {
 
     @Override
     public CategoryDto convert(String description) {
+        if (description == null || description.equals("")) { // Added by Evgenia. Need this for Validation to work when Category not selected :)
+            return null;
+        }
         return categoryService.findById(Long.valueOf(description));
     }
 }
