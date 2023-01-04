@@ -11,7 +11,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
@@ -48,6 +51,20 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
             "where invoice_type = 'PURCHASE' and company_id = ?1 and product_id = ?2",nativeQuery = true)
     Integer retrieveTotalPriceForPurchaseInvoices(Long companyId,Long productId);
 
+
+
+    //**************************PROFIT/LOSS REPORT*************************//
+
+    @Query(value = "select date from invoices i join invoice_products ip on i.id = ip.invoice_id\n" +
+            "where  invoice_type = 'SALES' and company_id = 2\n" +
+            "group by date, profit_loss",nativeQuery = true)
+    List<LocalDate> retrieveLocalDatesBelongsToSalesInvoicesAndCompany();
+
+
+    @Query(value = "select profit_loss from invoices i join invoice_products ip on i.id = ip.invoice_id\n" +
+            "where  invoice_type = 'SALES' and company_id = 2\n" +
+            "group by date, profit_loss",nativeQuery = true)
+    List<BigDecimal> retrieveProfitLossBelongsToSalesInvoicesAndCompany();
 
 
 
