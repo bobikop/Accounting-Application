@@ -9,6 +9,9 @@ import java.util.Map;
 
 public interface InvoiceService {
 
+    //Dashboard
+    List<InvoiceDTO> findAllApprovedInvoicesBelongsToCompany(InvoiceStatus invoiceStatus, InvoiceType invoiceType);
+
     Map<String, Double> calculateCostSummary();
 
     List<InvoiceDTO> lastThreeTransactions();
