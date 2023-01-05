@@ -38,6 +38,53 @@ public class ReportingController {
 
         Map< String,Double> monthlyProfitLossDataMap = new LinkedHashMap<>();
 
+        Map<LocalDate, List<InvoiceDTO>> collect = allApprovedSalesInvoicesBelongsToCompany.stream()
+                .collect(Collectors.groupingBy(InvoiceDTO::getDate));
+
+        collect.entrySet().stream().map(localDateListEntry -> {
+
+            int year = localDateListEntry.getKey().getYear();
+            String name = localDateListEntry.getKey().getMonth().name();
+            String result = year + " " + name;
+
+
+            double profitLoss = localDateListEntry.getValue().stream().flatMap(invoiceDTO -> invoiceDTO.getInvoiceProducts().stream())
+                    .map(InvoiceProductDTO::getProfitLoss).mapToDouble(BigDecimal::doubleValue).sum();
+
+
+            monthlyProfitLossDataMap.put(result,profitLoss);
+
+            /*
+            localDateListEntry.getValue().stream().map(invoiceDTO -> {
+
+                double profitLoss = invoiceDTO.getInvoiceProducts().stream()
+                        .map(InvoiceProductDTO::getProfitLoss)
+                        .mapToDouble(BigDecimal::doubleValue)
+                        .reduce(Double::sum)
+                        .getAsDouble();
+                        //.map(InvoiceProductDTO::getProfitLoss)
+                        //.mapToDouble(BigDecimal::doubleValue)
+                        //.sum();
+
+
+                monthlyProfitLossDataMap.put(result,profitLoss);
+
+
+              return invoiceDTO;
+
+
+
+            }).collect(Collectors.toList());
+
+             */
+
+            return localDateListEntry;
+        }).collect(Collectors.toList());
+
+
+
+        /*
+
         allApprovedSalesInvoicesBelongsToCompany.stream()
                 .sorted(Comparator.comparing(InvoiceDTO::getDate).reversed()).map(invoiceDTO -> {
 
@@ -56,6 +103,12 @@ public class ReportingController {
             monthlyProfitLossDataMap.put(result,profitLoss);
             return invoiceDTO;
         }).collect(Collectors.toList());
+
+
+         */
+
+
+
 
         model.addAttribute("monthlyProfitLossDataMap", monthlyProfitLossDataMap);
 
