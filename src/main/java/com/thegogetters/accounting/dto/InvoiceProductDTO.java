@@ -37,7 +37,7 @@ public class InvoiceProductDTO {
     private Integer remainingQuantity;   // Once you approve a purchase invoice, this invoiceProduct remaining_quantity
                                     // will help you to calculate how many item you left from that invoice_product
                                     // Use this value to keep track of your products FIFO logic..
-    private InvoiceDTO invoiceDto;
+    private InvoiceDTO invoice;
 
     @NotNull
     private ProductDTO product;

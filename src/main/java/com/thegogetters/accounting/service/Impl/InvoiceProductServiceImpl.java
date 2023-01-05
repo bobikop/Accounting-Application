@@ -1,6 +1,7 @@
 package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.dto.*;
+import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.InvoiceProduct;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.InvoiceProductRepository;
@@ -23,16 +24,42 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
 
     private final InvoiceService invoiceService;
+    private final CompanyService companyService;
 
-    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, MapperUtil mapperUtil, CompanyService companyService, @Lazy InvoiceService invoiceService) {
+    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, MapperUtil mapperUtil, CompanyService companyService, @Lazy InvoiceService invoiceService, CompanyService companyService1) {
         this.invoiceProductRepository = invoiceProductRepository;
         this.mapperUtil = mapperUtil;
         this.invoiceService = invoiceService;
+        this.companyService = companyService1;
     }
 
+
+
+
+    //************************STOCK REPORT++++++++++++++
+
+    @Override
+    public List<InvoiceProductDTO> findAllInvoiceProductsOfCompany() {
+
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        List<InvoiceProduct> invoiceProductList = invoiceProductRepository.retrieveAllInvoiceProductsOfCompany(company.getId());
+
+        return invoiceProductList.stream()
+                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDTO()))
+                .collect(Collectors.toList());
+
+
+    }
+
+
+    //************************STOCK REPORT++++++++++++++
+
+
+
+
     //----get All invoiceProducts----//
-
-
     @Override
     public List<InvoiceProduct> FindAllInvoiceProducts() {
         return invoiceProductRepository.findAll();
@@ -108,7 +135,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
         if (invoiceProductDTO .getTotal() != null || invoiceProductDTO.getRemainingQuantity() != null){ // after approve button, invoiceProductDto will come with getTotal(), then it will be updated for the field profitLoss
 
-            invoiceProductDTO.setInvoiceDto(invoiceDTO);
+            invoiceProductDTO.setInvoice(invoiceDTO);
 
             InvoiceProduct invoiceProduct = invoiceProductRepository.findById(invoiceProductDTO.getId()).orElseThrow();
 
@@ -122,7 +149,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         }else {
 
             InvoiceProductDTO new_invoiceProductDTO = new InvoiceProductDTO();
-            new_invoiceProductDTO.setInvoiceDto(invoiceDTO);
+            new_invoiceProductDTO.setInvoice(invoiceDTO);
             new_invoiceProductDTO.setPrice(invoiceProductDTO.getPrice());
             new_invoiceProductDTO.setQuantity(invoiceProductDTO.getQuantity());
             new_invoiceProductDTO.setTax(invoiceProductDTO.getTax());

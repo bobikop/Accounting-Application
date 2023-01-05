@@ -8,7 +8,18 @@ import java.util.List;
 
 public interface InvoiceProductService {
 
+    //************************STOCK REPORT++++++++++++++
+
+    List<InvoiceProductDTO> findAllInvoiceProductsOfCompany();
+
+
+
+    //************************STOCK REPORT++++++++++++++
+
+
+
     List<InvoiceProduct> FindAllInvoiceProducts();
+
 
     //-----------------------------------------------------------------//
 

@@ -2,8 +2,9 @@ package com.thegogetters.accounting.controller;
 
 import com.thegogetters.accounting.dto.InvoiceDTO;
 import com.thegogetters.accounting.dto.InvoiceProductDTO;
-import com.thegogetters.accounting.enums.InvoiceStatus;
+import com.thegogetters.accounting.entity.InvoiceProduct;
 import com.thegogetters.accounting.enums.InvoiceType;
+import com.thegogetters.accounting.service.InvoiceProductService;
 import com.thegogetters.accounting.service.InvoiceService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,13 +23,16 @@ public class ReportingController {
 
     private final InvoiceService invoiceService;
 
-    public ReportingController(InvoiceService invoiceService) {
+    private final InvoiceProductService invoiceProductService;
+
+    public ReportingController(InvoiceService invoiceService, InvoiceProductService invoiceProductService) {
         this.invoiceService = invoiceService;
+        this.invoiceProductService = invoiceProductService;
     }
 
 
     @GetMapping("/profitLossData")
-    public String listReportTable(Model model){
+    public String showProfitLossReports(Model model){
 
         List<InvoiceDTO> allApprovedSalesInvoicesBelongsToCompany = invoiceService.findAllInvoicesBelongsToCompany(InvoiceType.SALES);
 
@@ -58,5 +62,20 @@ public class ReportingController {
 
         return "report/profit-loss-report";
     }
+
+
+
+    @GetMapping("/stockData")
+    public String showStockReports(Model model){
+
+        List<InvoiceProductDTO> invoiceProductDTOList = invoiceProductService.findAllInvoiceProductsOfCompany();
+
+
+        model.addAttribute("invoiceProducts", invoiceProductDTOList);
+
+
+        return "report/stock-report";
+    }
+
 
 }
