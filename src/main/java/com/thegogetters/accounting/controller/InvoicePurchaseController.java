@@ -112,7 +112,7 @@ public class InvoicePurchaseController {
         model.addAttribute("newInvoiceProduct", new InvoiceProductDTO());
 
 
-        List<ProductDTO> productDTOList = productService.listAllProducts();
+        List<ProductDTO> productDTOList = productService.getAllProductsByCompany();
 
 
         model.addAttribute("products",productDTOList);
