@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.service;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.UserDTO;
 
 import java.util.List;
@@ -10,10 +11,10 @@ public interface UserService {
     void save(UserDTO userDTO);
     void update(UserDTO userDTO);
     UserDTO findByUserName(String username);
-    UserDTO findById(Long id);
+    UserDTO findById(Long id) throws AccountingAppException;
 
     // delete method here
-    void deleteById(Long id);
+    void deleteById(Long id) throws AccountingAppException;
 
 /*
     Need to separate listed users depending on who is looged-in to application

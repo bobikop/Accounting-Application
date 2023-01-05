@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.service.Impl;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.CategoryDto;
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.entity.Category;
@@ -42,14 +43,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto findById(Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow();
+    public CategoryDto findById(Long id) throws AccountingAppException {
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new AccountingAppException("Category not found"));
         return mapperUtil.convert(category, new CategoryDto());
     }
 
     @Override
-    public void updateCategory(CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(categoryDto.getId()).orElseThrow();
+    public void updateCategory(CategoryDto categoryDto) throws AccountingAppException {
+        Category category = categoryRepository.findById(categoryDto.getId()).orElseThrow(()-> new AccountingAppException("Category not found"));
         CategoryDto toBeConverted = mapperUtil.convert(category, new CategoryDto());
         toBeConverted.setId(category.getId());
         toBeConverted.setDescription(categoryDto.getDescription());
@@ -57,8 +58,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow();
+    public void deleteCategory(Long id) throws AccountingAppException {
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new AccountingAppException("Category not found"));
         category.setIsDeleted(true);
         categoryRepository.save(category);
     }
@@ -83,7 +84,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto checkAndSetProductStatus(Long id) {
+    public CategoryDto checkAndSetProductStatus(Long id) throws AccountingAppException {
         CategoryDto categoryDto = findById(id);
         if(productService.checkAnyProductExist(categoryDto.getId())) categoryDto.setHasProduct(true);
         return categoryDto;

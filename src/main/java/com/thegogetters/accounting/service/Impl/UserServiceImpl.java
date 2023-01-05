@@ -1,7 +1,9 @@
 package com.thegogetters.accounting.service.Impl;
 
 
+import com.thegogetters.accounting.AccountingApplication;
 import com.thegogetters.accounting.config.SecurityConfig;
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.UserDTO;
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Product;
@@ -65,8 +67,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO findById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User not found"));
+    public UserDTO findById(Long id) throws AccountingAppException {
+        User user = userRepository.findById(id).orElseThrow(() -> new AccountingAppException("User not found"));
         return mapperUtil.convert(user, new UserDTO());
     }
 
@@ -91,8 +93,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        User user = userRepository.findById(id).get();
+    public void deleteById(Long id) throws AccountingAppException {
+        User user = userRepository.findById(id).orElseThrow(() -> new AccountingAppException("User not found"));
         user.setIsDeleted(true);
         user.setUsername(user.getUsername() + "-" + user.getId());
         userRepository.save(user);
