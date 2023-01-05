@@ -403,7 +403,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<InvoiceDTO> findAllByClientVendorId(Long id) {
 
-        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); //it returns null,
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
         Company company = mapperUtil.convert(companyDto, new Company());
 
         List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndClientVendor_IdAndInvoiceStatus(company, id, InvoiceStatus.APPROVED);
