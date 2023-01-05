@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.controller;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.UserDTO;
 import com.thegogetters.accounting.enums.ClientVendorType;
 import com.thegogetters.accounting.service.CompanyService;
@@ -33,14 +34,14 @@ public class UserController {
 
 
     @GetMapping("/list")
-    public String listAllUsers(Model model){
+    public String listAllUsers(Model model) throws AccountingAppException {
         model. addAttribute("users", userService.listAllUsersByLoggedInStatus());
         return "user/user-list";
     }
 
 
     @GetMapping("/create")
-    public String createUser(Model model){
+    public String createUser(Model model) throws AccountingAppException {
 
         model.addAttribute("newUser", new UserDTO());
         model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
@@ -67,7 +68,7 @@ public class UserController {
 
 
     @GetMapping("/update/{id}")
-    public String editUser(@PathVariable ("id") Long id, Model model){
+    public String editUser(@PathVariable ("id") Long id, Model model) throws AccountingAppException {
 
         model.addAttribute("user",userService.findById(id));
         model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
@@ -91,7 +92,7 @@ public class UserController {
 
 
     @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable("id") Long id){
+    public String deleteUser(@PathVariable("id") Long id) throws AccountingAppException {
 
         userService.deleteById(id);
         return "redirect:/users/list";

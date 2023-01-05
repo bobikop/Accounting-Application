@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.controller;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.service.CompanyService;
 import org.springframework.scheduling.support.SimpleTriggerContext;
@@ -63,7 +64,7 @@ public class CompanyController {
     //=========================================================================//
 
     @GetMapping("/update/{id}")
-    public String edit(@PathVariable("id") String id, Model model) {
+    public String edit(@PathVariable("id") String id, Model model) throws AccountingAppException {
 
 
         model.addAttribute("company", companyService.findById(Long.parseLong(id)));
@@ -74,7 +75,7 @@ public class CompanyController {
     //=========================================================================//
 
     @PostMapping("/update/{id}")
-    public String update(@Valid @ModelAttribute("company") CompanyDto companyDto, BindingResult bindingResult, Model model) {
+    public String update(@Valid @ModelAttribute("company") CompanyDto companyDto, BindingResult bindingResult, Model model) throws AccountingAppException {
 
         if (bindingResult.hasErrors()) {
 
@@ -93,7 +94,7 @@ public class CompanyController {
 
 
     @GetMapping("/activate/{id}")
-    public String activate(@PathVariable("id") String id) {
+    public String activate(@PathVariable("id") String id) throws AccountingAppException {
 
         companyService.changeCompanyStatusById(Long.parseLong(id));
 
@@ -103,7 +104,7 @@ public class CompanyController {
     //=========================================================================//
 
     @GetMapping("/deactivate/{id}")
-    public String deactivate(@PathVariable("id") String id) {
+    public String deactivate(@PathVariable("id") String id) throws AccountingAppException {
 
         companyService.changeCompanyStatusById(Long.parseLong(id));
 

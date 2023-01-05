@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.service.Impl;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.*;
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Invoice;
@@ -327,7 +328,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoiceProductDTOList.stream().map(invoiceProductDTO -> {
 
-            ProductDTO productDTO = productService.getProductById(invoiceProductDTO.getProduct().getId());
+            ProductDTO productDTO = null;
+            try {
+                productDTO = productService.getProductById(invoiceProductDTO.getProduct().getId());
+            } catch (AccountingAppException e) {
+                throw new RuntimeException(e);
+            }
             Integer quantityOfInvoiceProduct = invoiceProductDTO.getQuantity();
             Integer quantityInStockOfProduct = productDTO.getQuantityInStock();
             if (invoiceType.getValue().equals("Purchase")){
@@ -344,8 +350,16 @@ public class InvoiceServiceImpl implements InvoiceService {
                 }
             }
 
-            productService.update(productDTO);
-            invoiceProductService.save(invoiceId,invoiceProductDTO);
+            try {
+                productService.update(productDTO);
+            } catch (AccountingAppException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                invoiceProductService.save(invoiceId,invoiceProductDTO);
+            } catch (AccountingAppException e) {
+                throw new RuntimeException(e);
+            }
 
             return invoiceProductDTO;
 
@@ -387,7 +401,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                 invoiceProductDTO.setProfitLoss(BigDecimal.valueOf(0));
             }
 
-            invoiceProductService.save(invoiceId, invoiceProductDTO);
+            try {
+                invoiceProductService.save(invoiceId, invoiceProductDTO);
+            } catch (AccountingAppException e) {
+                throw new RuntimeException(e);
+            }
 
             return invoiceProductDTO;
         }).collect(Collectors.toList());

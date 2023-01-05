@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.controller;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.ProductDTO;
 import com.thegogetters.accounting.enums.ProductUnit;
 import com.thegogetters.accounting.service.CategoryService;
@@ -46,7 +47,7 @@ public class ProductController {
 
     //save new created product
     @PostMapping("/create")
-    public String insertProduct(@Valid @ModelAttribute("newProduct") ProductDTO productDTO, BindingResult bindingResult, Model model) {
+    public String insertProduct(@Valid @ModelAttribute("newProduct") ProductDTO productDTO, BindingResult bindingResult, Model model) throws AccountingAppException {
         boolean isNameExist = productService.isNameExist(productDTO.getName(), null);
         if (isNameExist) {
             bindingResult.rejectValue("name", " ", "This product name already exist");
@@ -63,7 +64,7 @@ public class ProductController {
 
     //get product by Id for update
     @GetMapping("/update/{id}")
-    public String getUpdateProduct(@PathVariable("id") Long id, Model model) {
+    public String getUpdateProduct(@PathVariable("id") Long id, Model model) throws AccountingAppException {
         model.addAttribute("product", productService.getProductById(id));
         model.addAttribute("productUnits", Arrays.asList(ProductUnit.values()));
         model.addAttribute("categories", categoryService.listCategories());
@@ -73,7 +74,7 @@ public class ProductController {
 
     //update product by Id
     @PostMapping("/update/{id}")
-    public String updateProduct(@PathVariable("id") Long id,@Valid @ModelAttribute("product") ProductDTO productDTO, BindingResult bindingResult, Model model) {
+    public String updateProduct(@PathVariable("id") Long id,@Valid @ModelAttribute("product") ProductDTO productDTO, BindingResult bindingResult, Model model) throws AccountingAppException {
         productDTO.setId(id);
         boolean isNameExist = productService.isNameExist(productDTO.getName(), id);
         if (isNameExist) {
@@ -90,7 +91,7 @@ public class ProductController {
 
     //delete product by Id
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+    public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws AccountingAppException {
         if (productService.checkAnyInvoiceExist(id)) {
             redirectAttributes.addFlashAttribute("error", "This product has Invoices, so you can not delete");
             return "redirect:/products/list";
