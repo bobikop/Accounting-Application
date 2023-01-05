@@ -1,7 +1,9 @@
 package com.thegogetters.accounting.service.Impl;
 
 
+import com.thegogetters.accounting.AccountingApplication;
 import com.thegogetters.accounting.config.SecurityConfig;
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.UserDTO;
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Product;
@@ -65,13 +67,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO findById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User not found"));
+    public UserDTO findById(Long id) throws AccountingAppException {
+        User user = userRepository.findById(id).orElseThrow(() -> new AccountingAppException("User not found"));
         return mapperUtil.convert(user, new UserDTO());
     }
 
     @Override
-    public List<UserDTO> listAllUsersByLoggedInStatus() {
+    public List<UserDTO> listAllUsersByLoggedInStatus() throws AccountingAppException {
 
         if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
 
@@ -91,8 +93,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        User user = userRepository.findById(id).get();
+    public void deleteById(Long id) throws AccountingAppException {
+        User user = userRepository.findById(id).orElseThrow(() -> new AccountingAppException("User not found"));
         user.setIsDeleted(true);
         user.setUsername(user.getUsername() + "-" + user.getId());
         userRepository.save(user);
@@ -103,19 +105,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUsername(username);
     }
 
-//    private boolean isOnlyAdmin(UserDTO userDTO){
-//
-//        Company company = mapperUtil.convert(userDTO.getCompany(), new Company());
-//        List<User> admins = userRepository.findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription("Admin",company);
-//        return userDTO.getRole().getDescription().equals("Admin") && admins.size() == 1;
-//    }
+    private boolean isOnlyAdmin(UserDTO userDTO){
 
-    public boolean isOnlyAdmin(UserDTO userDTO) {
-
-        List<User> admin = userRepository.findById(userDTO.getId()).stream()
-                .filter(user -> user.getRole().getDescription().equals("Admin"))
-                .collect(Collectors.toList());
-
-        return admin.size() == 1;
+        Company company = mapperUtil.convert(userDTO.getCompany(), new Company());
+        List<User> admins = userRepository.findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription("Admin",company);
+        return userDTO.getRole().getDescription().equals("Admin") && admins.size() == 1;
     }
+
 }

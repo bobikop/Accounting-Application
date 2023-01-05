@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.controller;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.ClientVendorDto;
 import com.thegogetters.accounting.dto.InvoiceDTO;
 import com.thegogetters.accounting.dto.InvoiceProductDTO;
@@ -92,7 +93,7 @@ public class InvoicePurchaseController {
     //GetMapping - update(Long invoiceId)----------------------------------------------------------------4
 
     @GetMapping("/update/{id}")
-    public String editInvoice(@PathVariable("id") Long invoiceId,Model model){
+    public String editInvoice(@PathVariable("id") Long invoiceId,Model model) throws AccountingAppException {
 
         InvoiceDTO invoiceDTO = invoiceService.findInvoiceById(invoiceId);
         model.addAttribute("invoice", invoiceDTO);
@@ -144,7 +145,7 @@ public class InvoicePurchaseController {
     }
 
     @PostMapping("/addInvoiceProduct/{id}")
-    public String updateInvoice(@PathVariable("id") Long invoiceId,  @Valid @ModelAttribute("newInvoiceProduct") InvoiceProductDTO invoiceProductDTO,BindingResult bindingResult,Model model){
+    public String updateInvoice(@PathVariable("id") Long invoiceId,  @Valid @ModelAttribute("newInvoiceProduct") InvoiceProductDTO invoiceProductDTO,BindingResult bindingResult,Model model) throws AccountingAppException {
 
 
         if(bindingResult.hasErrors()){
@@ -197,7 +198,7 @@ public class InvoicePurchaseController {
     //GetMapping - removeInvoiceProduct(Long invoiceId)----------------------------------------------------------------8
 
     @GetMapping("/removeInvoiceProduct/{invoiceId}/{invoiceProductId}") //soft delete
-    public String removeInvoiceProduct(@PathVariable("invoiceId") Long invoiceId, @PathVariable("invoiceProductId") Long invoiceProductId){
+    public String removeInvoiceProduct(@PathVariable("invoiceId") Long invoiceId, @PathVariable("invoiceProductId") Long invoiceProductId) throws AccountingAppException {
 
        // invoiceService.findInvoiceById(invoiceId);
         invoiceProductService.deleteById(invoiceProductId);

@@ -25,4 +25,6 @@ public class AccountingApplication {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+
 }

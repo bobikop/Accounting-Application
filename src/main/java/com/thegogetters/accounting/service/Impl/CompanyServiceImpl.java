@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.service.impl;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.enums.CompanyStatus;
@@ -49,10 +50,10 @@ public class CompanyServiceImpl implements CompanyService {
 
     //=========================================================================//
     @Override
-    public CompanyDto findById(Long id) {
+    public CompanyDto findById(Long id) throws AccountingAppException {
 
-        Optional<Company> company = companyRepository.findById(id);
-        // handle exception here
+        Company company = companyRepository.findById(id).orElseThrow(()-> new AccountingAppException("Company not found"));
+
 
         return mapperUtil.convert(company, new CompanyDto());
     }
@@ -72,7 +73,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     //=========================================================================//
     @Override
-    public void changeCompanyStatusById(Long id) {
+    public void changeCompanyStatusById(Long id) throws AccountingAppException {
 
         CompanyDto companyDto = findById(id);
 
@@ -93,7 +94,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     //=========================================================================//
     @Override
-    public CompanyDto update(CompanyDto companyDto) {
+    public CompanyDto update(CompanyDto companyDto) throws AccountingAppException {
 
         CompanyDto oldCompany = findById(companyDto.getId());
 
