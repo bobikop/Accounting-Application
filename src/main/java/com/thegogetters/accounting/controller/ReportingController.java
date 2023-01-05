@@ -45,14 +45,14 @@ public class ReportingController {
 
             int year = localDateListEntry.getKey().getYear();
             String name = localDateListEntry.getKey().getMonth().name();
-            String result = year + " " + name;
+            String yearName = year + " " + name;
 
 
             double profitLoss = localDateListEntry.getValue().stream().flatMap(invoiceDTO -> invoiceDTO.getInvoiceProducts().stream())
                     .map(InvoiceProductDTO::getProfitLoss).mapToDouble(BigDecimal::doubleValue).sum();
 
 
-            monthlyProfitLossDataMap.put(result,profitLoss);
+            monthlyProfitLossDataMap.put(yearName,profitLoss);
 
             /*
             localDateListEntry.getValue().stream().map(invoiceDTO -> {
