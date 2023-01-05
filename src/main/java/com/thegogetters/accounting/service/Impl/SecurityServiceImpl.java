@@ -1,6 +1,7 @@
 package com.thegogetters.accounting.service.Impl;
 
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.dto.UserDTO;
 import com.thegogetters.accounting.entity.User;
@@ -45,7 +46,7 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public CompanyDto getLoggedInCompany() {
+    public CompanyDto getLoggedInCompany() throws AccountingAppException {
         CompanyDto company = getLoggedInUser().getCompany();
         return companyService.findById(company.getId());
     }

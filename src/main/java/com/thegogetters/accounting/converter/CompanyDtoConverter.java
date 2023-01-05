@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.converter;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.service.CompanyService;
 import org.springframework.core.convert.converter.Converter;
@@ -17,6 +18,10 @@ public class CompanyDtoConverter implements Converter<String, CompanyDto> {
     @Override
     public CompanyDto convert(String source) {
 
-        return companyService.findById(Long.parseLong(source));
+        try {
+            return companyService.findById(Long.parseLong(source));
+        } catch (AccountingAppException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

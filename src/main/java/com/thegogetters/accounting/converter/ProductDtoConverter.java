@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.converter;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.ProductDTO;
 import com.thegogetters.accounting.service.ProductService;
 import org.springframework.core.convert.converter.Converter;
@@ -18,6 +19,10 @@ public class ProductDtoConverter implements Converter<String, ProductDTO> {
         if (source == null || source.equals("")) {
             return null;
         }
-        return productService.getProductById(Long.valueOf(source));
+        try {
+            return productService.getProductById(Long.valueOf(source));
+        } catch (AccountingAppException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

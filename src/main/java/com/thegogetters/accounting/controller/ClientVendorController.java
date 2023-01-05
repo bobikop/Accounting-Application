@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.controller;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.ClientVendorDto;
 import com.thegogetters.accounting.enums.ClientVendorType;
 import com.thegogetters.accounting.service.ClientVendorService;
@@ -56,7 +57,7 @@ public class ClientVendorController {
     //**************************************************************************************
 
     @GetMapping("/update/{id}")
-    public String edit(@PathVariable("id") Long id, Model model){
+    public String edit(@PathVariable("id") Long id, Model model) throws AccountingAppException {
         model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
         model.addAttribute("clientVendor", clientVendorService.findById(id));
         return "clientVendor/clientVendor-update";
@@ -66,7 +67,8 @@ public class ClientVendorController {
 
 
     @PostMapping("/update/{id}")
-    public String update(@Valid @ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model){
+    public String update(/*@Valid */@ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model) throws AccountingAppException {
+
 
         if(bindingResult.hasErrors()){
             model.addAttribute("clientVendor", clientVendorDto);
@@ -83,7 +85,7 @@ public class ClientVendorController {
     //****************************************************************************************
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes){
+    public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws AccountingAppException {
         if(clientVendorService.isClientVendorCanBeDeleted(id)){
             redirectAttributes.addFlashAttribute("error", "Can not be deleted..." +
                     "You have invoices with this client/vendor");

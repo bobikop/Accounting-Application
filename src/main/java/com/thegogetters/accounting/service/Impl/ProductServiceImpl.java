@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.service.Impl;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.ProductDTO;
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Product;
@@ -40,8 +41,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProductById(Long id) {
-       Product product = productRepository.findProductById(id).orElseThrow();
+    public ProductDTO getProductById(Long id) throws AccountingAppException {
+       Product product = productRepository.findProductById(id).orElseThrow(() -> new AccountingAppException("Product not found"));
        return mapperUtil.convert(product, new ProductDTO());
     }
 
@@ -55,8 +56,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void update(ProductDTO productDTO) {
-        Product product = productRepository.findProductById(productDTO.getId()).orElseThrow();
+    public void update(ProductDTO productDTO) throws AccountingAppException {
+        Product product = productRepository.findProductById(productDTO.getId()).orElseThrow(()-> new AccountingAppException("Product not found"));
         ProductDTO convertedProduct = mapperUtil.convert(product, new ProductDTO());
         convertedProduct.setId(product.getId());
         convertedProduct.setCategory(productDTO.getCategory());
@@ -68,8 +69,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        Product product = productRepository.findProductById(id).orElseThrow();
+    public void deleteById(Long id) throws AccountingAppException {
+        Product product = productRepository.findProductById(id).orElseThrow(()-> new AccountingAppException("Product not found"));
 
         //check if quantity of product is more than 0, user cannot delete that product.
             product.setIsDeleted(true);
@@ -98,10 +99,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean isNameExist(String name, Long id) {
+    public boolean isNameExist(String name, Long id) throws AccountingAppException {
         Product product=productRepository.findProductByName(name).orElse(null);
         if (product == null) {
-            return false;
+            throw new AccountingAppException("Product not found");
         }
         return !Objects.equals(product.getId(), id);
     }

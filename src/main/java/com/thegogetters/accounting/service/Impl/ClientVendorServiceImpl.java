@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.service.Impl;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.ClientVendorDto;
 import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.dto.InvoiceDTO;
@@ -49,8 +50,8 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     }
 
     @Override
-    public void update(ClientVendorDto clientVendorDto) {
-        ClientVendor clientVendor = clientVendorRepository.findById(clientVendorDto.getId()).orElseThrow();
+    public void update(ClientVendorDto clientVendorDto) throws AccountingAppException {
+        ClientVendor clientVendor = clientVendorRepository.findById(clientVendorDto.getId()).orElseThrow(()-> new AccountingAppException("ClientVendor not found"));
         clientVendor.setClientVendorType(clientVendorDto.getClientVendorType());
 
         CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
@@ -64,11 +65,11 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long id) throws AccountingAppException {
 
         boolean check = isClientVendorCanBeDeleted(id);
         if(!check){
-            ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow();
+            ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow(()-> new AccountingAppException("ClientVendor not found"));
             clientVendor.setIsDeleted(true);
 
             clientVendor.setClientVendorName(clientVendor.getClientVendorName() + "-" + clientVendor.getId());
@@ -101,8 +102,8 @@ public class ClientVendorServiceImpl implements ClientVendorService {
 
 
     @Override
-    public ClientVendorDto findById(long id) {
-        ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow();
+    public ClientVendorDto findById(long id) throws AccountingAppException {
+        ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow(()-> new AccountingAppException("ClientVendor not found"));
         return mapperUtil.convert(clientVendor, new ClientVendorDto());
     }
 

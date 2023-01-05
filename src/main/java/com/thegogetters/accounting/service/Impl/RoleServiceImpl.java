@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.service.Impl;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.RoleDTO;
 import com.thegogetters.accounting.entity.Role;
 import com.thegogetters.accounting.mapper.MapperUtil;
@@ -32,8 +33,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleDTO findById(Long id) {
-        return mapperUtil.convert(roleRepository.findById(id), new RoleDTO());
+    public RoleDTO findById(Long id) throws AccountingAppException {
+        return mapperUtil.convert(roleRepository.findById(id).orElseThrow(()-> new AccountingAppException("Role not found")), new RoleDTO());
     }
 
     @Override

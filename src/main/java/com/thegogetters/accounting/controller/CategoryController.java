@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.controller;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.CategoryDto;
 import com.thegogetters.accounting.service.CategoryService;
 import org.springframework.stereotype.Controller;
@@ -53,13 +54,13 @@ public class CategoryController {
     }
 
     @GetMapping("/update/{id}")
-    public String updateCategory(@PathVariable("id") Long id, Model model){
+    public String updateCategory(@PathVariable("id") Long id, Model model) throws AccountingAppException {
         model.addAttribute("category", categoryService.checkAndSetProductStatus(id));
         return "/category/category-update";
     }
 
     @PostMapping("/update/{id}")
-    public String updateCategory(@Valid @ModelAttribute("category") CategoryDto category, BindingResult bindingResult, Model model){
+    public String updateCategory(@Valid @ModelAttribute("category") CategoryDto category, BindingResult bindingResult, Model model) throws AccountingAppException {
 
         if(bindingResult.hasErrors()){
 
@@ -74,7 +75,7 @@ public class CategoryController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteCategory(@PathVariable("id") Long id){
+    public String deleteCategory(@PathVariable("id") Long id) throws AccountingAppException {
 
         categoryService.deleteCategory(id);
         return "redirect:/categories/list";

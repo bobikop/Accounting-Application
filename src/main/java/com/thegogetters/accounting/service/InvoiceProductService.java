@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.service;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.InvoiceDTO;
 import com.thegogetters.accounting.dto.InvoiceProductDTO;
 import com.thegogetters.accounting.entity.InvoiceProduct;
@@ -35,11 +36,11 @@ public interface InvoiceProductService {
 
     //InvoiceProductDTO update(Long invoiceId, InvoiceProductDTO invoiceProductDTO);
 
-    InvoiceProductDTO save(Long invoiceId, InvoiceProductDTO invoiceProductDTO);
+    InvoiceProductDTO save(Long invoiceId, InvoiceProductDTO invoiceProductDTO) throws AccountingAppException;
 
     void deleteByInvoiceId(Long invoiceId);
 
-    void deleteById(Long invoiceProductId);
+    void deleteById(Long invoiceProductId) throws AccountingAppException;
 
 
 
