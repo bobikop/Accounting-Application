@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.service.Impl;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.*;
 import com.thegogetters.accounting.entity.InvoiceProduct;
 import com.thegogetters.accounting.mapper.MapperUtil;
@@ -102,7 +103,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
 
     @Override
-    public InvoiceProductDTO save(Long invoiceId, InvoiceProductDTO invoiceProductDTO) {
+    public InvoiceProductDTO save(Long invoiceId, InvoiceProductDTO invoiceProductDTO) throws AccountingAppException {
 
         InvoiceDTO invoiceDTO = invoiceService.findInvoiceById(invoiceId);
 
@@ -110,7 +111,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
             invoiceProductDTO.setInvoiceDto(invoiceDTO);
 
-            InvoiceProduct invoiceProduct = invoiceProductRepository.findById(invoiceProductDTO.getId()).orElseThrow();
+            InvoiceProduct invoiceProduct = invoiceProductRepository.findById(invoiceProductDTO.getId()).orElseThrow(()-> new AccountingAppException("InvoiceProduct not found"));
 
             invoiceProduct.setRemainingQuantity(invoiceProductDTO.getRemainingQuantity());
             invoiceProduct.setProfitLoss(invoiceProductDTO.getProfitLoss());
@@ -144,9 +145,9 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
 
     @Override
-    public void deleteById(Long invoiceProductId) { // for only invoiceProduct
+    public void deleteById(Long invoiceProductId) throws AccountingAppException { // for only invoiceProduct
 
-        InvoiceProduct invoiceProduct = invoiceProductRepository.findById(invoiceProductId).orElseThrow();
+        InvoiceProduct invoiceProduct = invoiceProductRepository.findById(invoiceProductId).orElseThrow(()-> new AccountingAppException("InvoiceProduct not found"));
 
         invoiceProduct.setIsDeleted(true);
 
@@ -166,7 +167,13 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
         List<InvoiceProduct> invoiceProductList = invoiceProductRepository.findAllByInvoice_Id(invoiceId);
 
-        invoiceProductList.forEach(invoiceProduct -> deleteById(invoiceProduct.getId()));
+        invoiceProductList.forEach(invoiceProduct -> {
+            try {
+                deleteById(invoiceProduct.getId());
+            } catch (AccountingAppException e) {
+                 e.printStackTrace();
+            }
+        });
 
     }
 
