@@ -111,9 +111,6 @@ public class ReportingController {
 
          */
 
-
-
-
         model.addAttribute("monthlyProfitLossDataMap", monthlyProfitLossDataMap);
 
 
