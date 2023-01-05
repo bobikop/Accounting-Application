@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.Impl;
+package com.thegogetters.accounting.service.impl;
 
 import com.thegogetters.accounting.dto.*;
 import com.thegogetters.accounting.entity.Company;
@@ -11,6 +11,7 @@ import com.thegogetters.accounting.service.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,9 +60,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                     invoiceDTO.setInvoiceNo(invoiceProduct.getInvoice().getInvoiceNo());
                     invoiceDTO.setClientVendor(mapperUtil.convert(invoiceProduct.getInvoice().getClientVendor(), new ClientVendorDto()));
                     invoiceDTO.setDate(invoiceProduct.getInvoice().getDate());
-                    invoiceDTO.setPrice(invoiceProduct.getPrice());
+                    invoiceDTO.setPrice(invoiceProduct.getPrice().setScale(2, RoundingMode.CEILING));
                     invoiceDTO.setTax(invoiceProduct.getTax());
-                    invoiceDTO.setTotal(invoiceProduct.getPrice().multiply(tax.divide(BigDecimal.valueOf(100))).add(invoiceProduct.getPrice()));
+                    invoiceDTO.setTotal(invoiceProduct.getPrice().multiply(tax.divide(BigDecimal.valueOf(100))).add(invoiceProduct.getPrice()).setScale(2,RoundingMode.CEILING));
                     return invoiceDTO;
                 })
                 .sorted(comparing(InvoiceDTO::getDate).reversed())
