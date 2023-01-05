@@ -20,6 +20,7 @@ public class InvoiceProductDTO {
 
     @NotNull
     @Max(100)
+    @Min(value = 1, message = "Quantity should be at least 1.")
     private Integer quantity;       // If this is a purchase invoice, you can keep track of how many product you bought
 
     @NotNull
