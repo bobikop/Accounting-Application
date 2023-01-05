@@ -1,5 +1,6 @@
 package com.thegogetters.accounting.converter;
 
+import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.ClientVendorDto;
 import com.thegogetters.accounting.service.ClientVendorService;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
@@ -24,7 +25,11 @@ public class ClientVendorDtoConverter implements Converter<String, ClientVendorD
             return null;
         }
 
-        return clientVendorService.findById(Long.parseLong(source));
+        try {
+            return clientVendorService.findById(Long.parseLong(source));
+        } catch (AccountingAppException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

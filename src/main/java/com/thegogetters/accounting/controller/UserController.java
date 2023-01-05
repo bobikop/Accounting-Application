@@ -34,14 +34,14 @@ public class UserController {
 
 
     @GetMapping("/list")
-    public String listAllUsers(Model model){
+    public String listAllUsers(Model model) throws AccountingAppException {
         model. addAttribute("users", userService.listAllUsersByLoggedInStatus());
         return "user/user-list";
     }
 
 
     @GetMapping("/create")
-    public String createUser(Model model){
+    public String createUser(Model model) throws AccountingAppException {
 
         model.addAttribute("newUser", new UserDTO());
         model.addAttribute("userRoles", roleService.listRolesByLoggedUser());

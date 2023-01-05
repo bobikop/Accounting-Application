@@ -22,6 +22,6 @@ public interface UserService {
             Case 2: admin is logged in = show managers, admins, employees for assigned company only
 
 */
-    List<UserDTO> listAllUsersByLoggedInStatus();
+    List<UserDTO> listAllUsersByLoggedInStatus() throws AccountingAppException;
     boolean usernameExist(String username);
 }

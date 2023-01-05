@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> listAllUsersByLoggedInStatus() {
+    public List<UserDTO> listAllUsersByLoggedInStatus() throws AccountingAppException {
 
         if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
 
