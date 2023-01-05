@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.Impl;
+package com.thegogetters.accounting.service.impl;
 
 import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.CompanyDto;
@@ -40,8 +40,9 @@ public class CompanyServiceImpl implements CompanyService {
 
         List<CompanyDto> companyDtoList = list.stream().
                 map(company -> mapperUtil.convert(company, new CompanyDto())).
-                sorted(comparing(CompanyDto::getCompanyStatus)).
-                collect(Collectors.toList());
+                sorted(comparing(CompanyDto::getTitle))
+                .sorted(comparing(CompanyDto::getCompanyStatus))
+                .collect(Collectors.toList());
 
 
         return companyDtoList;
