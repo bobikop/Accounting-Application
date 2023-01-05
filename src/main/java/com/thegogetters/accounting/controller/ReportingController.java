@@ -3,6 +3,7 @@ package com.thegogetters.accounting.controller;
 import com.thegogetters.accounting.dto.InvoiceDTO;
 import com.thegogetters.accounting.dto.InvoiceProductDTO;
 import com.thegogetters.accounting.entity.InvoiceProduct;
+import com.thegogetters.accounting.enums.InvoiceStatus;
 import com.thegogetters.accounting.enums.InvoiceType;
 import com.thegogetters.accounting.service.InvoiceProductService;
 import com.thegogetters.accounting.service.InvoiceService;
@@ -34,7 +35,10 @@ public class ReportingController {
     @GetMapping("/profitLossData")
     public String showProfitLossReports(Model model){
 
-        List<InvoiceDTO> allApprovedSalesInvoicesBelongsToCompany = invoiceService.findAllInvoicesBelongsToCompany(InvoiceType.SALES);
+        //List<InvoiceDTO> allApprovedSalesInvoicesBelongsToCompany = invoiceService.findAllInvoicesBelongsToCompany(InvoiceType.SALES);
+
+        List<InvoiceDTO> allApprovedSalesInvoicesBelongsToCompany
+                = invoiceService.findAllApprovedInvoicesBelongsToCompany(InvoiceStatus.APPROVED,InvoiceType.SALES);
 
         Map< String,Double> monthlyProfitLossDataMap = new LinkedHashMap<>();
 
