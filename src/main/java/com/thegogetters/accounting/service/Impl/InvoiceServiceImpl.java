@@ -40,8 +40,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
 
-
-
     //-----------------------------------DASHBOARD---------------------
 
 
@@ -117,15 +115,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         return costSummary;
     }
 
-
-
-
-
-
-
     //---------------------------------PURCHASE - SALES INVOICE LIST------------------------------------------------------------------//
-
-
 
     @Override
     public List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType) {
@@ -140,7 +130,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return calculateInvoiceDetails(invoiceList);
     }
-
 
     private List<InvoiceDTO> calculateInvoiceDetails(List<Invoice> invoiceList) {
         List<InvoiceDTO> invoiceDTOList = invoiceList.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO()))
@@ -414,7 +403,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<InvoiceDTO> findAllByClientVendorId(Long id) {
 
-        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser(); //it returns null,
+        CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
         Company company = mapperUtil.convert(companyDto, new Company());
 
         List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndClientVendor_IdAndInvoiceStatus(company, id, InvoiceStatus.APPROVED);
