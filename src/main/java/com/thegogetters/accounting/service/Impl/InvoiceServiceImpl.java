@@ -39,13 +39,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
 
-
-
-
-
-
-
-
     //-----------------------------------DASHBOARD---------------------
 
 
@@ -74,8 +67,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .collect(Collectors.toList());
 
     }
-
-
 
 
     @Override
@@ -123,15 +114,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         return costSummary;
     }
 
-
-
-
-
-
-
     //---------------------------------PURCHASE - SALES INVOICE LIST------------------------------------------------------------------//
-
-
 
     @Override
     public List<InvoiceDTO> findAllInvoicesBelongsToCompany(InvoiceType invoiceType) {
@@ -146,7 +129,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return calculateInvoiceDetails(invoiceList);
     }
-
 
     private List<InvoiceDTO> calculateInvoiceDetails(List<Invoice> invoiceList) {
         List<InvoiceDTO> invoiceDTOList = invoiceList.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDTO()))
