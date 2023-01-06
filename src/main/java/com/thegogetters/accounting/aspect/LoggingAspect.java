@@ -55,7 +55,7 @@ public class LoggingAspect {
 
     @AfterReturning(pointcut = "anyControllerPointCut()")
     public void afterReturningAnyControllerAdvice(JoinPoint joinPoint) {
-        log.info("[Controller Operation 2222]: User -> {}, Method -> {}, Parameters -> {} "
+        log.info("[Controller Operation]: User -> {}, Method -> {}, Parameters -> {} "
                 , getUserName()
                 , joinPoint.getSignature().toShortString()
                 , joinPoint.toShortString());
