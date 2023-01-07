@@ -1,9 +1,13 @@
 package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.custom.exception.AccountingAppException;
+import com.thegogetters.accounting.dto.CompanyDto;
+import com.thegogetters.accounting.dto.InvoiceProductDTO;
 import com.thegogetters.accounting.dto.ProductDTO;
 import com.thegogetters.accounting.entity.Company;
+import com.thegogetters.accounting.entity.InvoiceProduct;
 import com.thegogetters.accounting.entity.Product;
+import com.thegogetters.accounting.enums.InvoiceType;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.CompanyRepository;
 import com.thegogetters.accounting.repository.InvoiceProductRepository;
@@ -30,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository = productRepository;
         this.companyService = companyService;
         this.invoiceProductService = invoiceProductService;
+
     }
 
     @Override
@@ -42,8 +47,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO getProductById(Long id) throws AccountingAppException {
-       Product product = productRepository.findProductById(id).orElseThrow(() -> new AccountingAppException("Product not found"));
-       return mapperUtil.convert(product, new ProductDTO());
+        Product product = productRepository.findProductById(id).orElseThrow(() -> new AccountingAppException("Product not found"));
+        return mapperUtil.convert(product, new ProductDTO());
     }
 
     @Override
@@ -57,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void update(ProductDTO productDTO) throws AccountingAppException {
-        Product product = productRepository.findProductById(productDTO.getId()).orElseThrow(()-> new AccountingAppException("Product not found"));
+        Product product = productRepository.findProductById(productDTO.getId()).orElseThrow(() -> new AccountingAppException("Product not found"));
         ProductDTO convertedProduct = mapperUtil.convert(product, new ProductDTO());
         convertedProduct.setId(product.getId());
         convertedProduct.setCategory(productDTO.getCategory());
@@ -65,45 +70,63 @@ public class ProductServiceImpl implements ProductService {
         convertedProduct.setProductUnit(productDTO.getProductUnit());
         convertedProduct.setLowLimitAlert(productDTO.getLowLimitAlert());
         convertedProduct.setQuantityInStock(productDTO.getQuantityInStock());
+        CompanyDto company = mapperUtil.convert(companyService.getCompanyOfLoggedInUser(), new CompanyDto());
+        convertedProduct.setCompany(company);
         productRepository.save(mapperUtil.convert(convertedProduct, new Product()));
     }
 
     @Override
     public void deleteById(Long id) throws AccountingAppException {
-        Product product = productRepository.findProductById(id).orElseThrow(()-> new AccountingAppException("Product not found"));
+        Product product = productRepository.findProductById(id).orElseThrow(() -> new AccountingAppException("Product not found"));
 
         //check if quantity of product is more than 0, user cannot delete that product.
-            product.setIsDeleted(true);
-            productRepository.save(product);
+        product.setIsDeleted(true);
+        productRepository.save(product);
     }
+
     @Override
     public boolean checkAnyProductExist(Long id) {
         List<Product> products = productRepository.findAllByCategoryId(id);
         return products.size() > 0;
     }
-//    @Override
-//    public boolean isInStock(Long id) {
-//        return productRepository.getQuantityInStock(id) > 0;
-//    }
+
+    @Override
+    public boolean isInStockEnough(InvoiceProductDTO invoiceProductDTO) {
+        int remainingStock = productRepository.findProductByName(invoiceProductDTO.getProduct().getName()).getQuantityInStock();
+        return remainingStock > invoiceProductDTO.getQuantity();
+    }
+
     @Override
     public List<ProductDTO> getAllProductsByCompany() {
         List<Product> products = productRepository.findAllByCompanyId(companyService.getCompanyOfLoggedInUser().getId());
         return products
                 .stream()
-                .map(product-> mapperUtil.convert(product, new ProductDTO()))
+                .map(product -> mapperUtil.convert(product, new ProductDTO()))
                 .collect(Collectors.toList());
     }
+
     @Override
     public boolean checkAnyInvoiceExist(Long id) {
         return invoiceProductService.findInvoiceProductsByProductID(id).size() > 0;
     }
 
     @Override
-    public boolean isNameExist(String name, Long id) throws AccountingAppException {
-        Product product=productRepository.findProductByName(name).orElse(null);
+    public boolean isNameExist(String name, Long id) {
+        Product product=productRepository.findProductByName(name);
         if (product == null) {
-            throw new AccountingAppException("Product not found");
+           return false;
         }
         return !Objects.equals(product.getId(), id);
+    }
+
+    @Override
+    public void updateProductQuantity(InvoiceType invoiceType, InvoiceProduct invoiceProduct) {
+        Product product = invoiceProduct.getProduct();
+        if (invoiceProduct.getInvoice().equals(InvoiceType.SALES)) {
+            product.setQuantityInStock(invoiceProduct.getProduct().getQuantityInStock() - invoiceProduct.getQuantity());
+        } else {
+            product.setQuantityInStock(invoiceProduct.getProduct().getQuantityInStock() + invoiceProduct.getQuantity());
+        }
+        productRepository.save(mapperUtil.convert(product, new Product()));
     }
 }

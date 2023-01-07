@@ -32,4 +32,6 @@ public class ProductDTO {
 
     @NotNull(message = "Please select a category.")
     private CategoryDto category;
+
+    private CompanyDto company;
 }
