@@ -53,20 +53,20 @@ public class LoggingAspect {
                 , exception.getMessage());
     }
 
-    @AfterReturning(pointcut = "anyControllerPointCut()", returning = "results")
-    public void afterReturningAnyControllerAdvice(JoinPoint joinPoint, Object results) {
+    @AfterReturning(pointcut = "anyControllerPointCut()")
+    public void afterReturningAnyControllerAdvice(JoinPoint joinPoint) {
         log.info("[Controller Operation]: User -> {}, Method -> {}, Parameters -> {} "
                 , getUserName()
                 , joinPoint.getSignature().toShortString()
-                , results.toString());
+                , joinPoint.toShortString());
     }
 
-    @AfterReturning(pointcut = "anyServicePointCut()", returning = "results")
-    public void afterReturningAnyServiceAdvice(JoinPoint joinPoint, Object results) {
+    @AfterReturning(pointcut = "anyServicePointCut()")
+    public void afterReturningAnyServiceAdvice(JoinPoint joinPoint) {
         log.info("[Service Operation]: User -> {}, Method -> {}, Parameters -> {} "
                 , getUserName()
                 , joinPoint.getSignature().toShortString()
-                , results.toString());
+                , Arrays.toString(joinPoint.getArgs()));
     }
 
     @Around("anyControllerPointCut() || anyServicePointCut()")
