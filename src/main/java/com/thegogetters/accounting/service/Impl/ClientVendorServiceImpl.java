@@ -6,7 +6,6 @@ import com.thegogetters.accounting.dto.CompanyDto;
 import com.thegogetters.accounting.dto.InvoiceDTO;
 import com.thegogetters.accounting.entity.ClientVendor;
 import com.thegogetters.accounting.entity.Company;
-import com.thegogetters.accounting.entity.Invoice;
 import com.thegogetters.accounting.enums.ClientVendorType;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.ClientVendorRepository;
