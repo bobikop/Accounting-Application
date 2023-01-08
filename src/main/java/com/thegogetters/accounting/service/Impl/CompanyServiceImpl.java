@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.impl;
+package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.CompanyDto;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;

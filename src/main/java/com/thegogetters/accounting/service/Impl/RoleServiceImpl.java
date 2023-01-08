@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.impl;
+package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.RoleDTO;

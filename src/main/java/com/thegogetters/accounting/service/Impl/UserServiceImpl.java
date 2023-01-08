@@ -1,12 +1,9 @@
-package com.thegogetters.accounting.service.impl;
+package com.thegogetters.accounting.service.Impl;
 
 
-import com.thegogetters.accounting.AccountingApplication;
-import com.thegogetters.accounting.config.SecurityConfig;
 import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.UserDTO;
 import com.thegogetters.accounting.entity.Company;
-import com.thegogetters.accounting.entity.Product;
 import com.thegogetters.accounting.entity.User;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.UserRepository;
@@ -17,8 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

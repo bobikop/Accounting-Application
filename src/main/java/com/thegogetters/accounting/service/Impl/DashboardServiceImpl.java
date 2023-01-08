@@ -1,21 +1,15 @@
-package com.thegogetters.accounting.service.impl;
+package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.client.ExchangeClient;
 import com.thegogetters.accounting.dto.*;
-import com.thegogetters.accounting.enums.InvoiceStatus;
-import com.thegogetters.accounting.enums.InvoiceType;
-import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.service.DashboardService;
-import com.thegogetters.accounting.service.InvoiceProductService;
 import com.thegogetters.accounting.service.InvoiceService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {

@@ -1,4 +1,4 @@
-package com.thegogetters.accounting.service.impl;
+package com.thegogetters.accounting.service.Impl;
 
 import com.thegogetters.accounting.service.ReportingService;
 import org.springframework.stereotype.Service;
