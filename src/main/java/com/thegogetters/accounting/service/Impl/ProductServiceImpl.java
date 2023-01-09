@@ -9,8 +9,6 @@ import com.thegogetters.accounting.entity.InvoiceProduct;
 import com.thegogetters.accounting.entity.Product;
 import com.thegogetters.accounting.enums.InvoiceType;
 import com.thegogetters.accounting.mapper.MapperUtil;
-import com.thegogetters.accounting.repository.CompanyRepository;
-import com.thegogetters.accounting.repository.InvoiceProductRepository;
 import com.thegogetters.accounting.repository.ProductRepository;
 import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.InvoiceProductService;
@@ -29,12 +27,11 @@ public class ProductServiceImpl implements ProductService {
     private final CompanyService companyService;
     private final InvoiceProductService invoiceProductService;
 
-    public ProductServiceImpl(MapperUtil mapperUtil, ProductRepository productRepository, CompanyRepository companyRepository, CompanyService companyService, InvoiceProductRepository invoiceProductRepository, InvoiceProductService invoiceProductService) {
+    public ProductServiceImpl(MapperUtil mapperUtil, ProductRepository productRepository, CompanyService companyService, InvoiceProductService invoiceProductService) {
         this.mapperUtil = mapperUtil;
         this.productRepository = productRepository;
         this.companyService = companyService;
         this.invoiceProductService = invoiceProductService;
-
     }
 
     @Override
@@ -98,7 +95,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO> getAllProductsByCompany() {
-        List<Product> products = productRepository.findAllByCompanyId(companyService.getCompanyOfLoggedInUser().getId());
+     Sort sort =  Sort.by("company_id","category_id", "name").ascending();
+        List<Product> products = productRepository.findAllByCompanyId(companyService.getCompanyOfLoggedInUser().getId(), sort);
         return products
                 .stream()
                 .map(product -> mapperUtil.convert(product, new ProductDTO()))
