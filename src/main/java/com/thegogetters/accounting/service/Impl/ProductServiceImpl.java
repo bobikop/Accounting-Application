@@ -27,7 +27,8 @@ public class ProductServiceImpl implements ProductService {
     private final CompanyService companyService;
     private final InvoiceProductService invoiceProductService;
 
-    public ProductServiceImpl(MapperUtil mapperUtil, ProductRepository productRepository, CompanyService companyService, InvoiceProductService invoiceProductService) {
+    public ProductServiceImpl(MapperUtil mapperUtil, ProductRepository productRepository, CompanyService companyService,
+                              InvoiceProductService invoiceProductService) {
         this.mapperUtil = mapperUtil;
         this.productRepository = productRepository;
         this.companyService = companyService;
@@ -66,6 +67,8 @@ public class ProductServiceImpl implements ProductService {
         convertedProduct.setName(productDTO.getName());
         convertedProduct.setProductUnit(productDTO.getProductUnit());
         convertedProduct.setLowLimitAlert(productDTO.getLowLimitAlert());
+        Integer quantityInStock = productDTO.getQuantityInStock() == null ? product.getQuantityInStock() :  productDTO.getQuantityInStock();
+        convertedProduct.setQuantityInStock(quantityInStock);
         CompanyDto company = mapperUtil.convert(companyService.getCompanyOfLoggedInUser(), new CompanyDto());
         convertedProduct.setCompany(company);
         productRepository.save(mapperUtil.convert(convertedProduct, new Product()));
