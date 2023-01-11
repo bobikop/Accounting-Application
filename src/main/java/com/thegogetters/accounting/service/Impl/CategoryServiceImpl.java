@@ -3,6 +3,7 @@ package com.thegogetters.accounting.service.Impl;
 import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.CategoryDto;
 import com.thegogetters.accounting.dto.CompanyDto;
+import com.thegogetters.accounting.dto.ProductDTO;
 import com.thegogetters.accounting.entity.Category;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.CategoryRepository;
@@ -37,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(category -> mapperUtil.convert(category, new CategoryDto())).toList();
 
         for (CategoryDto category : categoryList) {
-            if(productService.checkAnyProductExist(category.getId())) category.setHasProduct(true);
+            if(getQuantityInStockByCategoryId(category.getId()) > 0) category.setHasProduct(true);
         }
         return categoryList;
     }
@@ -86,8 +87,19 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto checkAndSetProductStatus(Long id) throws AccountingAppException {
         CategoryDto categoryDto = findById(id);
-        if(productService.checkAnyProductExist(categoryDto.getId())) categoryDto.setHasProduct(true);
+        if(getQuantityInStockByCategoryId(id) > 0) categoryDto.setHasProduct(true);
+        else categoryDto.setHasProduct(false);
         return categoryDto;
+    }
+
+    @Override
+    public int getQuantityInStockByCategoryId(Long id) {
+        List<ProductDTO> productDTOList = productService.getAllProductsByCategoryId(id);
+        int sumOfQuantity = 0;
+        for (ProductDTO productDTO : productDTOList) {
+            sumOfQuantity += productDTO.getQuantityInStock();
+        }
+        return sumOfQuantity;
     }
 
 

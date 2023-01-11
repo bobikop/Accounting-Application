@@ -20,4 +20,6 @@ public interface ProductService {
     boolean checkAnyInvoiceExist(Long id);
     boolean isNameExist(String name, Long id);
     void updateProductQuantity(InvoiceType invoiceType, InvoiceProduct invoiceProduct);
+    int getQuantityById(Long id);
+    List<ProductDTO> getAllProductsByCategoryId(Long id);
 }
