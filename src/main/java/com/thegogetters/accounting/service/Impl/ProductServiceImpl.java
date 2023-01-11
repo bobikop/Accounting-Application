@@ -126,4 +126,16 @@ public class ProductServiceImpl implements ProductService {
         }
         productRepository.save(mapperUtil.convert(product, new Product()));
     }
+
+    @Override
+    public int getQuantityById(Long id) {
+        return productRepository.getQuantityInStock(id);
+    }
+
+    @Override
+    public List<ProductDTO> getAllProductsByCategoryId(Long id) {
+        return productRepository.findAllByCategoryId(id). stream()
+                .map(product -> mapperUtil.convert(product, new ProductDTO()))
+                .collect(Collectors.toList());
+    }
 }

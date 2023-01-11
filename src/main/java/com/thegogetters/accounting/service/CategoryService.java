@@ -19,4 +19,6 @@ public interface CategoryService {
     boolean ifCategoryExist(String description);
 
     CategoryDto checkAndSetProductStatus(Long id) throws AccountingAppException;
+
+    int getQuantityInStockByCategoryId(Long id);
 }
