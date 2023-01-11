@@ -3,6 +3,7 @@ package com.thegogetters.accounting.controller;
 import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.ClientVendorDto;
 import com.thegogetters.accounting.enums.ClientVendorType;
+import com.thegogetters.accounting.service.AddressService;
 import com.thegogetters.accounting.service.ClientVendorService;
 import com.thegogetters.accounting.service.InvoiceService;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @RequestMapping("/clientVendors")
@@ -21,10 +23,14 @@ public class ClientVendorController {
     private final ClientVendorService clientVendorService;
     private final InvoiceService invoiceService;
 
-    public ClientVendorController(ClientVendorService clientVendorService, InvoiceService invoiceService) {
+    private final AddressService addressService;
+
+    public ClientVendorController(ClientVendorService clientVendorService, InvoiceService invoiceService, AddressService addressService) {
         this.clientVendorService = clientVendorService;
         this.invoiceService = invoiceService;
+        this.addressService = addressService;
     }
+
 
     @GetMapping("/list")
     public String listAll(Model model) {
@@ -37,6 +43,12 @@ public class ClientVendorController {
     public String create(Model model){
         model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
         model.addAttribute("newClientVendor", new ClientVendorDto());
+
+        List<String> countryNames = addressService.findAllCountries();
+
+        model.addAttribute("countries", countryNames);
+
+
         return "clientVendor/clientVendor-create";
     }
 
@@ -60,6 +72,9 @@ public class ClientVendorController {
     public String edit(@PathVariable("id") Long id, Model model) throws AccountingAppException {
         model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
         model.addAttribute("clientVendor", clientVendorService.findById(id));
+
+        List<String> countryNames = addressService.findAllCountries();
+        model.addAttribute("countries", countryNames);
         return "clientVendor/clientVendor-update";
     }
 
@@ -73,6 +88,9 @@ public class ClientVendorController {
         if(bindingResult.hasErrors()){
             model.addAttribute("clientVendor", clientVendorDto);
             model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
+
+            List<String> countryNames = addressService.findAllCountries();
+            model.addAttribute("countries", countryNames);
 
             return "clientVendor/clientVendor-update";
         }
