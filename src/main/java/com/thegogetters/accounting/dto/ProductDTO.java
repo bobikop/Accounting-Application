@@ -1,16 +1,15 @@
 package com.thegogetters.accounting.dto;
 
 import com.thegogetters.accounting.enums.ProductUnit;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import javax.validation.constraints.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class ProductDTO {
 
     private Long id;

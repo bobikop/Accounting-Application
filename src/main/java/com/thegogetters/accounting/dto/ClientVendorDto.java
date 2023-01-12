@@ -1,10 +1,7 @@
 package com.thegogetters.accounting.dto;
 
 import com.thegogetters.accounting.enums.ClientVendorType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -13,6 +10,7 @@ import javax.validation.constraints.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ClientVendorDto {
 
     private Long id;

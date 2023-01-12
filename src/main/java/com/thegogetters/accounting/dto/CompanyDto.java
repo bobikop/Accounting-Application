@@ -11,6 +11,7 @@ import java.security.PrivateKey;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class CompanyDto {
 
     private Long id;
