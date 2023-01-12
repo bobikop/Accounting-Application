@@ -10,6 +10,7 @@ import com.thegogetters.accounting.enums.ClientVendorType;
 import com.thegogetters.accounting.mapper.MapperUtil;
 import com.thegogetters.accounting.repository.ClientVendorRepository;
 import com.thegogetters.accounting.repository.InvoiceRepository;
+import com.thegogetters.accounting.service.AddressService;
 import com.thegogetters.accounting.service.ClientVendorService;
 import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.InvoiceService;
@@ -30,13 +31,18 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     private final InvoiceRepository invoiceRepository;
 
 
+    //**************
+    private final AddressService addressService;
+
+
     public ClientVendorServiceImpl(ClientVendorRepository clientVendorRepository, MapperUtil mapperUtil,
-                                   CompanyService companyService, @Lazy InvoiceService invoiceService, InvoiceRepository invoiceRepository) {
+                                   CompanyService companyService, @Lazy InvoiceService invoiceService, InvoiceRepository invoiceRepository, AddressService addressService) {
         this.clientVendorRepository = clientVendorRepository;
         this.mapperUtil = mapperUtil;
         this.companyService = companyService;
         this.invoiceService = invoiceService;
         this.invoiceRepository = invoiceRepository;
+        this.addressService = addressService;
     }
 
     @Override
@@ -52,6 +58,12 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     public void update(ClientVendorDto clientVendorDto) throws AccountingAppException {
         ClientVendor clientVendor = clientVendorRepository.findById(clientVendorDto.getId()).orElseThrow(()-> new AccountingAppException("ClientVendor not found"));
         clientVendor.setClientVendorType(clientVendorDto.getClientVendorType());
+
+        //***********************************
+        addressService.update(clientVendor.getAddress().getId(), clientVendorDto.getAddress());
+        //***********************************
+
+
 
         CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
         Company company = mapperUtil.convert(companyDto, new Company());
@@ -109,7 +121,6 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     @Override
     public void save(ClientVendorDto clientVendorDto) {
         ClientVendor clientVendor = mapperUtil.convert(clientVendorDto, new ClientVendor());
-
         CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
         Company company = mapperUtil.convert(companyDto, new Company());
         clientVendor.setCompany(company);

@@ -169,7 +169,8 @@ public class InvoiceSalesController {
 
 
         if(!invoiceProductService.check_productQuantity_if_it_is_enough_to_sell(invoiceProductDTO)){
-            redirectAttributes.addFlashAttribute("error","Quantity of " + invoiceProductDTO.getProduct().getName() + " is not enough to sell!");
+            redirectAttributes.addFlashAttribute("error","Quantity of "
+                    + invoiceProductDTO.getProduct().getName() + " is not enough to sell!");
             return "redirect:/salesInvoices/update/" + invoiceId;
         }
 

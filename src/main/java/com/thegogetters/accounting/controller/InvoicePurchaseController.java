@@ -8,6 +8,7 @@ import com.thegogetters.accounting.dto.ProductDTO;
 import com.thegogetters.accounting.enums.ClientVendorType;
 import com.thegogetters.accounting.enums.InvoiceType;
 import com.thegogetters.accounting.service.ClientVendorService;
+import com.thegogetters.accounting.service.Impl.EmailSenderService;
 import com.thegogetters.accounting.service.InvoiceProductService;
 import com.thegogetters.accounting.service.InvoiceService;
 import com.thegogetters.accounting.service.ProductService;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -33,11 +35,17 @@ public class InvoicePurchaseController {
 
     private final InvoiceProductService invoiceProductService;
 
-    public InvoicePurchaseController(InvoiceService invoiceService, ClientVendorService clientVendorService, ProductService productService, InvoiceProductService invoiceProductService) {
+
+
+    private final EmailSenderService emailSenderService;
+
+
+    public InvoicePurchaseController(InvoiceService invoiceService, ClientVendorService clientVendorService, ProductService productService, InvoiceProductService invoiceProductService, EmailSenderService emailSenderService) {
         this.invoiceService = invoiceService;
         this.clientVendorService = clientVendorService;
         this.productService = productService;
         this.invoiceProductService = invoiceProductService;
+        this.emailSenderService = emailSenderService;
     }
 
 
@@ -234,10 +242,26 @@ public class InvoicePurchaseController {
         model.addAttribute("invoiceProducts", invoiceProductDTOS);
 
 
+
+
+
         return "/invoice/invoice_print";
     }
 
 
+
+    @GetMapping("/sendEmail/{id}")
+    public String sendEmail(@PathVariable("id") Long invoiceId) throws MessagingException {
+
+        //**************************************EMAIL SENDING
+
+        emailSenderService.sendEmailWithAttachment("ayhanhasancan55@gmail.com","This the email body ,This is the email subject", "",
+                "C:\\Users\\ayhan\\OneDrive\\Masaüstü\\Payment Success.pdf");
+
+        //**************************************EMAIL SENDING
+
+        return "redirect:/purchaseInvoices/print/" + invoiceId;
+    }
 
 
 

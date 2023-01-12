@@ -194,6 +194,8 @@
                                                             <div class="form-group">
                                                                 <div class="controls">
                                                                     <label>Country</label>
+
+                                                                    <!--
                                                                     <input type="text" th:field="*{address.country}"
                                                                            placeholder="State"
                                                                            class="form-control">
@@ -203,7 +205,15 @@
                                                                                 th:each="err : ${#fields.errors('address.country')}"
                                                                                 th:text="${err}"></li>
                                                                         </ul>
-                                                                    </div>
+                                                                    </div>  -->
+
+                                                                    <select id="Country" class="form-control"
+                                                                            th:field="*{address.country}">
+                                                                        <option th:each="country:${countries}"
+                                                                                th:value="${country}"
+                                                                                th:text="${country}"></option>
+                                                                    </select>
+
                                                                 </div>
                                                             </div>
                                                         </div>
