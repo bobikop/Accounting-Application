@@ -33,12 +33,12 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
+/*    @Override
     public List<UserDTO> listAllUsers() {
         List<User> userList = userRepository.findAll();
         return userList.stream().map(user -> mapperUtil.convert(user, new UserDTO()))
                 .collect(Collectors.toList());
-    }
+    }*/
 
     @Override
     public void save(UserDTO userDTO) {
@@ -60,6 +60,13 @@ public class UserServiceImpl implements UserService {
     public UserDTO findByUserName(String username) {
         return mapperUtil.convert(userRepository.findByUsername(username), new UserDTO());
     }
+
+//    @Override
+//    public UserDTO findByUserName(String username) {
+//        User user = userRepository.findByUsername(username);
+//        return mapperUtil.convert(user, new UserDTO());
+//
+//    }
 
     @Override
     public UserDTO findById(Long id) throws AccountingAppException {
