@@ -87,8 +87,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto checkAndSetProductStatus(Long id) throws AccountingAppException {
         CategoryDto categoryDto = findById(id);
-        if(getQuantityInStockByCategoryId(id) > 0) categoryDto.setHasProduct(true);
-        else categoryDto.setHasProduct(false);
+        categoryDto.setHasProduct(getQuantityInStockByCategoryId(id) > 0);
         return categoryDto;
     }
 
