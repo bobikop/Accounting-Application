@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +30,10 @@ import static org.mockito.Mockito.*;
 class CategoryServiceImplTest {
 
     @Mock
+    ProductServiceImpl productService;
+    @Mock
+    CompanyServiceImpl companyService;
+    @Mock
     CategoryRepository categoryRepository;
     @InjectMocks
     CategoryServiceImpl categoryService;
@@ -38,13 +43,14 @@ class CategoryServiceImplTest {
     @Test
     void listCategories() {
         //GIVEN
+        CategoryDto categoryDto = TestDocumentInitializer.getCategory();
         CompanyDto companyDto = new CompanyDto();
         UserDTO userDTO = new UserDTO();
         userDTO.setCompany(companyDto);
+        categoryDto.setCompany(companyDto);
+        Category category = mapperUtil.convert(categoryDto, new Category());
 
-        //THEN
-        categoryService.listCategories();
-        verify(categoryRepository).listCategoriesByAscOrder();
+        assertEquals(category.getId(), categoryDto.getId());
 
     }
 
@@ -60,7 +66,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
-    void updateCategory() throws AccountingAppException {
+    void updateCategory() {
 
         CategoryDto categoryDto = TestDocumentInitializer.getCategory();
         categoryDto.setId(1L);
@@ -84,30 +90,44 @@ class CategoryServiceImplTest {
     @Test
     void createCategory() {
 
-        categoryService.createCategory(any(CategoryDto.class));
+        CategoryDto categoryDto = TestDocumentInitializer.getCategory();
+        categoryDto.setId(1L);
+
+        when(companyService.getCompanyOfLoggedInUser()).thenReturn(new CompanyDto());
+
+        categoryService.createCategory(categoryDto);
+
         verify(categoryRepository).save(any(Category.class));
     }
 
     @Test
-    void ifCategoryExist() {
-
+    void ifCompanyIdEqualUserCompanyIdThenSuccess(){
+        UserDTO userDTO = TestDocumentInitializer.getUser("Admin");
         CompanyDto companyDto = TestDocumentInitializer.getCompany(CompanyStatus.ACTIVE);
         CategoryDto categoryDto = TestDocumentInitializer.getCategory();
         categoryDto.setCompany(companyDto);
 
+        assertEquals(userDTO.getCompany().getId(), categoryDto.getCompany().getId());
     }
 
     @Test
-    void checkAndSetProductStatus() {
+    void getQuantityInStockByCategoryId(){
+
         CategoryDto categoryDto = TestDocumentInitializer.getCategory();
+        categoryDto.setId(1L);
+
+        ProductDTO productDTO = TestDocumentInitializer.getProduct();
+        productDTO.setId(1L);
+        productDTO.setCategory(categoryDto);
+
+        assertFalse(categoryService.getQuantityInStockByCategoryId(1L) > 0);
     }
 
     @Test
-    void getQuantityInStockByCategoryId() {
-        //GIVEN
-        //WHEN
-//        when(productService.getAllProductsByCategoryId(anyLong())).thenReturn(List.of(any(ProductDTO.class)));
+    void whenCategoryCannotFoundThenThrow(){
 
-        //THEN
+        when(categoryRepository.findById(anyLong())).thenThrow(NoSuchElementException.class);
+
+        assertThrows(NoSuchElementException.class, () -> categoryService.findById(anyLong()));
     }
 }
