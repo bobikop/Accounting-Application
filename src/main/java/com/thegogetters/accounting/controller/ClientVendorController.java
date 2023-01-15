@@ -40,14 +40,12 @@ public class ClientVendorController {
     //*******************************************************************************************
 
     @GetMapping("/create")
-    public String create(Model model){
+    public String create(@Valid Model model){
         model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
         model.addAttribute("newClientVendor", new ClientVendorDto());
 
         List<String> countryNames = addressService.findAllCountries();
-
         model.addAttribute("countries", countryNames);
-
 
         return "clientVendor/clientVendor-create";
     }
@@ -55,10 +53,15 @@ public class ClientVendorController {
     //*******************************************************************************************
 
     @PostMapping("/create")
-    public String save(@Valid @ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model){
+    public String save(@Valid @ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto,
+                       BindingResult bindingResult, Model model){
 
         if(bindingResult.hasErrors()){
             model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
+
+            List<String> countryNames = addressService.findAllCountries();
+            model.addAttribute("countries", countryNames);
+
             return "clientVendor/clientVendor-create";
         }
 
@@ -82,7 +85,8 @@ public class ClientVendorController {
 
 
     @PostMapping("/update/{id}")
-    public String update(/*@Valid */@ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model) throws AccountingAppException {
+    public String update(@Valid @ModelAttribute("clientVendor") ClientVendorDto clientVendorDto,
+                         BindingResult bindingResult, Model model) throws AccountingAppException {
 
 
         if(bindingResult.hasErrors()){
@@ -106,7 +110,7 @@ public class ClientVendorController {
     public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws AccountingAppException {
         if(clientVendorService.isClientVendorCanBeDeleted(id)){
             redirectAttributes.addFlashAttribute("error", "Can not be deleted..." +
-                    "You have invoices with this client/vendor");
+                    "You have invoices with this client/vendor.");
             return "redirect:/clientVendors/list";
         }
         clientVendorService.deleteById(id);

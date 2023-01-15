@@ -22,16 +22,15 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
     private final InvoiceProductRepository invoiceProductRepository;
     private final MapperUtil mapperUtil;
-
-
-    private final InvoiceService invoiceService;
     private final CompanyService companyService;
+    private final InvoiceService invoiceService;
 
-    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, MapperUtil mapperUtil, CompanyService companyService, @Lazy InvoiceService invoiceService, CompanyService companyService1) {
+    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, MapperUtil mapperUtil,
+                                     CompanyService companyService, @Lazy InvoiceService invoiceService) {
         this.invoiceProductRepository = invoiceProductRepository;
         this.mapperUtil = mapperUtil;
-        this.invoiceService = invoiceService;
-        this.companyService = companyService1;
+        this.companyService = companyService;
+        this.invoiceService = invoiceService;;
     }
 
 
@@ -56,6 +55,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
 
     //************************STOCK REPORT++++++++++++++
+
 
 
 

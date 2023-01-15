@@ -34,7 +34,7 @@ public class AddressDto {
     @Size(min = 2,max = 50)
     private String state;
 
-    @NotBlank
+    @NotBlank(message = "Country is required field.")
     @Size(min = 2, max = 50)
     private String country;
 
