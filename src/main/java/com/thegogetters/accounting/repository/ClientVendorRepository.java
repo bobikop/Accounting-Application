@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Repository
-public interface ClientVendorRepository extends JpaRepository<ClientVendor, Long> {
+public interface ClientVendorRepository extends JpaRepository < ClientVendor, Long > {
 
 
     List<ClientVendor> findAllByClientVendorTypeAndCompany(ClientVendorType clientVendorType, Company company);
