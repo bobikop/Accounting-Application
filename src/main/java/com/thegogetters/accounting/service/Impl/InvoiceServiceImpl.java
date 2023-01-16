@@ -4,6 +4,7 @@ import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.*;
 import com.thegogetters.accounting.entity.Company;
 import com.thegogetters.accounting.entity.Invoice;
+import com.thegogetters.accounting.entity.InvoiceProduct;
 import com.thegogetters.accounting.enums.InvoiceStatus;
 import com.thegogetters.accounting.enums.InvoiceType;
 import com.thegogetters.accounting.mapper.MapperUtil;
@@ -48,25 +49,16 @@ public class InvoiceServiceImpl implements InvoiceService {
     public List<InvoiceDTO> lastThreeTransactions() {
 
         CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
+        Company company = mapperUtil.convert(companyDto, new Company());
 
-        return invoiceProductService.FindAllInvoiceProducts().stream()
-                .filter(invoiceProduct -> invoiceProduct.getInvoice().getCompany().getId().equals(companyDto.getId()))
-                .filter(invoiceProduct -> invoiceProduct.getInvoice().getInvoiceStatus().equals(InvoiceStatus.APPROVED))
-                .map(invoiceProduct -> {
-                    BigDecimal tax = BigDecimal.valueOf(invoiceProduct.getTax());
+        List<Invoice> invoiceList = invoiceRepository.findAllByCompanyAndInvoiceStatus(company, InvoiceStatus.APPROVED);
 
-                    InvoiceDTO invoiceDTO = new InvoiceDTO();
-                    invoiceDTO.setInvoiceNo(invoiceProduct.getInvoice().getInvoiceNo());
-                    invoiceDTO.setClientVendor(mapperUtil.convert(invoiceProduct.getInvoice().getClientVendor(), new ClientVendorDto()));
-                    invoiceDTO.setDate(invoiceProduct.getInvoice().getDate());
-                    invoiceDTO.setPrice(invoiceProduct.getPrice().setScale(2, RoundingMode.CEILING));
-                    invoiceDTO.setTax(invoiceProduct.getTax());
-                    invoiceDTO.setTotal(invoiceProduct.getPrice().multiply(tax.divide(BigDecimal.valueOf(100))).add(invoiceProduct.getPrice()).setScale(2,RoundingMode.CEILING));
-                    return invoiceDTO;
-                })
-                .sorted(comparing(InvoiceDTO::getDate).reversed())
-                .limit(3)
+        List<InvoiceDTO> invoiceDTOS = calculateInvoiceDetails(invoiceList);
+
+
+        return invoiceDTOS.stream().sorted(comparing(InvoiceDTO::getDate).reversed())
                 .collect(Collectors.toList());
+
 
     }
 
