@@ -23,6 +23,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     //********************************* Dashboard
 
     List<Invoice> findAllByCompanyAndInvoiceStatusAndInvoiceType(Company company ,InvoiceStatus invoiceStatus, InvoiceType invoiceType);
+    List<Invoice> findAllByCompanyAndInvoiceStatus(Company company ,InvoiceStatus invoiceStatus);
+
 
     //*********************************
 
