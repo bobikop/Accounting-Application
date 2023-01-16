@@ -50,12 +50,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void updateCategory(CategoryDto categoryDto) throws AccountingAppException {
+    public CategoryDto updateCategory(CategoryDto categoryDto) throws AccountingAppException {
         Category category = categoryRepository.findById(categoryDto.getId()).orElseThrow(()-> new AccountingAppException("Category not found"));
         CategoryDto toBeConverted = mapperUtil.convert(category, new CategoryDto());
         toBeConverted.setId(category.getId());
         toBeConverted.setDescription(categoryDto.getDescription());
-        categoryRepository.save(mapperUtil.convert(toBeConverted, new Category()));
+        Category convertedCategory = mapperUtil.convert(toBeConverted, new Category());
+        if(!ifCategoryExist(convertedCategory.getDescription())) {
+            categoryRepository.save(convertedCategory);
+            return null;
+        }
+        else return categoryDto;
     }
 
     @Override
