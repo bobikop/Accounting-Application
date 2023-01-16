@@ -80,9 +80,9 @@ class CompanyServiceImplTest {
     @Test
     void WHEN_FIND_BY_ID_THEN_FAIL() {
 
-        when(companyRepository.findById(anyLong())).thenThrow(NoSuchElementException.class);
-
-        assertThrows(NoSuchElementException.class, () -> companyService.findById(anyLong()));
+        //when(companyRepository.findById(anyLong())).thenThrow(RuntimeException.class);
+        doThrow(AccountingAppException.class).when(companyRepository).findById(anyLong());
+        assertThrows(AccountingAppException.class, () -> companyService.findById(anyLong()));
 
 
     }
