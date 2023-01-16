@@ -10,7 +10,7 @@ public interface CategoryService {
 
     CategoryDto findById(Long id) throws AccountingAppException;
 
-    void updateCategory(CategoryDto categoryDto) throws AccountingAppException;
+    CategoryDto updateCategory(CategoryDto categoryDto) throws AccountingAppException;
 
     void deleteCategory(Long id) throws AccountingAppException;
 
