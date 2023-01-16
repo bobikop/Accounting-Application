@@ -60,13 +60,18 @@ public class CategoryController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateCategory(@Valid @ModelAttribute("category") CategoryDto category, BindingResult bindingResult, Model model) throws AccountingAppException {
+    public String updateCategory(@Valid @ModelAttribute("category") CategoryDto category, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) throws AccountingAppException {
 
         if(bindingResult.hasErrors()){
 
             model.addAttribute("category", category);
 
             return "/category/category-update";
+        }
+
+        if (categoryService.updateCategory(category) != null){
+            redirectAttributes.addFlashAttribute("error",category.getDescription()+" category already exists");
+            return "redirect:/categories/list";
         }
 
         categoryService.updateCategory(category);

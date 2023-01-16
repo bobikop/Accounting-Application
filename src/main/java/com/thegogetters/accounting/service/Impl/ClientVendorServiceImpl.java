@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,19 +57,19 @@ public class ClientVendorServiceImpl implements ClientVendorService {
 
     @Override
     public void update(ClientVendorDto clientVendorDto) throws AccountingAppException {
-        ClientVendor clientVendor = clientVendorRepository.findById(clientVendorDto.getId()).orElseThrow(()-> new AccountingAppException("ClientVendor not found"));
+        ClientVendor clientVendor = clientVendorRepository.findById(clientVendorDto.getId())
+                .orElseThrow(()-> new AccountingAppException("ClientVendor not found"));
         clientVendor.setClientVendorType(clientVendorDto.getClientVendorType());
 
         //***********************************
         addressService.update(clientVendor.getAddress().getId(), clientVendorDto.getAddress());
         //***********************************
 
-
-
         CompanyDto companyDto = companyService.getCompanyOfLoggedInUser();
-        Company company = mapperUtil.convert(companyDto, new Company());
 
+        Company company = mapperUtil.convert(companyDto, new Company());
         ClientVendor convert = mapperUtil.convert(clientVendorDto, new ClientVendor());
+
         convert.setId(clientVendorDto.getId());
         convert.setCompany(company);
 
@@ -114,7 +115,8 @@ public class ClientVendorServiceImpl implements ClientVendorService {
 
     @Override
     public ClientVendorDto findById(long id) throws AccountingAppException {
-        ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow(()-> new AccountingAppException("ClientVendor not found"));
+        ClientVendor clientVendor = clientVendorRepository.findById(id)
+                .orElseThrow(()-> new AccountingAppException("ClientVendor not found"));
         return mapperUtil.convert(clientVendor, new ClientVendorDto());
     }
 

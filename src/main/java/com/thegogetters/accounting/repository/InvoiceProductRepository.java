@@ -23,6 +23,9 @@ public interface InvoiceProductRepository extends JpaRepository<InvoiceProduct,L
     //************************STOCK REPORT++++++++++++++
 
 
+
+
+
     List<InvoiceProduct> findAll();
     InvoiceProduct findByInvoice_Id(Long id);
     List<InvoiceProduct> findAllByInvoice_Id(Long id);
