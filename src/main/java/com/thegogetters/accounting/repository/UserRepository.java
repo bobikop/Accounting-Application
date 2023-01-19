@@ -21,14 +21,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //------------------------------------------------------------------------
     List<User> findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription(String role, Company company);
 
-//    @Query("SELECT u FROM User u WHERE u.role =?1 and u.company.title = ?2 order by u.company.title, u.role.description asc")
-//    List<User> getRoleCompany(String role, Company company);
-
-    //---------------------------------------
-
     List<User> findAllByCompanyOrderByRoleDescription(Company company);
 
     List<User> findAllByRoleDescriptionOrderByCompanyTitle(String role);
+
+
+
 
 
 

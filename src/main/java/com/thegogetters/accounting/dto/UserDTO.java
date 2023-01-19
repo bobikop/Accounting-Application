@@ -32,7 +32,6 @@ public class UserDTO {
     private String lastname;
 
     @NotBlank (message = "Phone number is required field.")
-//    @Pattern(regexp = "^\\d{10}$", message = "Phone Number is required field and may be in any valid phone number format.")
     @Pattern(regexp = "^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$"
             + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?){2}\\d{3}$"
             + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?)(\\d{2}[ ]?){2}\\d{2}$", message = "Phone Number is required field and may be in any valid phone number format.")
@@ -42,10 +41,16 @@ public class UserDTO {
 
     @NotNull(message = "Please select a customer.")
     private CompanyDto company;
-
     private boolean isOnlyAdmin;
+
+    public boolean isOnlyAdmin() {
+        return isOnlyAdmin;
+    }
 
     public void setOnlyAdmin(boolean onlyAdmin) {
         isOnlyAdmin = onlyAdmin;
     }
+
+
+
 }

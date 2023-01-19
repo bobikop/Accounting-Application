@@ -1,18 +1,20 @@
 package com.thegogetters.accounting.controller;
 
 import com.thegogetters.accounting.custom.exception.AccountingAppException;
+import com.thegogetters.accounting.dto.RoleDTO;
 import com.thegogetters.accounting.dto.UserDTO;
-import com.thegogetters.accounting.enums.ClientVendorType;
 import com.thegogetters.accounting.service.CompanyService;
 import com.thegogetters.accounting.service.RoleService;
+import com.thegogetters.accounting.service.SecurityService;
 import com.thegogetters.accounting.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @RequestMapping("/users")
@@ -21,17 +23,14 @@ public class UserController {
     private final UserService userService;
     private final RoleService roleService;
     private final CompanyService companyService;
+    private final SecurityService securityService;
 
-    public UserController(UserService userService, RoleService roleService, CompanyService companyService) {
+    public UserController(UserService userService, RoleService roleService, CompanyService companyService, SecurityService securityService) {
         this.userService = userService;
         this.roleService = roleService;
         this.companyService = companyService;
+        this.securityService = securityService;
     }
-
- /*   @ModelAttribute
-    public void commonAttributes(Model model){
-    }*/
-
 
     @GetMapping("/list")
     public String listAllUsers(Model model) throws AccountingAppException {
@@ -68,14 +67,30 @@ public class UserController {
 
 
     @GetMapping("/update/{id}")
-    public String editUser(@PathVariable ("id") Long id, Model model) throws AccountingAppException {
+    public String editUser(@PathVariable ("id") Long id, RedirectAttributes redirectAttributes, Model model)  {
 
-        model.addAttribute("user",userService.findById(id));
-        model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
+        UserDTO loggedInUser = securityService.getLoggedInUser();
+        UserDTO userDTO = userService.findById(id);
+
+        if (userDTO.isOnlyAdmin()) {
+            String text = "This user is the only admin of" + userDTO.getCompany().getTitle() + "company. You can't change his/her company";
+            redirectAttributes.addFlashAttribute("text", text);
+            model.addAttribute("user", text);
+        }
+
+        model.addAttribute("user", userDTO);
         model.addAttribute("companies", companyService.listAllByUser());
+        model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
 
+        if (userDTO.getUsername().equals(loggedInUser.getUsername())) {
+            model.addAttribute("userRoles", new RoleDTO(2L, "Admin"));
+        }else{
+            model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
+        }
         return "user/user-update";
     }
+
+
 
 
     @PostMapping("/update/{id}")

@@ -38,7 +38,8 @@ public class UserServiceImpl implements UserService {
         List<User> userList = userRepository.findAll();
         return userList.stream().map(user -> mapperUtil.convert(user, new UserDTO()))
                 .collect(Collectors.toList());
-    }*/
+    }
+*/
 
     @Override
     public void save(UserDTO userDTO) {
@@ -60,13 +61,6 @@ public class UserServiceImpl implements UserService {
     public UserDTO findByUserName(String username) {
         return mapperUtil.convert(userRepository.findByUsername(username), new UserDTO());
     }
-
-//    @Override
-//    public UserDTO findByUserName(String username) {
-//        User user = userRepository.findByUsername(username);
-//        return mapperUtil.convert(user, new UserDTO());
-//
-//    }
 
     @Override
     public UserDTO findById(Long id) throws AccountingAppException {
@@ -93,7 +87,6 @@ public class UserServiceImpl implements UserService {
                     .collect(Collectors.toList());
         }
     }
-
     @Override
     public void deleteById(Long id) throws AccountingAppException {
         User user = userRepository.findById(id).orElseThrow(() -> new AccountingAppException("User not found"));
@@ -107,7 +100,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUsername(username);
     }
 
-    private boolean isOnlyAdmin(UserDTO userDTO){
+    @Override
+    public boolean isOnlyAdmin(UserDTO userDTO){
 
         Company company = mapperUtil.convert(userDTO.getCompany(), new Company());
         List<User> admins = userRepository.findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription("Admin",company);
