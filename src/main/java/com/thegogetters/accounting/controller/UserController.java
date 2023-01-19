@@ -72,11 +72,11 @@ public class UserController {
         UserDTO loggedInUser = securityService.getLoggedInUser();
         UserDTO userDTO = userService.findById(id);
 
-        if (userDTO.isOnlyAdmin()) {
-            String text = "This user is the only admin of" + userDTO.getCompany().getTitle() + "company. You can't change his/her company";
-            redirectAttributes.addFlashAttribute("text", text);
-            model.addAttribute("user", text);
-        }
+//        if (userDTO.isOnlyAdmin()) {
+//            String text = "This user is the only admin of" + userDTO.getCompany().getTitle() + "company. You can't change his/her company";
+//            redirectAttributes.addFlashAttribute("text", text);
+//            model.addAttribute("user", text);
+//        }
 
         model.addAttribute("user", userDTO);
         model.addAttribute("companies", companyService.listAllByUser());
