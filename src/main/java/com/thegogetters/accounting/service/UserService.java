@@ -24,4 +24,7 @@ public interface UserService {
 */
     List<UserDTO> listAllUsersByLoggedInStatus() throws AccountingAppException;
     boolean usernameExist(String username);
+    boolean isOnlyAdmin(UserDTO userDTO);
+
+
 }

@@ -115,10 +115,10 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public List<CompanyDto> listAllByUser() {
 
-        if (securityService.getLoggedInUser().getRole().getId() == 1){
+        if (securityService.getLoggedInUser().getRole().getId() == 1L){
             return listAll();
         }
-        if (securityService.getLoggedInUser().getRole().getId() == 2){
+        if (securityService.getLoggedInUser().getRole().getId() == 2L){
             return listAll().stream()
                     .filter(companyDto -> companyDto.getId().equals(securityService.getLoggedInUser().getCompany().getId()))
                     .collect(Collectors.toList());
@@ -126,7 +126,5 @@ public class CompanyServiceImpl implements CompanyService {
         return null;
 
     }
-
-
 
 }
