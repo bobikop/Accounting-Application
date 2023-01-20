@@ -2,23 +2,26 @@ package com.thegogetters.accounting.controller;
 
 import com.thegogetters.accounting.custom.exception.AccountingAppException;
 import com.thegogetters.accounting.dto.CompanyDto;
+import com.thegogetters.accounting.service.AddressService;
 import com.thegogetters.accounting.service.CompanyService;
-import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/companies")
 public class CompanyController {
 
     private final CompanyService companyService;
+    private final AddressService addressService;
 
-    public CompanyController(CompanyService companyService) {
+    public CompanyController(CompanyService companyService, AddressService addressService) {
         this.companyService = companyService;
+        this.addressService = addressService;
     }
 
 
@@ -39,6 +42,9 @@ public class CompanyController {
 
         model.addAttribute("newCompany", new CompanyDto());
 
+        List<String> countryNames = addressService.findAllCountries();
+        model.addAttribute("countries", countryNames);
+
         return "/company/company-create";
     }
 
@@ -51,6 +57,9 @@ public class CompanyController {
         if (bindingResult.hasErrors()) {
 
             model.addAttribute("newCompany", companyDto);
+
+            List<String> countryNames = addressService.findAllCountries();
+            model.addAttribute("countries", countryNames);
 
             return "/company/company-create";
 
@@ -68,6 +77,9 @@ public class CompanyController {
 
 
         model.addAttribute("company", companyService.findById(Long.parseLong(id)));
+
+        List<String> countryNames = addressService.findAllCountries();
+        model.addAttribute("countries", countryNames);
 
         return "/company/company-update";
     }

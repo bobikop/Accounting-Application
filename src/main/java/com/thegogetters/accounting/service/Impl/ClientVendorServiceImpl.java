@@ -59,6 +59,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     public void update(ClientVendorDto clientVendorDto) throws AccountingAppException {
         ClientVendor clientVendor = clientVendorRepository.findById(clientVendorDto.getId())
                 .orElseThrow(()-> new AccountingAppException("ClientVendor not found"));
+
         clientVendor.setClientVendorType(clientVendorDto.getClientVendorType());
 
         //***********************************
