@@ -65,7 +65,6 @@ public class UserController {
         return "redirect:/users/list";
     }
 
-
     @GetMapping("/update/{id}")
     public String editUser(@PathVariable ("id") Long id, RedirectAttributes redirectAttributes, Model model)  {
 
@@ -75,6 +74,7 @@ public class UserController {
         model.addAttribute("user", userDTO);
         model.addAttribute("companies", companyService.listAllByUser());
         model.addAttribute("userRoles", roleService.listRolesByLoggedUser());
+
 
         if (userDTO.getUsername().equals(loggedInUser.getUsername())) {
             model.addAttribute("userRoles", new RoleDTO(2L, "Admin"));
